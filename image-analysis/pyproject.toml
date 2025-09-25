@@ -1,7 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "image-analysis"
 version = "0.1.0"
-description = "Add your description here"
+description = "Forensic-grade image analysis for legal evidence processing"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -16,3 +20,9 @@ dependencies = [
     "python-dateutil>=2.9",
     "numpy>=2.0",
 ]
+
+[project.scripts]
+image-analyzer = "image_analysis.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["image_analysis*"]
