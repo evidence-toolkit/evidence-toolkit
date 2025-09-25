@@ -17,11 +17,14 @@ source .venv/bin/activate
 
 ### Basic Usage
 ```bash
-# Analyze documents in a folder
+# Simple analysis (uses ./inbox/ by default)
+document-analyzer analyze
+
+# Analyze custom directory
 document-analyzer analyze ./legal-documents --output-dir ./results
 
-# Detect retaliation patterns
-document-analyzer retaliation ./email-chains --output-dir ./analysis
+# Detect retaliation patterns (uses ./inbox/ by default)
+document-analyzer retaliation
 
 # Version information
 document-analyzer version
@@ -44,14 +47,14 @@ document-analyzer analyze [DOCUMENTS_DIR] [OPTIONS]
 
 **Examples:**
 ```bash
-# Basic analysis using sample documents
-document-analyzer analyze examples/sample-documents
+# Basic analysis (uses ./inbox/ by default)
+document-analyzer analyze
 
-# With case tracking
-document-analyzer analyze examples/sample-documents --case-id "CASE-2025-001" -o ./results
+# With case tracking and custom output
+document-analyzer analyze --case-id "CASE-2025-001" -o ./results
 
-# Quiet mode with custom stop words
-document-analyzer analyze examples/sample-documents --quiet --stop-words "company,internal,email"
+# Custom directory with stop words
+document-analyzer analyze ./custom-docs --quiet --stop-words "company,internal,email"
 ```
 
 **Outputs:**
@@ -80,11 +83,11 @@ Use dated filenames for timeline analysis:
 
 **Examples:**
 ```bash
-# Analyze sample documents for retaliation patterns
-document-analyzer retaliation examples/sample-documents --case-id "RETALIATION-001"
+# Analyze for retaliation patterns (uses ./inbox/ by default)
+document-analyzer retaliation --case-id "RETALIATION-001"
 
-# With custom output directory
-document-analyzer retaliation examples/sample-documents --output-dir ./timeline-analysis
+# Custom directory with output location
+document-analyzer retaliation ./dated-documents --output-dir ./timeline-analysis
 ```
 
 **Outputs:**
@@ -199,6 +202,25 @@ document-analyzer export a1b2c3d4e5f6... case-summary.json
 - **Metadata Preservation**: File system attributes and processing history
 - **Schema Validation**: All outputs conform to legal evidence standards
 - **Duplicate Detection**: Automatically identifies identical documents
+
+## Inbox Workflow
+
+### Quick Start with Inbox
+The easiest way to use the Document Evidence Analyzer:
+
+```bash
+# 1. Copy your documents to the inbox
+cp /path/to/case-files/*.txt inbox/
+
+# 2. Run analysis (no paths needed!)
+document-analyzer analyze --case-id "CASE-2025-001"
+document-analyzer retaliation --case-id "CASE-2025-001"
+
+# 3. Results appear in current directory
+ls *.png  # word_cloud.png, word_frequency.png, timeline charts
+```
+
+The `inbox/` directory contains sample documents you can analyze immediately, or replace with your own case files.
 
 ## File Organization
 

@@ -183,7 +183,7 @@ def call_openai(image_path: Path, prompt: str, model: str, temperature: float) -
 
 @app.command()
 def ingest(
-    images_dir: Path = typer.Argument(..., exists=True, file_okay=False, dir_okay=True),
+    images_dir: Path = typer.Argument(Path("./inbox/"), exists=True, file_okay=False, dir_okay=True, help="Directory containing images to ingest (default: ./inbox/)"),
     case_id: Optional[str] = typer.Option(None, help="Case identifier to associate with the evidence."),
     actor: str = typer.Option("system@app", help="Actor recorded in chain-of-custody events."),
 ):
@@ -194,13 +194,20 @@ def ingest(
     processed = 0
     skipped = 0
     try:
+        # Supported image extensions
+        IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif'}
+
         for file_path in images_dir.rglob("*"):
             if not file_path.is_file():
                 continue
 
+            # Skip non-image files
+            ext = file_path.suffix.lower()
+            if ext not in IMAGE_EXTENSIONS:
+                continue
+
             contents = file_path.read_bytes()
             sha = sha256_bytes(contents)
-            ext = file_path.suffix.lower() or ""
             raw_dir, derived_dir, raw_file = layout.content_paths(sha, ext)
             ensure_directory(raw_dir)
             ensure_directory(derived_dir)

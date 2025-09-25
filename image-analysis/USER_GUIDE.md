@@ -22,14 +22,13 @@ uv run python -m image_analysis.cli --help
 
 ### Basic Workflow
 ```bash
-# 1. Ingest images into evidence storage
-uv run python -m image_analysis.cli ingest /path/to/images --case-id "CASE-2025-001"
-
-# 2. Analyze specific image
+# Simple workflow (uses ./inbox/ by default)
+uv run python -m image_analysis.cli ingest --case-id "CASE-2025-001"
 uv run python -m image_analysis.cli analyze <sha256-hash>
-
-# 3. Export results
 uv run python -m image_analysis.cli export-json <sha256-hash> analysis.json
+
+# Or with custom directories
+uv run python -m image_analysis.cli ingest /path/to/images --case-id "CASE-2025-001"
 ```
 
 ## Commands
@@ -47,11 +46,11 @@ uv run python -m image_analysis.cli ingest [IMAGES_DIR] [OPTIONS]
 
 **Examples:**
 ```bash
-# Ingest sample images
-uv run python -m image_analysis.cli ingest examples/sample-images --case-id "DEMO-2025-001"
+# Ingest from inbox (default)
+uv run python -m image_analysis.cli ingest --case-id "DEMO-2025-001"
 
-# Ingest with specific actor
-uv run python -m image_analysis.cli ingest examples/sample-images --case-id "CASE-123" --actor "analyst@firm.com"
+# Ingest custom directory with specific actor
+uv run python -m image_analysis.cli ingest ./evidence-photos --case-id "CASE-123" --actor "analyst@firm.com"
 ```
 
 **Supported Formats:**
@@ -142,6 +141,30 @@ for hash in $(cat important_hashes.txt); do
   uv run python -m image_analysis.cli export-json $hash "analysis-${hash:0:8}.json"
 done
 ```
+
+## Inbox Workflow
+
+### Quick Start with Inbox
+The easiest way to use the Image Analysis system:
+
+```bash
+# 1. Copy your images to the inbox
+cp /path/to/case-photos/* inbox/
+
+# 2. Ingest and analyze (no paths needed!)
+uv run python -m image_analysis.cli ingest --case-id "CASE-2025-001"
+
+# 3. Get the SHA256 hashes from evidence listing
+ls evidence/raw/
+
+# 4. Analyze images
+uv run python -m image_analysis.cli analyze-batch --skip-existing
+
+# 5. Export results
+uv run python -m image_analysis.cli export-json <sha256-hash> report.json
+```
+
+The `inbox/` directory contains a sample image you can analyze immediately, or replace with your own case photos.
 
 ## Evidence Storage Structure
 

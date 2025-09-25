@@ -28,14 +28,19 @@ export OPENAI_API_KEY="your-api-key-here"
 ## Document Analysis
 
 ### Basic Document Analysis
-Analyze a folder of legal documents:
+The simplest way to analyze documents:
 
 ```bash
-# Basic analysis using provided samples
-document-analyzer analyze examples/sample-documents --output-dir ./results
+cd document-evidence-analyzer/
 
-# Analyze with custom case ID
-document-analyzer analyze examples/sample-documents --case-id "CASE-2025-001" --output-dir ./results
+# Basic analysis (uses inbox/ by default)
+document-analyzer analyze
+
+# With custom output directory
+document-analyzer analyze --output-dir ./results
+
+# Or analyze custom directory
+document-analyzer analyze /path/to/documents --output-dir ./results
 ```
 
 **Output:**
@@ -47,8 +52,13 @@ document-analyzer analyze examples/sample-documents --case-id "CASE-2025-001" --
 Detect workplace retaliation patterns in dated documents:
 
 ```bash
-# Analyze retaliation patterns (requires dated filenames)
-document-analyzer retaliation examples/sample-documents --output-dir ./retaliation-results
+cd document-evidence-analyzer/
+
+# Analyze retaliation patterns (uses inbox/ by default)
+document-analyzer retaliation
+
+# With custom output directory
+document-analyzer retaliation --output-dir ./timeline-analysis
 ```
 
 **Naming Convention for Best Results:**
@@ -77,8 +87,10 @@ document-analyzer export <sha256-hash> analysis-report.json
 Process images with AI-powered analysis and content-addressed storage:
 
 ```bash
-# 1. Ingest images into evidence storage
-uv run python -m image_analysis.cli ingest examples/sample-images --case-id "CASE-2025-001"
+cd image-analysis/
+
+# 1. Ingest images (uses inbox/ by default)
+uv run python -m image_analysis.cli ingest --case-id "CASE-2025-001"
 
 # 2. Analyze specific image by SHA256 hash
 uv run python -m image_analysis.cli analyze <sha256-hash>
@@ -103,22 +115,44 @@ For cases with both documents and images:
 
 1. **Process Documents:**
    ```bash
-   document-analyzer analyze examples/sample-documents --case-id "CASE-2025-001"
+   cd document-evidence-analyzer/
+   # Copy case documents to inbox/
+   document-analyzer analyze --case-id "CASE-2025-001"
    ```
 
 2. **Process Images:**
    ```bash
-   uv run python -m image_analysis.cli ingest examples/sample-images --case-id "CASE-2025-001"
+   cd ../image-analysis/
+   # Copy case images to inbox/
+   uv run python -m image_analysis.cli ingest --case-id "CASE-2025-001"
    uv run python -m image_analysis.cli analyze-batch --skip-existing
    ```
 
 3. **Both tools use the same case ID and compatible evidence storage**
 
 ### Legal Team Workflow
+
+**Simplified Inbox Workflow:**
+```bash
+# 1. Drop evidence files into inboxes
+cp case-documents/* document-evidence-analyzer/inbox/
+cp case-photos/* image-analysis/inbox/
+
+# 2. Run analysis (no paths needed!)
+cd document-evidence-analyzer/
+document-analyzer analyze --case-id "CASE-2025-001"
+document-analyzer retaliation --case-id "CASE-2025-001"
+
+cd ../image-analysis/
+uv run python -m image_analysis.cli ingest --case-id "CASE-2025-001"
+uv run python -m image_analysis.cli analyze-batch
+```
+
+**Traditional Workflow:**
 1. **Bulk Document Processing:**
    - Place documents in organized folders
-   - Run `document-analyzer analyze` for overview
-   - Run `document-analyzer retaliation` for timeline analysis
+   - Run `document-analyzer analyze /path/to/docs` for overview
+   - Run `document-analyzer retaliation /path/to/docs` for timeline analysis
 
 2. **Evidence Preservation:**
    - Use `ingest` commands for forensic-grade storage

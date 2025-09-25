@@ -71,7 +71,9 @@ Examples:
     analyze_parser = subparsers.add_parser('analyze', help='Analyze evidence (documents or images)')
     analyze_parser.add_argument(
         'input',
-        help='SHA256 hash of ingested evidence or directory containing files to analyze'
+        nargs='?',
+        default='./inbox/',
+        help='SHA256 hash of ingested evidence or directory containing files to analyze (default: ./inbox/)'
     )
     analyze_parser.add_argument(
         '-o', '--output-dir',
@@ -121,7 +123,9 @@ Examples:
     retaliation_parser = subparsers.add_parser('retaliation', help='Run retaliation-pattern analysis')
     retaliation_parser.add_argument(
         'input_dir',
-        help='Directory containing text files to analyze'
+        nargs='?',
+        default='./inbox/',
+        help='Directory containing text files to analyze (default: ./inbox/)'
     )
     retaliation_parser.add_argument(
         '-o', '--output-dir',
