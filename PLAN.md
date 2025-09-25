@@ -19,13 +19,13 @@ This plan outlines the enhancement and integration of Evidence Toolkit component
 - ✅ **Schema Validation**: All outputs validated against `evidence.v1.json`
 - ✅ **Risk Assessment**: Comprehensive risk flags and confidence scoring
 
-### Current Gaps
-- ❌ **Analysis Sophistication**: Document analysis limited to word frequency vs AI-powered insights
-- ❌ **API Inconsistency**: Chat Completions vs modern Responses API. ALWAYS USE Responses API
-- ❌ **Schema Validation**: Document analyzer lacks structured validation approach
-- ❌ **Cross-referencing**: Mixed evidence cases (emails + attachments, incident reports + photos) lack connection tools
+### Current Gaps ✅ RESOLVED
+- ✅ **Analysis Sophistication**: Document analysis now includes AI-powered insights with entity extraction, sentiment analysis, and risk flagging
+- ✅ **API Consistency**: Both tools now use OpenAI Responses API consistently
+- ✅ **Schema Validation**: Document analyzer now validates against `document.v1.json` schema
+- ❌ **Cross-referencing**: Mixed evidence cases (emails + attachments, incident reports + photos) lack connection tools - PHASE 3
 
-## Phase 1: Enhanced Document Analysis (Core Priority)
+## Phase 1: Enhanced Document Analysis ✅ COMPLETED
 
 ### 1.1 Upgrade to OpenAI Responses API
 Replace basic word frequency analysis with structured AI insights:
@@ -266,19 +266,19 @@ Once both tools are individually excellent, consider:
 ### Phase 1: Enhanced Document Analysis (Weeks 1-4)
 **Goal**: Bring document analysis up to image analysis quality standards
 
-#### Week 1-2: OpenAI Responses API Integration
+#### Week 1-2: OpenAI Responses API Integration ✅ COMPLETED
 
-- [ ] Upgrade document analyzer to use `responses api` with Pydantic models
-- [ ] Implement entity extraction (people, organizations, dates, legal terms)
-- [ ] Add document classification (email, letter, contract, filing)
-- [ ] Implement sentiment analysis (hostile, neutral, professional)
-- [ ] Add legal risk flags (PII, privileged, threatening, deadline)
+- [x] Upgrade document analyzer to use `responses api` with Pydantic models ✅
+- [x] Implement entity extraction (people, organizations, dates, legal terms) ✅
+- [x] Add document classification (email, letter, contract, filing) ✅
+- [x] Implement sentiment analysis (hostile, neutral, professional) ✅
+- [x] Add legal risk flags (PII, privileged, threatening, deadline) ✅
 
-#### Week 3-4: Schema & Validation
-- [ ] Create `document.v1.json` schema following image analyzer patterns
-- [ ] Implement schema validation for all document analyses
-- [ ] Add chain of custody tracking for document operations
-- [ ] Create validation scripts for CI/CD pipeline
+#### Week 3-4: Schema & Validation ✅ COMPLETED
+- [x] Create `document.v1.json` schema following image analyzer patterns ✅
+- [x] Implement schema validation for all document analyses ✅
+- [x] Add chain of custody tracking for document operations ✅
+- [x] Create validation scripts for CI/CD pipeline ✅
 
 ### Phase 2: Polish & Optimization (Weeks 5-6)
 **Goal**: Optimize performance and user experience
