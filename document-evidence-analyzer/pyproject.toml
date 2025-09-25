@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "document-evidence-analyzer"
+version = "0.1.0"
+description = "AI-powered text analysis for legal document evidence processing"
+authors = [
+    {name = "Evidence Toolkit Contributors"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "wordcloud>=1.9.4",
+    "matplotlib>=3.7.0",
+    "nltk>=3.9.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "Pillow>=10.0.0",
+    "click>=8.0.0",
+    "seaborn>=0.12.0",
+    "openai>=1.60",
+    "pydantic>=2.8",
+    "piexif>=1.1",
+    "python-dateutil>=2.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/evidence-toolkit/document-evidence-analyzer"
+Repository = "https://github.com/evidence-toolkit/document-evidence-analyzer"
+Issues = "https://github.com/evidence-toolkit/document-evidence-analyzer/issues"
+
+[project.scripts]
+document-analyzer = "document_analyzer.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

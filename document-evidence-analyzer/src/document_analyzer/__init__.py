@@ -1,0 +1,72 @@
+"""
+Document Evidence Analyzer
+
+A Python library for analyzing text documents and generating visualizations
+for legal evidence processing.
+"""
+
+from .word_cloud_analyzer import (
+    DocumentAnalyzer,
+    analyze_documents,
+    analyze_text_content,
+    ensure_nltk_data
+)
+
+from .retaliation_analyzer import (
+    RetaliationAnalyzer,
+    RetaliationSummary,
+    analyze_retaliation_case
+)
+
+from .evidence_manager import EvidenceManager
+from .image_analyzer import ImageAnalyzer
+from .unified_models import (
+    UnifiedAnalysis,
+    DocumentAnalysisResult,
+    ImageAnalysisResult,
+    EvidenceType,
+    IngestionResult,
+    ExportResult
+)
+from .utils import (
+    calculate_sha256,
+    get_file_metadata,
+    detect_file_type,
+    is_image_file,
+    is_text_file
+)
+
+__version__ = "0.1.0"
+__author__ = "Evidence Toolkit Contributors"
+
+__all__ = [
+    # Document analysis
+    "DocumentAnalyzer",
+    "analyze_documents",
+    "analyze_text_content",
+    "ensure_nltk_data",
+
+    # Retaliation analysis
+    "RetaliationAnalyzer",
+    "RetaliationSummary",
+    "analyze_retaliation_case",
+
+    # Unified evidence toolkit
+    "EvidenceManager",
+    "ImageAnalyzer",
+
+    # Models
+    "UnifiedAnalysis",
+    "DocumentAnalysisResult",
+    "ImageAnalysisResult",
+    "EvidenceType",
+    "IngestionResult",
+    "ExportResult",
+
+    # Utils
+    "calculate_sha256",
+    "get_file_metadata",
+    "detect_file_type",
+    "is_image_file",
+    "is_text_file"
+]
