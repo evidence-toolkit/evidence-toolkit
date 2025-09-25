@@ -23,6 +23,7 @@ dependencies = [
     "seaborn>=0.12.0",
     "openai>=1.60",
     "pydantic>=2.8",
+    "jsonschema>=4.23",
     "piexif>=1.1",
     "python-dateutil>=2.9",
 ]

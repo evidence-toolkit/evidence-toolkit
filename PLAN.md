@@ -21,7 +21,7 @@ This plan outlines the enhancement and integration of Evidence Toolkit component
 
 ### Current Gaps
 - ❌ **Analysis Sophistication**: Document analysis limited to word frequency vs AI-powered insights
-- ❌ **API Inconsistency**: Chat Completions vs modern Responses API
+- ❌ **API Inconsistency**: Chat Completions vs modern Responses API. ALWAYS USE Responses API
 - ❌ **Schema Validation**: Document analyzer lacks structured validation approach
 - ❌ **Cross-referencing**: Mixed evidence cases (emails + attachments, incident reports + photos) lack connection tools
 
@@ -58,15 +58,7 @@ class DocumentAnalysis(BaseModel):
     confidence_overall: float
 
 # OpenAI Responses API call
-completion = client.chat.completions.parse(
-    model="gpt-4o-2024-08-06",
-    messages=[
-        {"role": "system", "content": LEGAL_ANALYSIS_PROMPT},
-        {"role": "user", "content": document_text}
-    ],
-    response_format=DocumentAnalysis,
-    temperature=0  # Deterministic for legal use
-)
+    CHECK WITH USER ON CONTEXT7 DOCS DO NOT USE CHAT.COMPLETIONS
 ```
 
 ### 1.2 Document Schema Validation
@@ -276,7 +268,7 @@ Once both tools are individually excellent, consider:
 
 #### Week 1-2: OpenAI Responses API Integration
 
-- [ ] Upgrade document analyzer to use `client.chat.completions.parse()` with Pydantic models
+- [ ] Upgrade document analyzer to use `responses api` with Pydantic models
 - [ ] Implement entity extraction (people, organizations, dates, legal terms)
 - [ ] Add document classification (email, letter, contract, filing)
 - [ ] Implement sentiment analysis (hostile, neutral, professional)
