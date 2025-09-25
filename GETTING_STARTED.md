@@ -10,18 +10,36 @@ The Evidence Toolkit provides forensic-grade analysis for legal evidence process
 
 ### Installation
 
-**Document Analysis:**
+**Prerequisites:**
+- Python 3.8+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (recommended) or pip
+- OpenAI API key for image analysis
+
+**Method 1: Using uv (Recommended)**
 ```bash
+# Document Analysis
 cd document-evidence-analyzer
-pip install -e .
-# OR
-uv venv && uv pip install -e .
+uv sync && uv pip install -e .
+
+# Image Analysis
+cd ../image-analysis
+uv sync && uv pip install -e .
+export OPENAI_API_KEY="your-api-key-here"
 ```
 
-**Image Analysis:**
+**Method 2: Using pip/venv**
 ```bash
-cd image-analysis
-uv sync
+# Document Analysis
+cd document-evidence-analyzer
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -e .
+
+# Image Analysis
+cd ../image-analysis
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -e .
 export OPENAI_API_KEY="your-api-key-here"
 ```
 
@@ -90,16 +108,16 @@ Process images with AI-powered analysis and content-addressed storage:
 cd image-analysis/
 
 # 1. Ingest images (uses inbox/ by default)
-uv run python -m image_analysis.cli ingest --case-id "CASE-2025-001"
+uv run image-analyzer ingest --case-id "CASE-2025-001"
 
 # 2. Analyze specific image by SHA256 hash
-uv run python -m image_analysis.cli analyze <sha256-hash>
+uv run image-analyzer analyze <sha256-hash>
 
 # 3. Batch analysis of all ingested images
-uv run python -m image_analysis.cli analyze-batch --limit 10 --skip-existing
+uv run image-analyzer analyze-batch --limit 10 --skip-existing
 
 # 4. Export analysis results
-uv run python -m image_analysis.cli export-json <sha256-hash> report.json
+uv run image-analyzer export-json <sha256-hash> report.json
 ```
 
 **AI Analysis Features:**
@@ -242,9 +260,56 @@ uv run python -m image_analysis.cli analyze-batch
 - Content-addressed storage prevents data corruption
 - Chain of custody is automatically maintained for legal admissibility
 
+## Troubleshooting
+
+### Installation Issues
+
+**"externally-managed-environment" Error:**
+```bash
+# Use virtual environment instead of system Python
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+**"python3-venv not available" Error:**
+```bash
+# Ubuntu/Debian systems
+sudo apt install python3.12-venv python3-pip
+
+# Then retry installation
+```
+
+**"uv not found" Error:**
+```bash
+# Install uv first
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# Restart terminal, then retry
+```
+
+### Runtime Issues
+
+**No sample files in inbox:**
+```bash
+# Copy examples to inbox directories
+cp examples/sample-documents/* document-evidence-analyzer/inbox/
+cp examples/sample-images/* image-analysis/inbox/
+```
+
+**OpenAI API errors:**
+- Verify your API key is set: `echo $OPENAI_API_KEY`
+- Check API key permissions at https://platform.openai.com/api-keys
+
+**Image analysis "UNIQUE constraint failed" errors:**
+```bash
+# Reset the database to clear old analysis data
+cd image-analysis
+./scripts/reset_database.sh
+```
+
 ## Support
 
 For issues or questions:
-- Check the README files in each component directory
-- Review the CLAUDE.md files for technical details
+- Check the troubleshooting section above
+- Review the USER_GUIDE.md in each component directory
 - Validate your environment setup and API keys

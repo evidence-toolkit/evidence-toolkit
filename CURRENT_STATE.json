@@ -1,0 +1,56 @@
+{
+  "working_state": {
+    "document_analyzer": {
+      "status": "working_well",
+      "command": "document-analyzer analyze",
+      "installation": "uv venv && uv pip install -e . (works)",
+      "sample_output": "word_cloud.png, word_frequency.png",
+      "user_experience": "smooth once setup complete",
+      "inbox_samples": "empty by default, needs manual copy"
+    },
+    "image_analyzer": {
+      "status": "functional_but_confusing",
+      "command_attempts": [
+        "uv run image-analyzer ingest (FAILS - script not found)",
+        "uv run python -m image_analysis.cli ingest (WORKS)"
+      ],
+      "installation": "uv sync (works)",
+      "ai_integration": "confirmed working - analysis.v1.json generated",
+      "database_location": "db/evidence.sqlite",
+      "console_script_issue": "registered but not found by uv run"
+    },
+    "file_locations": {
+      "sample_docs": "examples/sample-documents/ (5 files)",
+      "sample_images": "examples/sample-images/office-screenshot.png",
+      "doc_inbox": "document-evidence-analyzer/inbox/ (empty + README)",
+      "img_inbox": "image-analysis/inbox/ (has office-screenshot.png + README)",
+      "analysis_results": "image-analysis/evidence/derived/sha256=.../analysis.v1.json"
+    }
+  },
+  "technical_findings": {
+    "ai_analysis_quality": "excellent - detailed object detection, scene description",
+    "document_analysis_quality": "excellent - meaningful word clouds, retaliation detection",
+    "schema_validation": "working - outputs validate against evidence.v1.json",
+    "chain_of_custody": "working - complete audit trails",
+    "content_addressing": "working - SHA256-based evidence storage"
+  },
+  "repository_cleanup_needed": {
+    "root_directory_noise": [
+      "function-tools.md",
+      "images.md",
+      "migrate.md",
+      "structured-out.md",
+      "text.md"
+    ],
+    "confusing_for_users": "too many MD files at root level",
+    "recommendation": "move to docs/ or archive/"
+  },
+  "next_session_context": {
+    "priority_fix_order": ["installation", "populate_inboxes", "command_consistency", "database_cleanup"],
+    "test_environment": "/tmp/claude/user-test (fresh clone setup)",
+    "known_working_commands": {
+      "document": "cd document-evidence-analyzer && uv venv && uv pip install -e . && document-analyzer analyze",
+      "image": "cd image-analysis && uv sync && uv run python -m image_analysis.cli ingest --case-id TEST"
+    }
+  }
+}
