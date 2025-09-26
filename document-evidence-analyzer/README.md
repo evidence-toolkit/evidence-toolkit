@@ -8,6 +8,7 @@ A powerful Python library for analyzing text documents and generating visualizat
 ## 🚀 Features
 
 - **Text Analysis**: Advanced natural language processing for legal documents
+- **Email Thread Analysis**: AI-powered analysis of email communications with escalation detection
 - **Word Cloud Generation**: Create compelling visual representations of document themes
 - **Frequency Analysis**: Statistical analysis of word patterns and frequency distributions
 - **Legal Document Processing**: Specialized filters for business and legal correspondence
@@ -47,17 +48,20 @@ uv pip install -e .
 Analyze documents in a directory:
 
 ```bash
-# Basic analysis
+# Basic document analysis
 document-analyzer analyze ./documents
+
+# Email thread analysis
+document-analyzer email ./email_files --case-id CASE123
 
 # Save to specific output directory
 document-analyzer analyze ./documents -o ./analysis_results
 
+# Email analysis with JSON export
+document-analyzer email ./emails --json-output email_analysis.json
+
 # Add custom stop words and run quietly
 document-analyzer analyze ./documents --stop-words "company,internal" --quiet
-
-# Save results as JSON
-document-analyzer analyze ./documents --json-output results.json
 ```
 
 ### Python API
@@ -112,9 +116,9 @@ A precise bar chart showing exact word counts, ideal for:
 - **Document Review**: Quickly assess large volumes of documents
 
 ### Workplace Investigations
-- **Communication Analysis**: Analyze email chains and internal communications
-- **Pattern Recognition**: Identify recurring issues or themes
-- **Report Generation**: Create compelling visual evidence
+- **Communication Analysis**: Analyze email chains and internal communications with AI-powered escalation detection
+- **Pattern Recognition**: Identify recurring issues, themes, and retaliation patterns
+- **Report Generation**: Create compelling visual evidence and forensic timelines
 
 ### Research & Academia
 - **Content Analysis**: Systematic analysis of text corpora

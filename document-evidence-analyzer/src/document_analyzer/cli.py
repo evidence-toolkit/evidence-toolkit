@@ -15,6 +15,7 @@ from .word_cloud_analyzer import DocumentAnalyzer, analyze_documents
 from .retaliation_analyzer import analyze_retaliation_case
 from .evidence_manager import EvidenceManager
 from .image_analyzer import ImageAnalyzer
+from .email_analyzer import EmailAnalyzer
 from .unified_models import (
     UnifiedAnalysis,
     DocumentAnalysisResult,
@@ -164,6 +165,35 @@ Examples:
     )
 
     version_parser = subparsers.add_parser('version', help='Show version information')
+
+    # Email analysis command
+    email_parser = subparsers.add_parser('email', help='Analyze email threads for legal evidence')
+    email_parser.add_argument(
+        'input',
+        help='Directory containing email files (.eml, .msg, .mbox) or single email file'
+    )
+    email_parser.add_argument(
+        '-o', '--output-dir',
+        help='Output directory for analysis results (default: current directory)'
+    )
+    email_parser.add_argument(
+        '--case-id',
+        help='Case ID to associate with email analysis'
+    )
+    email_parser.add_argument(
+        '--json-output',
+        help='Save analysis results as JSON to specified file'
+    )
+    email_parser.add_argument(
+        '--quiet', '-q',
+        action='store_true',
+        help='Suppress verbose output'
+    )
+    email_parser.add_argument(
+        '--evidence-root',
+        default='evidence',
+        help='Evidence storage root directory (default: evidence)'
+    )
 
     return parser
 
@@ -475,6 +505,84 @@ def handle_version_command(args) -> int:
     return 0
 
 
+def handle_email_command(args) -> int:
+    """Handle the email analysis command"""
+    import os
+
+    input_path = Path(args.input)
+
+    if not input_path.exists():
+        print(f"❌ Input path '{input_path}' does not exist")
+        return 1
+
+    # Initialize OpenAI client
+    openai_client = None
+    try:
+        import openai
+        api_key = os.getenv('OPENAI_API_KEY')
+        if api_key:
+            openai_client = openai.OpenAI(api_key=api_key)
+        else:
+            print("⚠️  OPENAI_API_KEY not set - AI analysis will be disabled")
+    except ImportError:
+        print("⚠️  OpenAI package not available - AI analysis will be disabled")
+
+    # Initialize email analyzer
+    email_analyzer = EmailAnalyzer(openai_client, verbose=not args.quiet)
+
+    try:
+        # Collect email files
+        email_files = []
+
+        if input_path.is_file():
+            # Single email file
+            if input_path.suffix.lower() in ['.eml', '.msg', '.mbox']:
+                email_files.append(input_path)
+            else:
+                print(f"❌ Unsupported email format: {input_path.suffix}")
+                return 1
+        else:
+            # Directory of email files
+            for pattern in ['*.eml', '*.msg', '*.mbox']:
+                email_files.extend(input_path.glob(pattern))
+
+            if not email_files:
+                print(f"❌ No email files found in {input_path}")
+                return 1
+
+        if not args.quiet:
+            print(f"📧 Found {len(email_files)} email file(s)")
+
+        # Analyze emails
+        analysis = email_analyzer.analyze_email_files(email_files, case_id=args.case_id)
+
+        if not analysis:
+            print("❌ Email analysis failed")
+            return 1
+
+        # Output results
+        output_dir = Path(args.output_dir) if args.output_dir else Path.cwd()
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Save JSON output if requested
+        if args.json_output:
+            json_path = Path(args.json_output)
+            if email_analyzer.export_analysis_to_json(analysis, json_path):
+                if not args.quiet:
+                    print(f"✅ Analysis saved to: {json_path}")
+
+        # Print summary
+        if not args.quiet:
+            summary = email_analyzer.get_analysis_summary(analysis)
+            print("\n" + summary)
+
+        return 0
+
+    except Exception as e:
+        print(f"❌ Error during email analysis: {e}")
+        return 1
+
+
 def main() -> int:
     """Main CLI entry point"""
     parser = create_parser()
@@ -494,6 +602,8 @@ def main() -> int:
         return handle_retaliation_command(args)
     elif args.command == 'version':
         return handle_version_command(args)
+    elif args.command == 'email':
+        return handle_email_command(args)
     else:
         print(f"❌ Unknown command: {args.command}")
         return 1

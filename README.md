@@ -7,7 +7,7 @@
 
 **Comprehensive AI-powered legal evidence analysis suite with forensic-grade content-addressed storage**
 
-The Evidence Toolkit is a professional suite for legal evidence processing, combining advanced document analysis with forensic-grade image analysis. Designed for legal professionals, investigators, and compliance teams who need reliable, court-ready evidence analysis.
+The Evidence Toolkit is a professional suite for legal evidence processing, combining advanced document analysis, email thread analysis, and forensic-grade image analysis. Designed for legal professionals, investigators, and compliance teams who need reliable, court-ready evidence analysis across multiple evidence types.
 
 ---
 
@@ -20,12 +20,18 @@ The Evidence Toolkit is a professional suite for legal evidence processing, comb
 # Install everything with unified CLI
 git clone https://github.com/evidence-toolkit/evidence-toolkit.git
 cd evidence-toolkit
-pip install -e .
+uv pip install -e .
+source .venv/bin/activate
 
 # Now you can use either:
-evidence-toolkit document analyze ./documents    # Unified CLI
-document-analyzer analyze ./documents           # Direct CLI
-image-analyzer ingest ./images --case-id CASE123  # Direct CLI
+evidence-toolkit document analyze ./documents           # Unified CLI
+evidence-toolkit email analyze ./emails --case-id CASE123  # Unified CLI
+evidence-toolkit image ingest ./images --case-id CASE123   # Unified CLI
+
+# Or direct component CLIs:
+uv run document-analyzer analyze ./documents              # Direct CLI
+uv run document-analyzer email ./emails --case-id CASE123 # Direct CLI
+uv run python -m image_analysis.cli ingest ./images --case-id CASE123  # Direct CLI
 ```
 
 **Option 2: Individual Components**
@@ -47,15 +53,19 @@ uv run python -m image_analysis.cli ingest ./images --case-id CASE123
 
 ```bash
 # Document Analysis - Generate word clouds and legal insights
-document-analyzer analyze ./legal_documents --output-dir ./analysis
+evidence-toolkit document analyze ./legal_documents --output-dir ./analysis
+
+# Email Thread Analysis - Detect escalation and legal risks
+evidence-toolkit email analyze ./email_threads --case-id CASE123 --json-output analysis.json
 
 # Image Evidence Processing - Full forensic pipeline
 image-analyzer ingest ./evidence_photos --case-id WORKPLACE-2024-001
 image-analyzer analyze-batch --limit 10
 image-analyzer export-json <sha256> court_evidence.json
 
-# Unified Toolkit Commands
+# Unified Toolkit Commands (after source .venv/bin/activate)
 evidence-toolkit document analyze ./case_files
+evidence-toolkit email analyze ./emails --case-id CASE123
 evidence-toolkit image ingest ./photos --case-id CASE123
 ```
 
@@ -98,6 +108,14 @@ Users can choose their preferred approach:
 - **Retaliation Analysis**: Timeline analysis for workplace retaliation patterns
 - **Batch Processing**: Analyze entire directories efficiently
 - **Multiple Export Formats**: JSON, visualizations, statistical reports
+
+### Email Thread Analysis
+- **Thread Reconstruction**: Automatic chronological ordering and conversation mapping
+- **Escalation Detection**: AI-powered identification of tone changes and authority escalation
+- **Participant Analysis**: Organizational hierarchy and role assessment
+- **Legal Risk Assessment**: Automated flagging of harassment, discrimination, and retaliation
+- **Multi-Format Support**: Parse .eml, .msg, and .mbox email files
+- **Forensic Timeline**: Complete communication timeline for legal proceedings
 
 ### Image Analysis System
 - **Content-Addressed Storage**: SHA256-based evidence organization with immutable file layout

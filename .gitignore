@@ -1,5 +1,7 @@
 # Evidence Toolkit Monorepo .gitignore
 
+*AUDHD*
+
 # Python
 __pycache__/
 *.py[cod]
