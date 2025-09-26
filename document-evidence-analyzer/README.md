@@ -237,7 +237,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Related Projects
 
-- [Image Evidence Analyzer](https://github.com/evidence-toolkit/image-evidence-analyzer) - AI-powered forensic image analysis
+- [Image Analysis](https://github.com/evidence-toolkit/image-analysis) - AI-powered forensic image analysis
 - [Evidence Toolkit](https://github.com/evidence-toolkit) - Complete legal evidence analysis suite
 
 ## 📞 Support

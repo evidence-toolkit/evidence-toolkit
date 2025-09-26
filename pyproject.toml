@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evidence-toolkit"
+version = "0.1.0"
+description = "Comprehensive legal evidence analysis suite with AI-powered content-addressed evidence storage"
+authors = [
+    {name = "Evidence Toolkit Contributors"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Document analyzer dependencies
+    "wordcloud>=1.9.4",
+    "matplotlib>=3.7.0",
+    "nltk>=3.9.0",
+    "pandas>=2.0.0",
+    "numpy>=2.0",
+    "Pillow>=10.0.0",
+    "click>=8.0.0",
+    "seaborn>=0.12.0",
+    # Image analysis dependencies
+    "typer>=0.12",
+    "piexif>=1.1",
+    "tenacity>=9.0",
+    "sqlalchemy>=2.0",
+    # Shared dependencies
+    "openai>=1.60",
+    "pydantic>=2.8",
+    "jsonschema>=4.23",
+    "python-dateutil>=2.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/evidence-toolkit/evidence-toolkit"
+Repository = "https://github.com/evidence-toolkit/evidence-toolkit"
+Issues = "https://github.com/evidence-toolkit/evidence-toolkit/issues"
+Documentation = "https://github.com/evidence-toolkit/evidence-toolkit#readme"
+
+[project.scripts]
+# Document analyzer CLI
+document-analyzer = "document_analyzer.cli:main"
+# Image analyzer CLI
+image-analyzer = "image_analysis.cli:app"
+# Unified toolkit CLI (optional)
+evidence-toolkit = "evidence_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = [".", "document-evidence-analyzer/src", "image-analysis"]
+include = ["evidence_toolkit*", "document_analyzer*", "image_analysis*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "mypy>=1.0",
+    "ruff>=0.1.0",
+]

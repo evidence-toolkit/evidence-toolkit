@@ -27,7 +27,7 @@ This directory contains sample legal documents demonstrating a workplace harassm
 - `2025-02-15-EMAIL-EscalationResponse-CEO-Legal.txt` - Executive decision communication
 - `2025-03-01-LETTER-Resolution-Legal-JSmith.txt` - Settlement agreement letter
 
-## File Naming Convention
+## File Naming Convention [#TODO: AUTO RENAME FILES. Email dates / meta data eg?]
 
 For best timeline analysis results, use this naming pattern:
 - `YYYY-MM-DD-TYPE-Description-Parties.txt`
