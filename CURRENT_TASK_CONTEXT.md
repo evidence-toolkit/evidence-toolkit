@@ -1,92 +1,120 @@
-# Current Task Context: Email Analysis Implementation
+# Current Task Context: PDF Processing Enhancement
 
-*Development session context for adding email chain analysis to Evidence Toolkit*
+*Development session context for adding intelligent PDF processing to Evidence Toolkit*
 
 ## 🎯 Current Task
-**Add email chain analysis using our proven forensic-grade architecture patterns**
+**Add comprehensive PDF processing with minimal code changes to existing architecture**
 
 ### What We Know Works ✅
-- Document analysis: OpenAI Responses API + Pydantic models + schema validation
-- Image analysis: Same pattern with content-addressed storage + chain of custody
-- Both achieve 4.6/5 forensic standard
+- Document analysis: Text processing, word clouds, frequency analysis, AI analysis
+- Image analysis: Content-addressed storage, OCR, visual AI analysis
+- Email analysis: Thread reconstruction, escalation detection, participant analysis
+- Unified CLI: Automatic routing between document/image/email analysis
+- All achieve 4.6/5 forensic standard
 
 ### What We're Building 🔄
-Email analysis that follows the **exact same patterns** for consistency
+**Intelligent PDF processing** that leverages existing architecture:
+- Text-extractable PDFs → Route to document analysis
+- Non-extractable PDFs → Route to image analysis (OCR + visual AI)
+- **Minimal code changes** - work with existing systems
 
 ## 📋 Implementation Strategy
 
-### Pattern to Follow
+### Leverage Existing Routing
 ```python
-# This works in document_analyzer/word_cloud_analyzer.py:analyze_with_ai()
-response = self.openai_client.responses.parse(
-    model="gpt-4o-2024-08-06",
-    input=[{"role": "system", "content": prompt}, {"role": "user", "content": text}],
-    text_format=DocumentAnalysis  # Pydantic model
-)
+# CLI already routes based on detect_file_type() in utils.py
+def detect_file_type(file_path: Path) -> str:
+    if file_path.suffix.lower() == '.pdf':
+        if can_extract_text_from_pdf(file_path):
+            return 'document'  # → DocumentAnalyzer
+        else:
+            return 'image'     # → ImageAnalyzer (OCR + AI)
+    # existing logic...
 ```
 
-### Key Architecture Files to Reference
-- `document-evidence-analyzer/src/document_analyzer/ai_models.py` - Pydantic model structure
-- `document-evidence-analyzer/src/document_analyzer/word_cloud_analyzer.py:410-485` - AI analysis implementation
-- `EMAIL_FORENSIC_ARCHITECTURE.md` - Implementation plan
+### Key Architecture Files to Modify
+- `document-evidence-analyzer/src/document_analyzer/utils.py` - File type detection
+- `document-evidence-analyzer/src/document_analyzer/word_cloud_analyzer.py:155-185` - File processing
+- `pyproject.toml` - Add PDF processing dependencies (pdfplumber, pdf2image)
 
 ## 🔧 Development Tasks
 
-### Week 1: Email Models + Parser
-1. Create `email_models.py` following `ai_models.py` patterns
-2. Create `email_parser.py` for .eml/.msg/.mbox parsing
-3. Integrate with existing evidence storage system
+### Phase 1: PDF Text Extraction (Minimal Changes)
+1. **Add PDF text extraction** to `DocumentAnalyzer.process_files()`
+   - Use `pdfplumber` for text extraction
+   - Fallback gracefully for extraction failures
 
-### Week 2: AI Analysis Engine
-1. Create `email_analyzer.py` following `word_cloud_analyzer.py` patterns
-2. Implement `analyze_email_thread()` using OpenAI Responses API
-3. Add CLI integration to existing command structure
+2. **Enhance file type detection** in `utils.py`
+   - Make `detect_file_type()` try PDF text extraction
+   - Route text-extractable PDFs → document analysis
+   - Route non-extractable PDFs → image analysis
 
-### Week 3: Cross-Evidence Intelligence
-1. Add AI detection of email→document/image references
-2. Extend evidence database schema for thread relationships
-3. Generate comprehensive case analysis across all evidence types
+3. **Add dependencies** to `pyproject.toml`
+   - `pdfplumber` for PDF text extraction
+   - `pdf2image` for PDF→image conversion (image analysis pipeline)
+
+### Phase 2: Testing & Validation
+1. **Test with various PDF types**
+   - Text-based PDFs (contracts, letters)
+   - Scanned PDFs (court documents)
+   - Encrypted/protected PDFs
+   - Mixed content PDFs
+
+2. **Verify existing workflows still work**
+   - Document analysis unchanged for .txt files
+   - Image analysis unchanged for image files
+   - Email analysis unchanged
 
 ## 🧭 Context Priming Commands
 
-### Architecture Pattern Review
+### Current Architecture Review
 ```bash
-# Study our proven AI analysis pattern
-grep -A 20 -B 5 "responses\.parse" document-evidence-analyzer/src/document_analyzer/word_cloud_analyzer.py
+# Check file type detection logic
+grep -A 10 -B 5 "detect_file_type" document-evidence-analyzer/src/document_analyzer/utils.py
 
-# Review our Pydantic model structure
-cat document-evidence-analyzer/src/document_analyzer/ai_models.py
+# Review file processing in DocumentAnalyzer
+grep -A 15 -B 5 "process_files" document-evidence-analyzer/src/document_analyzer/word_cloud_analyzer.py
 
-# Check image analysis patterns for comparison
-grep -A 10 "openai" image-analysis/image_analysis/models.py
+# Check CLI routing logic
+grep -A 10 "detect_file_type" document-evidence-analyzer/src/document_analyzer/cli.py
 ```
 
-### Current Implementation Status
+### PDF Processing Status
 ```bash
-# See what email-related code already exists
-find . -name "*email*" -type f
-grep -r "email" . --include="*.py" | head -5
+# Check current PDF handling
+grep -r "\.pdf" document-evidence-analyzer/src/ --include="*.py"
 
-# Check existing CLI structure to extend
-grep -A 5 "subparser" document-evidence-analyzer/src/document_analyzer/cli.py
+# See current dependencies
+grep -A 5 -B 5 "dependencies" document-evidence-analyzer/pyproject.toml
+
+# Test current PDF behavior (will show the problem)
+echo "Test PDF content" > test.pdf
+uv run document-analyzer analyze . --file-pattern "*.pdf" --quiet
 ```
 
 ### Development Environment Check
 ```bash
-# Verify our tools work
-uv run document-analyzer --help | grep -A 3 "commands"
-ls document-evidence-analyzer/src/document_analyzer/ | grep -E "(ai_|models|analyzer)"
+# Verify CLI routing works
+uv run document-analyzer --help
+source .venv/bin/activate && evidence-toolkit --help
+
+# Check current file processing
+ls document-evidence-analyzer/src/document_analyzer/ | grep -E "(utils|word_cloud|cli)"
 ```
 
 ## 📊 Success Metrics
-- Email analysis achieves same 4.6/5 quality as document/image analysis
-- Uses identical OpenAI Responses API patterns
-- Integrates seamlessly with existing CLI and evidence storage
-- Provides thread reconstruction + escalation detection + sentiment analysis
+- **Text PDFs**: Extract cleanly → word clouds and frequency analysis work
+- **Scanned PDFs**: Route to image analysis → OCR + visual AI analysis
+- **Encrypted PDFs**: Graceful fallback → route to image analysis
+- **Existing workflows**: No regression in .txt, .eml, image file processing
+- **Minimal code**: <50 lines of changes total
+- **User experience**: Transparent - PDFs "just work" in existing commands
 
 ## 🎯 Next Action
-Start with creating `email_models.py` following the exact structure of `DocumentAnalysis` in `ai_models.py`
+1. Add PDF text extraction dependencies to `pyproject.toml`
+2. Enhance `detect_file_type()` with PDF intelligence
+3. Add PDF text extraction to `DocumentAnalyzer.process_files()`
 
 ---
 
-*This context focuses specifically on the email analysis development task, referencing our proven patterns*
+*This context focuses specifically on the PDF processing enhancement task, leveraging existing Evidence Toolkit architecture*
