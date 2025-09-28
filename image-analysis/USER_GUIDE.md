@@ -327,7 +327,7 @@ export EVIDENCE_ROOT="/secure/evidence-storage"
 ## Analysis Quality & Validation
 
 ### Schema Validation
-All analysis outputs are validated against `schemas/evidence.v1.json`:
+All analysis outputs are validated against `schemas/images.v1.json`:
 
 ```bash
 # Validate single analysis

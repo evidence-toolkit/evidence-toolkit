@@ -1,0 +1,601 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.org/schemas/cross-analysis.v1.json",
+  "title": "Cross-Evidence Analysis Results (V1)",
+  "description": "Schema for forensic-grade cross-evidence analysis linking multiple evidence types with entity correlation, timeline analysis, and narrative consistency scoring",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "analysis_metadata", "evidence_references", "analysis_results"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Cross-analysis schema version for compatibility tracking"
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Case identifier linking all related evidence bundles"
+    },
+    "analysis_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_id", "created_at", "analyst", "analysis_type", "version"],
+      "properties": {
+        "analysis_id": {
+          "type": "string",
+          "description": "Unique identifier for this cross-analysis session"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when cross-analysis was performed"
+        },
+        "analyst": {
+          "type": "string",
+          "description": "Actor or system performing the cross-analysis"
+        },
+        "analysis_type": {
+          "type": "string",
+          "enum": ["entity_correlation", "timeline_analysis", "narrative_consistency", "comprehensive"],
+          "description": "Type of cross-analysis performed"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of cross-analysis algorithm used"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "confidence_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Minimum confidence threshold for correlations"
+            },
+            "temporal_window_hours": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Time window for temporal correlation analysis"
+            },
+            "entity_matching_algorithm": {
+              "type": "string",
+              "enum": ["exact", "fuzzy", "semantic", "hybrid"],
+              "description": "Algorithm used for entity matching"
+            }
+          }
+        }
+      }
+    },
+    "evidence_references": {
+      "type": "array",
+      "minItems": 2,
+      "description": "References to evidence bundles included in this cross-analysis",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "sha256", "evidence_type", "bundle_path"],
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "description": "Unique evidence identifier"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "SHA256 hash of the evidence"
+          },
+          "evidence_type": {
+            "type": "string",
+            "enum": ["document", "image", "email", "pdf", "audio", "video", "other"],
+            "description": "Type of evidence for future extensibility"
+          },
+          "bundle_path": {
+            "type": "string",
+            "description": "Path to the evidence bundle file (analysis.v1.json)"
+          },
+          "ingested_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this evidence was originally ingested"
+          },
+          "source_metadata": {
+            "type": "object",
+            "description": "Key metadata from the source evidence bundle",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "chain_of_custody": {
+      "type": "array",
+      "description": "Audit trail for the cross-analysis process",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ts", "actor", "action"],
+        "properties": {
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of custody event"
+          },
+          "actor": {
+            "type": "string",
+            "description": "Actor performing the action"
+          },
+          "action": {
+            "type": "string",
+            "description": "Action performed (initiate_analysis, correlate_entities, generate_timeline, etc.)"
+          },
+          "note": {
+            "type": "string",
+            "description": "Additional details about the custody event"
+          },
+          "evidence_affected": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of evidence SHA256s affected by this action"
+          }
+        }
+      }
+    },
+    "analysis_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confidence_overall"],
+      "properties": {
+        "confidence_overall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Overall confidence in the cross-analysis results"
+        },
+        "entity_correlation": {
+          "type": "object",
+          "description": "Results of entity correlation analysis across evidence types",
+          "additionalProperties": false,
+          "properties": {
+            "correlated_entities": {
+              "type": "array",
+              "description": "Entities found across multiple pieces of evidence",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["entity_name", "entity_type", "evidence_occurrences", "correlation_confidence"],
+                "properties": {
+                  "entity_name": {
+                    "type": "string",
+                    "description": "Canonical name of the correlated entity"
+                  },
+                  "entity_type": {
+                    "type": "string",
+                    "enum": ["person", "organization", "location", "phone", "email", "date", "document_ref", "account", "address", "other"],
+                    "description": "Type of entity for classification"
+                  },
+                  "evidence_occurrences": {
+                    "type": "array",
+                    "minItems": 2,
+                    "description": "Evidence pieces where this entity appears",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["evidence_sha256", "context", "confidence"],
+                      "properties": {
+                        "evidence_sha256": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$",
+                          "description": "SHA256 of evidence containing this entity"
+                        },
+                        "context": {
+                          "type": "string",
+                          "description": "Context where entity appears in this evidence"
+                        },
+                        "confidence": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1,
+                          "description": "Confidence that this is the same entity"
+                        },
+                        "entity_variant": {
+                          "type": "string",
+                          "description": "Specific variant of entity name as it appears in this evidence"
+                        },
+                        "extraction_method": {
+                          "type": "string",
+                          "enum": ["nlp", "ocr", "manual", "ai_analysis"],
+                          "description": "How this entity was extracted"
+                        }
+                      }
+                    }
+                  },
+                  "correlation_confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Confidence that all occurrences refer to the same entity"
+                  },
+                  "semantic_analysis": {
+                    "type": "object",
+                    "description": "Semantic relationship analysis for this entity",
+                    "additionalProperties": false,
+                    "properties": {
+                      "role_analysis": {
+                        "type": "string",
+                        "description": "Analysis of the entity's role across evidence"
+                      },
+                      "relationship_patterns": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "Patterns in how this entity relates to other entities"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "correlation_summary": {
+              "type": "object",
+              "description": "Summary statistics for entity correlation",
+              "additionalProperties": false,
+              "properties": {
+                "total_entities_analyzed": { "type": "integer", "minimum": 0 },
+                "entities_correlated": { "type": "integer", "minimum": 0 },
+                "correlation_rate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "Percentage of entities that appear in multiple evidence pieces"
+                },
+                "high_confidence_correlations": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Number of correlations above confidence threshold"
+                }
+              }
+            }
+          }
+        },
+        "timeline_analysis": {
+          "type": "object",
+          "description": "Temporal analysis across evidence pieces",
+          "additionalProperties": false,
+          "properties": {
+            "temporal_events": {
+              "type": "array",
+              "description": "Chronologically ordered events extracted from evidence",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["event_timestamp", "evidence_sha256", "event_type", "description", "confidence"],
+                "properties": {
+                  "event_timestamp": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When the event occurred"
+                  },
+                  "evidence_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "Evidence containing this temporal reference"
+                  },
+                  "event_type": {
+                    "type": "string",
+                    "enum": ["document_created", "communication", "meeting", "deadline", "incident", "filing", "photo_taken", "other"],
+                    "description": "Type of temporal event"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the event"
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Confidence in the temporal extraction"
+                  },
+                  "entities_involved": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Entities associated with this temporal event"
+                  },
+                  "source_context": {
+                    "type": "string",
+                    "description": "Original context from which this timestamp was extracted"
+                  }
+                }
+              }
+            },
+            "temporal_patterns": {
+              "type": "object",
+              "description": "Patterns identified in the timeline",
+              "additionalProperties": false,
+              "properties": {
+                "sequence_analysis": {
+                  "type": "array",
+                  "description": "Identified sequences of related events",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["sequence_name", "events", "pattern_confidence"],
+                    "properties": {
+                      "sequence_name": {
+                        "type": "string",
+                        "description": "Name or type of the sequence pattern"
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "Event IDs or descriptions in sequence"
+                      },
+                      "pattern_confidence": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Confidence this represents a meaningful pattern"
+                      },
+                      "legal_significance": {
+                        "type": "string",
+                        "enum": ["low", "medium", "high", "critical"],
+                        "description": "Assessed legal significance of this pattern"
+                      }
+                    }
+                  }
+                },
+                "timeline_gaps": {
+                  "type": "array",
+                  "description": "Significant gaps in the evidence timeline",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["gap_start", "gap_end", "gap_duration_hours", "significance"],
+                    "properties": {
+                      "gap_start": { "type": "string", "format": "date-time" },
+                      "gap_end": { "type": "string", "format": "date-time" },
+                      "gap_duration_hours": { "type": "number", "minimum": 0 },
+                      "significance": {
+                        "type": "string",
+                        "enum": ["low", "medium", "high", "critical"],
+                        "description": "Significance of this timeline gap"
+                      },
+                      "context": {
+                        "type": "string",
+                        "description": "Context explaining why this gap might be significant"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "timeline_summary": {
+              "type": "object",
+              "description": "Summary of timeline analysis",
+              "additionalProperties": false,
+              "properties": {
+                "total_temporal_events": { "type": "integer", "minimum": 0 },
+                "timeline_span_days": { "type": "number", "minimum": 0 },
+                "earliest_event": { "type": "string", "format": "date-time" },
+                "latest_event": { "type": "string", "format": "date-time" },
+                "evidence_density": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Events per day across the timeline"
+                }
+              }
+            }
+          }
+        },
+        "narrative_consistency": {
+          "type": "object",
+          "description": "Analysis of narrative consistency across evidence",
+          "additionalProperties": false,
+          "properties": {
+            "consistency_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Overall narrative consistency score"
+            },
+            "contradictions": {
+              "type": "array",
+              "description": "Identified contradictions between evidence pieces",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["contradiction_type", "evidence_pair", "description", "severity"],
+                "properties": {
+                  "contradiction_type": {
+                    "type": "string",
+                    "enum": ["temporal", "factual", "entity_mismatch", "narrative_conflict"],
+                    "description": "Type of contradiction identified"
+                  },
+                  "evidence_pair": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "description": "SHA256s of contradicting evidence"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the contradiction"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": ["minor", "moderate", "major", "critical"],
+                    "description": "Severity of the contradiction"
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Confidence that this is a real contradiction"
+                  },
+                  "evidence_contexts": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Specific contexts from each evidence piece showing the contradiction"
+                  }
+                }
+              }
+            },
+            "supporting_evidence": {
+              "type": "array",
+              "description": "Evidence pieces that support each other",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["evidence_group", "support_type", "strength"],
+                "properties": {
+                  "evidence_group": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "description": "SHA256s of mutually supporting evidence"
+                  },
+                  "support_type": {
+                    "type": "string",
+                    "enum": ["corroborating", "complementary", "sequential", "contextual"],
+                    "description": "How the evidence pieces support each other"
+                  },
+                  "strength": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Strength of the mutual support"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Explanation of how evidence supports each other"
+                  }
+                }
+              }
+            },
+            "narrative_themes": {
+              "type": "array",
+              "description": "Common themes identified across evidence",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["theme_name", "supporting_evidence", "strength"],
+                "properties": {
+                  "theme_name": {
+                    "type": "string",
+                    "description": "Name or description of the narrative theme"
+                  },
+                  "supporting_evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "description": "Evidence that supports this theme"
+                  },
+                  "strength": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Strength of evidence for this theme"
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Key terms associated with this theme"
+                  },
+                  "legal_relevance": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "critical"],
+                    "description": "Assessed legal relevance of this theme"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "risk_assessment": {
+          "type": "object",
+          "description": "Cross-evidence risk assessment",
+          "additionalProperties": false,
+          "properties": {
+            "overall_risk_level": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"],
+              "description": "Overall risk level based on cross-analysis"
+            },
+            "risk_factors": {
+              "type": "array",
+              "description": "Specific risk factors identified",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["factor_type", "description", "severity", "evidence_support"],
+                "properties": {
+                  "factor_type": {
+                    "type": "string",
+                    "enum": ["data_integrity", "tampering_indicators", "timeline_gaps", "narrative_conflicts", "entity_discrepancies", "legal_exposure"],
+                    "description": "Type of risk factor"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the risk factor"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "critical"],
+                    "description": "Severity of this risk factor"
+                  },
+                  "evidence_support": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "description": "Evidence supporting this risk assessment"
+                  },
+                  "mitigation_recommendations": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Recommended actions to mitigate this risk"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "description": "Executive summary of cross-analysis findings",
+          "additionalProperties": false,
+          "properties": {
+            "key_findings": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Key findings from the cross-analysis"
+            },
+            "evidence_coherence": {
+              "type": "string",
+              "enum": ["highly_coherent", "mostly_coherent", "mixed", "concerning_gaps", "significant_conflicts"],
+              "description": "Overall assessment of evidence coherence"
+            },
+            "recommended_actions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Recommended next steps based on analysis"
+            },
+            "legal_considerations": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Legal considerations highlighted by the analysis"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.org/schemas/evidence.v1.json",
-  "title": "Evidence + Analyses (V1)",
+  "$id": "https://example.org/schemas/images.v1.json",
+  "title": "Image Evidence + Analyses (V1)",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "evidence", "analyses"],

@@ -1,4 +1,4 @@
-"""Pydantic models that mirror ``schemas/evidence.v1.json``."""
+"""Pydantic models that mirror ``schemas/images.v1.json``."""
 
 from __future__ import annotations
 

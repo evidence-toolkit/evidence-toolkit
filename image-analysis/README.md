@@ -85,7 +85,7 @@ Copies the validated bundle for downstream sharing/audit.
 
 ## Schema Validation
 
-The canonical schema is `schemas/evidence.v1.json`. Validate any generated bundle via:
+The canonical schema is `schemas/images.v1.json`. Validate any generated bundle via:
 
 ```bash
 uv run python validate_schema.py evidence/derived/sha256=<hash>/analysis.v1.json

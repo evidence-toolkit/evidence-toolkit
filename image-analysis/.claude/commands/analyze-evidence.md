@@ -33,7 +33,7 @@ Based on the arguments provided ($ARGUMENTS), perform evidence analysis using th
 **IMPORTANT**: Use simple, robust commands. Avoid complex shell pipelines that can fail.
 
 ### Validation Best Practices:
-- **Simple validation**: `find evidence/derived -name 'analysis.v1.json' -exec uv run python validate_schema.py {} --schema schemas/evidence.v1.json \;`
+- **Simple validation**: `find evidence/derived -name 'analysis.v1.json' -exec uv run python validate_schema.py {} --schema schemas/images.v1.json \;`
 - **Count successes**: Add `| grep -c "Validation passed"` only if needed
 - **Avoid complexity**: No complex pipes, loops, or command chaining unless absolutely necessary
 - **Start simple**: Use the most straightforward approach first
