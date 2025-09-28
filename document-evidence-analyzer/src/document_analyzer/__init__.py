@@ -28,6 +28,14 @@ from .unified_models import (
     IngestionResult,
     ExportResult
 )
+from .evidence_models import (
+    DocumentEvidenceBundle,
+    EvidenceCore,
+    ChainOfCustodyEntry,
+    DocumentAnalysisRecord,
+    AnalysisModelInfo,
+    AnalysisParameters
+)
 from .utils import (
     calculate_sha256,
     get_file_metadata,
@@ -62,6 +70,14 @@ __all__ = [
     "EvidenceType",
     "IngestionResult",
     "ExportResult",
+
+    # Evidence Bundle Models
+    "DocumentEvidenceBundle",
+    "EvidenceCore",
+    "ChainOfCustodyEntry",
+    "DocumentAnalysisRecord",
+    "AnalysisModelInfo",
+    "AnalysisParameters",
 
     # Utils
     "calculate_sha256",

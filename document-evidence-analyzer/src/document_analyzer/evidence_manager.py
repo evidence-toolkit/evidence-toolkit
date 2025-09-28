@@ -25,6 +25,15 @@ from .unified_models import (
     ChainOfCustodyEvent,
     EvidenceType
 )
+from .evidence_models import (
+    DocumentEvidenceBundle,
+    EvidenceCore,
+    ChainOfCustodyEntry,
+    DocumentAnalysisRecord,
+    AnalysisModelInfo,
+    AnalysisParameters
+)
+from .ai_models import DocumentAnalysis
 
 
 class EvidenceManager:
@@ -181,10 +190,98 @@ class EvidenceManager:
             for label in analysis.labels:
                 self._create_label_link(sha256, label, analysis.file_metadata.extension)
 
+            # Also save in evidence bundle format for unified architecture
+            bundle_success = self._save_evidence_bundle(analysis)
+            if not bundle_success:
+                print(f"Warning: Failed to save evidence bundle format for {sha256}")
+
             return True
 
         except Exception as e:
             print(f"Error saving analysis for {analysis.file_metadata.sha256}: {e}")
+            return False
+
+    def _save_evidence_bundle(self, analysis: UnifiedAnalysis) -> bool:
+        """Convert UnifiedAnalysis to DocumentEvidenceBundle format and save.
+
+        This creates the unified evidence bundle format that aligns with
+        the evidence.v1.json schema architecture for cross-case analysis.
+        """
+        try:
+            sha256 = analysis.file_metadata.sha256
+            derived_hash_dir = self.derived_dir / f"sha256={sha256}"
+
+            # Convert file metadata to evidence core
+            evidence_core = EvidenceCore(
+                evidence_id=sha256,
+                sha256=sha256,
+                mime_type=analysis.file_metadata.mime_type,
+                bytes=analysis.file_metadata.file_size,
+                ingested_at=analysis.file_metadata.created_time,
+                source_path=analysis.file_metadata.filename
+            )
+
+            # Convert chain of custody to bundle format
+            chain_entries = []
+            for event in analysis.chain_of_custody:
+                chain_entries.append(ChainOfCustodyEntry(
+                    ts=event.timestamp,
+                    actor=event.actor,
+                    action=event.event_type,
+                    note=event.description
+                ))
+
+            # Create analysis record for document analysis
+            analysis_records = []
+            if analysis.evidence_type == EvidenceType.DOCUMENT and analysis.document_analysis:
+                # Check if we have AI analysis data (with OpenAI results) or just word frequency analysis
+                # For now, create a basic summary from word frequency data since AI analysis wasn't run
+                # This is backward compatibility - future analyses will have proper AI analysis
+                doc_analysis = DocumentAnalysis(
+                    summary=f"Document analysis of {analysis.file_metadata.filename} containing {analysis.document_analysis.total_words} words with key themes: {', '.join([word for word, _ in analysis.document_analysis.top_words[:5]])}",
+                    entities=[],  # No entities extracted in basic analysis
+                    document_type="filing",  # Default classification
+                    sentiment="neutral",  # Default sentiment
+                    legal_significance="medium",  # Default significance
+                    risk_flags=[]  # No AI risk analysis available
+                )
+
+                # Create analysis record
+                analysis_record = DocumentAnalysisRecord(
+                    analysis_id=f"{sha256}_{int(analysis.analysis_timestamp.timestamp())}",
+                    created_at=analysis.analysis_timestamp,
+                    model=AnalysisModelInfo(
+                        name="basic-text-analysis",  # Basic analysis, not AI
+                        revision="1.0.0"
+                    ),
+                    parameters=AnalysisParameters(
+                        temperature=None,  # No AI analysis performed
+                        prompt_hash=None,
+                        token_usage_in=None,
+                        token_usage_out=None
+                    ),
+                    outputs=doc_analysis,
+                    confidence_overall=0.7
+                )
+                analysis_records.append(analysis_record)
+
+            # Create evidence bundle
+            evidence_bundle = DocumentEvidenceBundle(
+                case_id=analysis.case_id,
+                evidence=evidence_core,
+                chain_of_custody=chain_entries,
+                analyses=analysis_records
+            )
+
+            # Save evidence bundle
+            bundle_file = derived_hash_dir / "evidence_bundle.v1.json"
+            with open(bundle_file, 'w') as f:
+                json.dump(evidence_bundle.model_dump(mode="json"), f, indent=2, default=str)
+
+            return True
+
+        except Exception as e:
+            print(f"Error creating evidence bundle for {analysis.file_metadata.sha256}: {e}")
             return False
 
     def export_analysis(self, sha256: str, output_path: Path) -> ExportResult:

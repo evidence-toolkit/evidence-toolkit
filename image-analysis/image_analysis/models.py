@@ -47,6 +47,33 @@ class AnalysisOutputs(BaseModel):
     ] = Field(default_factory=list)
 
 
+class ImageAnalysisResponse(BaseModel):
+    """OpenAI structured output model for image analysis responses.
+
+    This model defines the expected response format from OpenAI's Responses API
+    for forensic image analysis, ensuring automatic validation and type safety.
+    """
+    summary: str = Field(..., description="Executive summary of image content")
+    objects: List[DetectedObject] = Field(
+        default_factory=list,
+        description="Detected objects with bounding boxes and confidence scores"
+    )
+    text_found: Optional[str] = Field(
+        default=None,
+        description="OCR text extracted from the image"
+    )
+    risk_flags: List[
+        Literal["low_quality", "tampering_suspected", "ocr_ambiguous", "nsfw", "pii"]
+    ] = Field(
+        default_factory=list,
+        description="Risk assessment flags for legal evidence processing"
+    )
+    confidence_overall: float = Field(
+        ..., ge=0.0, le=1.0,
+        description="Overall confidence in the complete analysis"
+    )
+
+
 class AnalysisRecord(BaseModel):
     analysis_id: str
     created_at: datetime
@@ -87,6 +114,7 @@ __all__ = [
     "AnalysisParameters",
     "AnalysisModelInfo",
     "AnalysisOutputs",
+    "ImageAnalysisResponse",
     "AnalysisRecord",
     "EvidenceCore",
     "EvidenceBundle",
