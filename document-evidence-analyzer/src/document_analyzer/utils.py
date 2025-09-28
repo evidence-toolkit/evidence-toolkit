@@ -84,12 +84,34 @@ def is_text_file(file_path: Path) -> bool:
 
 def detect_file_type(file_path: Path) -> str:
     """Detect if file is document, image, or other"""
+    # Special handling for PDFs - check if text is extractable
+    if file_path.suffix.lower() == '.pdf':
+        if _can_extract_pdf_text(file_path):
+            return "document"  # Route to DocumentAnalyzer for text analysis
+        else:
+            return "image"     # Route to ImageAnalyzer for OCR + visual analysis
+
+    # Existing logic for other file types
     if is_image_file(file_path):
         return "image"
     elif is_text_file(file_path):
         return "document"
     else:
         return "other"
+
+
+def _can_extract_pdf_text(file_path: Path) -> bool:
+    """Check if PDF has extractable text content"""
+    try:
+        import pdfplumber
+        with pdfplumber.open(file_path) as pdf:
+            if not pdf.pages:
+                return False
+            # Test first page for meaningful text content
+            text = pdf.pages[0].extract_text()
+            return text and len(text.strip()) > 50  # Meaningful text threshold
+    except Exception:
+        return False  # Encrypted, corrupted, or image-only PDF
 
 
 def ensure_directory(path: Path) -> None:

@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "files_processed": 3,
+  "total_words": 643,
+  "unique_words": 426,
+  "wordcloud_file": "word_cloud.png",
+  "frequency_chart_file": "word_frequency.png",
+  "top_20_words": {
+    "safety": 10,
+    "shelves": 8,
+    "issue": 8,
+    "issues": 7,
+    "aisle": 6,
+    "meat": 6,
+    "hygiene": 6,
+    "cleaning": 6,
+    "paul": 6,
+    "boucherat": 6,
+    "standards": 5,
+    "customers": 5,
+    "store": 5,
+    "ensure": 5,
+    "health": 4,
+    "concern": 4,
+    "management": 4,
+    "blood": 4,
+    "contamination": 4,
+    "fish": 4
+  }
+}
