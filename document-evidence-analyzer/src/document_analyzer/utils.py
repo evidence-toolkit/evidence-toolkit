@@ -82,8 +82,23 @@ def is_text_file(file_path: Path) -> bool:
     )
 
 
+def is_email_file(file_path: Path) -> bool:
+    """Check if file is an email"""
+    email_extensions = {'.eml', '.msg', '.mbox', '.mbx'}
+    mime_type, _ = mimetypes.guess_type(str(file_path))
+
+    return (
+        file_path.suffix.lower() in email_extensions or
+        (mime_type and 'message' in mime_type)
+    )
+
+
 def detect_file_type(file_path: Path) -> str:
-    """Detect if file is document, image, or other"""
+    """Detect if file is document, image, email, or other"""
+    # Check email files first
+    if is_email_file(file_path):
+        return "email"
+
     # Special handling for PDFs - check if text is extractable
     if file_path.suffix.lower() == '.pdf':
         if _can_extract_pdf_text(file_path):

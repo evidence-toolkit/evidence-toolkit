@@ -16,10 +16,12 @@ from .retaliation_analyzer import analyze_retaliation_case
 from .evidence_manager import EvidenceManager
 from .image_analyzer import ImageAnalyzer
 from .email_analyzer import EmailAnalyzer
+from .correlation_analyzer import CorrelationAnalyzer
 from .unified_models import (
     UnifiedAnalysis,
     DocumentAnalysisResult,
     ImageAnalysisResult,
+    EmailAnalysisResult,
     EvidenceType,
     FileMetadata
 )
@@ -111,7 +113,7 @@ Examples:
     )
     analyze_parser.add_argument(
         '--type',
-        choices=['document', 'image', 'auto'],
+        choices=['document', 'image', 'email', 'auto'],
         default='auto',
         help='Force evidence type (default: auto-detect)'
     )
@@ -190,6 +192,28 @@ Examples:
         help='Suppress verbose output'
     )
     email_parser.add_argument(
+        '--evidence-root',
+        default='evidence',
+        help='Evidence storage root directory (default: evidence)'
+    )
+
+    # Cross-evidence correlation command
+    correlate_parser = subparsers.add_parser('correlate', help='Analyze correlations across evidence types')
+    correlate_parser.add_argument(
+        '--case-id',
+        required=True,
+        help='Case ID to analyze for correlations'
+    )
+    correlate_parser.add_argument(
+        '--json-output',
+        help='Save correlation results as JSON to specified file'
+    )
+    correlate_parser.add_argument(
+        '--quiet', '-q',
+        action='store_true',
+        help='Suppress verbose output'
+    )
+    correlate_parser.add_argument(
         '--evidence-root',
         default='evidence',
         help='Evidence storage root directory (default: evidence)'
@@ -308,6 +332,8 @@ def _analyze_by_sha256(sha256: str, args, evidence_manager: EvidenceManager) -> 
             analysis_result = _analyze_document(original_file, args)
         elif evidence_type == EvidenceType.IMAGE:
             analysis_result = _analyze_image(original_file, args)
+        elif evidence_type == EvidenceType.EMAIL:
+            analysis_result = _analyze_email(original_file, args)
         else:
             print(f"❌ Cannot analyze evidence type: {evidence_type}")
             return 1
@@ -320,6 +346,7 @@ def _analyze_by_sha256(sha256: str, args, evidence_manager: EvidenceManager) -> 
             case_id=args.case_id,
             document_analysis=analysis_result if evidence_type == EvidenceType.DOCUMENT else None,
             image_analysis=analysis_result if evidence_type == EvidenceType.IMAGE else None,
+            email_analysis=analysis_result if evidence_type == EvidenceType.EMAIL else None,
             exif_data=extract_exif_data(original_file) if evidence_type == EvidenceType.IMAGE else None
         )
 
@@ -379,6 +406,45 @@ def _analyze_image(file_path: Path, args) -> ImageAnalysisResult:
     image_analyzer = ImageAnalyzer()
 
     return image_analyzer.analyze_image(file_path)
+
+
+def _analyze_email(file_path: Path, args) -> EmailAnalysisResult:
+    """Analyze email using EmailAnalyzer"""
+    import os
+    import openai
+
+    # Initialize OpenAI client
+    openai_client = None
+    try:
+        api_key = os.getenv('OPENAI_API_KEY')
+        if api_key:
+            openai_client = openai.OpenAI(api_key=api_key)
+        else:
+            if not args.quiet:
+                print("⚠️  OPENAI_API_KEY not set - email analysis may be limited")
+    except ImportError:
+        if not args.quiet:
+            print("⚠️  OpenAI package not available - email analysis may be limited")
+
+    # Initialize email analyzer
+    email_analyzer = EmailAnalyzer(openai_client, verbose=not args.quiet)
+
+    # Analyze the email file
+    analysis = email_analyzer.analyze_email_files([file_path], case_id=args.case_id)
+
+    if not analysis:
+        raise Exception("Email analysis failed - no results returned")
+
+    # Convert EmailThreadAnalysis to EmailAnalysisResult
+    return EmailAnalysisResult(
+        thread_summary=analysis.thread_summary,
+        participant_count=len(analysis.participants),
+        communication_pattern=analysis.communication_pattern,
+        legal_significance=analysis.legal_significance,
+        risk_flags=analysis.risk_flags,
+        escalation_events=[f"{event.escalation_type}: {event.description}" for event in analysis.escalation_events],
+        confidence_overall=analysis.confidence_overall
+    )
 
 
 def _analyze_directory_legacy(input_path: Path, args) -> int:
@@ -583,6 +649,85 @@ def handle_email_command(args) -> int:
         return 1
 
 
+def handle_correlate_command(args) -> int:
+    """Handle the correlate command"""
+    evidence_manager = EvidenceManager(Path(args.evidence_root))
+    correlation_analyzer = CorrelationAnalyzer(evidence_manager)
+
+    try:
+        if not args.quiet:
+            print(f"🔍 Analyzing correlations for case: {args.case_id}")
+
+        # Perform correlation analysis
+        result = correlation_analyzer.analyze_case_correlations(args.case_id)
+
+        if result.evidence_count == 0:
+            print(f"❌ No evidence found for case ID: {args.case_id}")
+            return 1
+
+        # Display results
+        if not args.quiet:
+            print("\n📊 Cross-Evidence Correlation Analysis")
+            print("=" * 50)
+            print(f"Case ID: {result.case_id}")
+            print(f"Evidence analyzed: {result.evidence_count} items")
+            print(f"Entity correlations found: {len(result.entity_correlations)}")
+            print(f"Timeline events: {len(result.timeline_events)}")
+
+            if result.entity_correlations:
+                print("\n🔗 Entity Correlations:")
+                for i, correlation in enumerate(result.entity_correlations[:10], 1):  # Show top 10
+                    print(f"  {i}. {correlation.entity_name} ({correlation.entity_type})")
+                    print(f"     Appears in {correlation.occurrence_count} evidence pieces")
+                    print(f"     Average confidence: {correlation.confidence_average:.2f}")
+
+            if result.timeline_events:
+                print("\n⏰ Timeline Events:")
+                for event in result.timeline_events[:10]:  # Show first 10 events
+                    print(f"  {event.timestamp.strftime('%Y-%m-%d %H:%M')} - {event.description}")
+
+        # Save JSON output if requested
+        if args.json_output:
+            output_data = {
+                'case_id': result.case_id,
+                'analysis_timestamp': result.analysis_timestamp.isoformat(),
+                'evidence_count': result.evidence_count,
+                'entity_correlations': [
+                    {
+                        'entity_name': corr.entity_name,
+                        'entity_type': corr.entity_type,
+                        'occurrence_count': corr.occurrence_count,
+                        'confidence_average': corr.confidence_average,
+                        'evidence_occurrences': corr.evidence_occurrences
+                    }
+                    for corr in result.entity_correlations
+                ],
+                'timeline_events': [
+                    {
+                        'timestamp': event.timestamp.isoformat(),
+                        'evidence_sha256': event.evidence_sha256,
+                        'evidence_type': event.evidence_type,
+                        'event_type': event.event_type,
+                        'description': event.description,
+                        'confidence': event.confidence
+                    }
+                    for event in result.timeline_events
+                ]
+            }
+
+            with open(args.json_output, 'w') as f:
+                json.dump(output_data, f, indent=2)
+
+            if not args.quiet:
+                print(f"\n✅ Correlation analysis saved to: {args.json_output}")
+
+        return 0
+
+    except Exception as e:
+        print(f"❌ Error during correlation analysis: {e}")
+        return 1
+
+
 def main() -> int:
     """Main CLI entry point"""
     parser = create_parser()
@@ -604,6 +749,8 @@ def main() -> int:
         return handle_version_command(args)
     elif args.command == 'email':
         return handle_email_command(args)
+    elif args.command == 'correlate':
+        return handle_correlate_command(args)
     else:
         print(f"❌ Unknown command: {args.command}")
         return 1
