@@ -1,0 +1,155 @@
+{
+  "case_id": "CORRELATION_TEST",
+  "generation_timestamp": "2025-09-28T14:59:23.442313",
+  "evidence_count": 2,
+  "evidence_types": [
+    "document",
+    "email"
+  ],
+  "evidence_summaries": [
+    {
+      "sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3",
+      "evidence_type": "document",
+      "filename": "test_document.txt",
+      "file_size": 573,
+      "analysis_confidence": null,
+      "key_findings": [
+        "Document contains 52 words",
+        "Top concepts: safety, john, manager, january, workplace"
+      ],
+      "legal_significance": null,
+      "risk_flags": []
+    },
+    {
+      "sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810",
+      "evidence_type": "email",
+      "filename": "test_email2.eml",
+      "file_size": 599,
+      "analysis_confidence": 0.85,
+      "key_findings": [
+        "Email thread with 3 participants",
+        "Communication pattern: professional",
+        "The email reflects Sarah Johnson's response to John regarding a workplace safety review, acknowledging the importance of addressing identified safety concerns in the warehouse. The tone is professional, indicating a cooperative and proactive approach to improving safety protocols, involving both management and HR."
+      ],
+      "legal_significance": "low",
+      "risk_flags": []
+    }
+  ],
+  "correlation_analysis": {
+    "entity_correlations": [
+      {
+        "entity_name": "John",
+        "entity_type": "person_name",
+        "occurrence_count": 2,
+        "confidence_average": 0.6000000000000001,
+        "evidence_occurrences": [
+          {
+            "evidence_sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3",
+            "evidence_type": "document",
+            "entity_type": "person_name",
+            "context": "Appeared 2 times in document",
+            "confidence": 0.4
+          },
+          {
+            "evidence_sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810",
+            "evidence_type": "email",
+            "entity_type": "person_name",
+            "context": "Found in email summary: The email reflects Sarah Johnson's response to John regarding a workplace safety review, acknowledgi...",
+            "confidence": 0.8
+          }
+        ]
+      },
+      {
+        "entity_name": "Sarah",
+        "entity_type": "person_name",
+        "occurrence_count": 2,
+        "confidence_average": 0.6000000000000001,
+        "evidence_occurrences": [
+          {
+            "evidence_sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3",
+            "evidence_type": "document",
+            "entity_type": "person_name",
+            "context": "Appeared 2 times in document",
+            "confidence": 0.4
+          },
+          {
+            "evidence_sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810",
+            "evidence_type": "email",
+            "entity_type": "person_name",
+            "context": "Found in email summary: The email reflects Sarah Johnson's response to John regarding a workplace safety review, acknowledgi...",
+            "confidence": 0.8
+          }
+        ]
+      }
+    ],
+    "timeline_events": [
+      {
+        "timestamp": "2025-09-28T14:31:47.196503",
+        "evidence_sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3",
+        "evidence_type": "document",
+        "event_type": "file_created",
+        "description": "Evidence file created: test_document.txt",
+        "confidence": 1.0
+      },
+      {
+        "timestamp": "2025-09-28T14:31:55.629690",
+        "evidence_sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810",
+        "evidence_type": "email",
+        "event_type": "file_created",
+        "description": "Evidence file created: test_email2.eml",
+        "confidence": 1.0
+      },
+      {
+        "timestamp": "2025-09-28T14:32:43.638336",
+        "evidence_sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3",
+        "evidence_type": "document",
+        "event_type": "analysis_performed",
+        "description": "AI analysis completed for document evidence",
+        "confidence": 1.0
+      },
+      {
+        "timestamp": "2025-09-28T14:32:58.929473",
+        "evidence_sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810",
+        "evidence_type": "email",
+        "event_type": "analysis_performed",
+        "description": "AI analysis completed for email evidence",
+        "confidence": 1.0
+      }
+    ]
+  },
+  "overall_assessment": {
+    "overall_confidence": 0.85,
+    "total_risk_flags": 0,
+    "unique_risk_flags": 0,
+    "risk_flag_breakdown": {},
+    "legal_significance_distribution": {
+      "low": 1
+    },
+    "overall_legal_significance": "low",
+    "entity_correlations_found": 2,
+    "timeline_events_count": 4,
+    "evidence_type_distribution": {
+      "document": 1,
+      "email": 1
+    },
+    "ai_key_findings": [
+      "Document contains themes of safety and management with reference to 'John' and 'manager'.",
+      "Email thread includes professional dialogue on workplace safety involving 'Sarah Johnson' and 'John'.",
+      "Cooperative and proactive approach seen in safety protocol communication.",
+      "Entities 'John' and 'Sarah' identified twice, each with 0.60 confidence."
+    ],
+    "ai_legal_implications": [
+      "Minimal legal implications as communications align with routine internal processes.",
+      "Potential relevance in demonstrating compliance with workplace safety standards.",
+      "Lack of any immediate risk flags or compliance issues in presented evidence."
+    ],
+    "ai_recommended_actions": [
+      "Verify if additional evidence supports these findings or indicates further risk.",
+      "Ensure company adheres to documented safety protocols to prevent future liabilities.",
+      "Consider periodic audits of safety communications for legal compliance assurance."
+    ],
+    "ai_confidence": 0.85,
+    "ai_risk_assessment": "low"
+  },
+  "executive_summary": "This case presents two pieces of evidence\u2014a document and an email\u2014both focusing on workplace safety discussions. The document, a text file, emphasizes themes around safety, management, and workplace protocols, mentioning individuals such as John and a manager, linked to a January incident. The email, part of a communication thread among three participants, highlights a dialogue between Sarah Johnson and John, discussing a review of safety measures in the workplace. Both pieces underscore a proactive approach to addressing safety concerns, demonstrating collaboration between different company departments.\n\nLegal significance in this case is low, as the evidence primarily reflects internal communications and documentation of standard safety reviews rather than a breach of procedures or regulations. There is a coherent timeline and correlation between the entities mentioned, focusing on mitigating safety issues. Despite this, there are no notable legal implications discovered beyond routine compliance. The overall confidence in the analysis is medium at 0.85, owing to the non-critical nature of the evidence and the absence of risk flags."
+}

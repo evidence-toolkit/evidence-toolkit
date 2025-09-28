@@ -17,6 +17,8 @@ from .evidence_manager import EvidenceManager
 from .image_analyzer import ImageAnalyzer
 from .email_analyzer import EmailAnalyzer
 from .correlation_analyzer import CorrelationAnalyzer
+from .case_summary_generator import CaseSummaryGenerator
+from .client_packager import ClientPackager
 from .unified_models import (
     UnifiedAnalysis,
     DocumentAnalysisResult,
@@ -214,6 +216,66 @@ Examples:
         help='Suppress verbose output'
     )
     correlate_parser.add_argument(
+        '--evidence-root',
+        default='evidence',
+        help='Evidence storage root directory (default: evidence)'
+    )
+
+    # Case summary command
+    summary_parser = subparsers.add_parser('summary', help='Generate comprehensive case summary')
+    summary_parser.add_argument(
+        '--case-id',
+        required=True,
+        help='Case ID to generate summary for'
+    )
+    summary_parser.add_argument(
+        '--json-output',
+        help='Save summary as JSON to specified file'
+    )
+    summary_parser.add_argument(
+        '--text-output',
+        help='Save formatted text report to specified file'
+    )
+    summary_parser.add_argument(
+        '--quiet', '-q',
+        action='store_true',
+        help='Suppress verbose output'
+    )
+    summary_parser.add_argument(
+        '--evidence-root',
+        default='evidence',
+        help='Evidence storage root directory (default: evidence)'
+    )
+
+    # Client package command
+    package_parser = subparsers.add_parser('package', help='Create client deliverable package')
+    package_parser.add_argument(
+        '--case-id',
+        required=True,
+        help='Case ID to package'
+    )
+    package_parser.add_argument(
+        '--output-dir',
+        default='./client_packages',
+        help='Output directory for client package (default: ./client_packages)'
+    )
+    package_parser.add_argument(
+        '--include-raw-evidence',
+        action='store_true',
+        help='Include original evidence files in package'
+    )
+    package_parser.add_argument(
+        '--format',
+        choices=['zip', 'directory'],
+        default='zip',
+        help='Package format (default: zip)'
+    )
+    package_parser.add_argument(
+        '--quiet', '-q',
+        action='store_true',
+        help='Suppress verbose output'
+    )
+    package_parser.add_argument(
         '--evidence-root',
         default='evidence',
         help='Evidence storage root directory (default: evidence)'
@@ -728,6 +790,142 @@ def handle_correlate_command(args) -> int:
         return 1
 
 
+def handle_summary_command(args) -> int:
+    """Handle the summary command"""
+    import os
+
+    evidence_manager = EvidenceManager(Path(args.evidence_root))
+
+    # Initialize OpenAI client for AI executive summaries
+    openai_client = None
+    try:
+        import openai
+        api_key = os.getenv('OPENAI_API_KEY')
+        if api_key:
+            openai_client = openai.OpenAI(api_key=api_key)
+            if not args.quiet:
+                print("🤖 AI executive summary enabled")
+        else:
+            if not args.quiet:
+                print("⚠️  OPENAI_API_KEY not set - AI executive summary disabled")
+    except ImportError:
+        if not args.quiet:
+            print("⚠️  OpenAI package not available - AI executive summary disabled")
+
+    summary_generator = CaseSummaryGenerator(evidence_manager, openai_client)
+
+    try:
+        if not args.quiet:
+            print(f"📊 Generating case summary for: {args.case_id}")
+
+        # Generate case summary
+        case_summary = summary_generator.generate_case_summary(args.case_id)
+
+        if not args.quiet:
+            print(f"✅ Summary generated for {case_summary.evidence_count} pieces of evidence")
+
+        # Save JSON output if requested
+        if args.json_output:
+            json_path = Path(args.json_output)
+            success = summary_generator.export_summary_to_json(case_summary, json_path)
+            if success and not args.quiet:
+                print(f"📄 JSON summary saved to: {json_path}")
+
+        # Save text report if requested
+        if args.text_output:
+            text_path = Path(args.text_output)
+            try:
+                formatted_report = summary_generator.format_summary_report(case_summary)
+                with open(text_path, 'w') as f:
+                    f.write(formatted_report)
+                if not args.quiet:
+                    print(f"📝 Text report saved to: {text_path}")
+            except Exception as e:
+                print(f"❌ Failed to save text report: {e}")
+
+        # Display summary if not quiet and no output files specified
+        if not args.quiet and not (args.json_output or args.text_output):
+            print("\n" + summary_generator.format_summary_report(case_summary))
+
+        return 0
+
+    except ValueError as e:
+        print(f"❌ {e}")
+        return 1
+    except Exception as e:
+        print(f"❌ Error generating case summary: {e}")
+        return 1
+
+
+def handle_package_command(args) -> int:
+    """Handle the package command"""
+    import os
+
+    evidence_manager = EvidenceManager(Path(args.evidence_root))
+
+    # Initialize OpenAI client for AI summaries in package
+    openai_client = None
+    try:
+        import openai
+        api_key = os.getenv('OPENAI_API_KEY')
+        if api_key:
+            openai_client = openai.OpenAI(api_key=api_key)
+            if not args.quiet:
+                print("🤖 AI analysis will be included in package")
+        else:
+            if not args.quiet:
+                print("⚠️  OPENAI_API_KEY not set - AI analysis will not be included")
+    except ImportError:
+        if not args.quiet:
+            print("⚠️  OpenAI package not available - AI analysis will not be included")
+
+    client_packager = ClientPackager(evidence_manager, openai_client)
+
+    try:
+        if not args.quiet:
+            print(f"📦 Creating client package for case: {args.case_id}")
+            print(f"   Output directory: {args.output_dir}")
+            print(f"   Format: {args.format}")
+            print(f"   Include raw evidence: {args.include_raw_evidence}")
+
+        # Create client package
+        result = client_packager.create_client_package(
+            case_id=args.case_id,
+            output_directory=Path(args.output_dir),
+            include_raw_evidence=args.include_raw_evidence,
+            package_format=args.format
+        )
+
+        if result["success"]:
+            if not args.quiet:
+                print(f"\n✅ Client package created successfully!")
+                print(f"   Package path: {result['package_path']}")
+                print(f"   Evidence analyzed: {result['evidence_count']} pieces")
+                print(f"   Package components:")
+
+                component_counts = result["metadata"]["file_counts"]
+                for component_type, count in component_counts.items():
+                    if count > 0:
+                        print(f"     - {component_type.replace('_', ' ').title()}: {count} files")
+
+                if result["metadata"]["analysis_summary"]["ai_analysis_included"]:
+                    print(f"   🤖 AI executive summary included")
+
+                print(f"\n📋 Package ready for client delivery!")
+
+            return 0
+        else:
+            print(f"❌ Failed to create client package")
+            return 1
+
+    except ValueError as e:
+        print(f"❌ {e}")
+        return 1
+    except Exception as e:
+        print(f"❌ Error creating client package: {e}")
+        return 1
+
+
 def main() -> int:
     """Main CLI entry point"""
     parser = create_parser()
@@ -751,6 +949,10 @@ def main() -> int:
         return handle_email_command(args)
     elif args.command == 'correlate':
         return handle_correlate_command(args)
+    elif args.command == 'summary':
+        return handle_summary_command(args)
+    elif args.command == 'package':
+        return handle_package_command(args)
     else:
         print(f"❌ Unknown command: {args.command}")
         return 1

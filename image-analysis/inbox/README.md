@@ -1,27 +1,28 @@
 # Image Inbox
 
-This is the default input directory for the Image Analysis system.
+This is the default input directory for the Image Analysis component.
 
 ## Usage
 
-Simply drop your images here and run analysis commands without specifying paths:
+Drop your images here and run analysis commands:
 
 ```bash
 # Copy your images to inbox
-cp /path/to/your/images/* inbox/
+cp /path/to/your/images/*.jpg inbox/
+cp /path/to/your/images/*.png inbox/
+cp /path/to/your/images/*.jpeg inbox/
 
-# Ingest images (defaults to ./inbox/)
-uv run python -m image_analysis.cli ingest --case-id "CASE-001"
+# Ingest images into content-addressed storage
+uv run python -m image_analysis.cli ingest ./inbox --case-id YOUR_CASE
 
-# Analyze images
-uv run python -m image_analysis.cli analyze-batch
+# Analyze all ingested images
+uv run python -m image_analysis.cli analyze-batch --skip-existing
 ```
 
-## Sample Images
+## Sample Data
 
-This directory contains sample images for testing:
-
-- `office-screenshot.png` - Computer screen capture showing development environment
+For sample images to test the system, see the main examples directory:
+- [Sample Images](../../examples/sample-images/) - Test images for development
 
 ## Supported Formats
 
@@ -33,20 +34,22 @@ This directory contains sample images for testing:
 
 ## Getting Started
 
-Try running analysis on the sample image:
+Try the system with sample data:
 
 ```bash
-# Ingest sample images
-uv run python -m image_analysis.cli ingest --case-id "DEMO-2025"
+# Copy samples to inbox (if available)
+cp ../../examples/sample-images/* ./
 
-# List ingested evidence to get SHA256 hashes
-ls evidence/raw/
-
-# Analyze specific image (replace <hash> with actual SHA256)
-uv run python -m image_analysis.cli analyze <hash>
-
-# Or analyze all ingested images
-uv run python -m image_analysis.cli analyze-batch --skip-existing
+# Ingest and analyze
+uv run python -m image_analysis.cli ingest ./ --case-id DEMO_CASE
+uv run python -m image_analysis.cli analyze-batch --limit 5
 ```
 
-Results will be stored in the content-addressed evidence directory with complete chain of custody tracking.
+## Important Notes
+
+- **Real images in this directory are NOT tracked by git** (protected by .gitignore)
+- All analysis results are stored in content-addressed format under `evidence/`
+- Original images are preserved immutably with SHA256 verification
+- Complete chain of custody is maintained for legal compliance
+
+Results include scene descriptions, object detection, OCR text extraction, and risk assessment.

@@ -58,6 +58,23 @@ db/
 analysis_output/
 logs/
 temp/
+test_packages/
+client_packages/
+*_package_*/
+*_analysis_package_*/
+results/
+output/
+retaliation_analysis/
+
+# Generated visualizations
+word_cloud.png
+word_frequency.png
+*.png
+*.jpg
+*.jpeg
+!examples/**/*.png
+!examples/**/*.jpg
+!examples/**/*.jpeg
 
 # Environment variables
 .env
@@ -78,6 +95,11 @@ coverage.xml
 .dmypy.json
 dmypy.json
 
+# Build artifacts and caches
+*.egg-info/
+.ruff_cache/
+.test-*/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -91,5 +113,39 @@ Pipfile.lock
 *.temp
 .cache/
 
+# Generated documentation and chat logs
+codex-chat.md
+*-chat.md
+soon
+
+# Client deliverables and analysis outputs
+*.zip
+*.tar.gz
+*_package_*
+*_analysis_*
+
+# Component-specific generated files
+**/handsconcern_analysis.json
+**/pdf_analysis.json
+**/*_analysis.json
+**/test_text_content.txt
+
 # Old components (keeping .old-* directories ignored)
 .old-*/
+
+# AI model cache and responses
+openai_cache/
+.openai_cache/
+*.openai.json
+
+# Evidence Toolkit specific
+*.v1.json.bak
+chain_of_custody.json.bak
+
+# Real test files (potentially sensitive)
+document-evidence-analyzer/test_pdfs/
+image-analysis/inbox/*.JPEG
+image-analysis/inbox/*.jpg
+image-analysis/inbox/*.png
+**/HandS-Concern*
+**/robeaton*

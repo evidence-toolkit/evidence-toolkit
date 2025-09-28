@@ -4,42 +4,50 @@ This is the default input directory for the Document Evidence Analyzer.
 
 ## Usage
 
-Simply drop your text documents here and run analysis commands without specifying paths:
+Drop your documents here and run analysis commands without specifying paths:
 
 ```bash
 # Copy your documents to inbox
 cp /path/to/your/documents/*.txt inbox/
+cp /path/to/your/documents/*.pdf inbox/
+cp /path/to/your/emails/*.eml inbox/
 
 # Run analysis (defaults to ./inbox/)
 document-analyzer analyze
 
 # Run retaliation analysis (defaults to ./inbox/)
 document-analyzer retaliation
+
+# Email analysis
+document-analyzer email --case-id YOUR_CASE
 ```
 
-## Sample Documents
-
-This directory contains sample legal documents demonstrating a workplace harassment case progression:
-
-- `2025-01-15-EMAIL-ComplaintInitial-JSmith-HR.txt` - Initial harassment complaint
-- `2025-01-20-LETTER-PolicyViolation-HR-JSmith.txt` - HR response with policy citations
-- `2025-02-01-MEMO-InvestigationUpdate-Legal-Management.txt` - Internal legal memo
-- `2025-02-15-EMAIL-EscalationResponse-CEO-Legal.txt` - Executive decision communication
-- `2025-03-01-LETTER-Resolution-Legal-JSmith.txt` - Settlement agreement letter
-
-## File Naming Convention [#TODO: AUTO RENAME FILES. Email dates / meta data eg?]
+## File Naming Convention
 
 For best timeline analysis results, use this naming pattern:
-- `YYYY-MM-DD-TYPE-Description-Parties.txt`
-- Example: `2025-03-15-EMAIL-ComplaintFollowUp-JSmith-HR.txt`
+- `YYYY-MM-DD-TYPE-Description-Parties.ext`
+- Example: `2025-03-15-EMAIL-ComplaintFollowUp-JSmith-HR.eml`
+
+## Sample Data
+
+For sample documents to test the system, see the main examples directory:
+- [Sample Documents](../../examples/sample-documents/) - Legal case progression samples
+- [Sample Emails](../../examples/sample-emails/) - Email communication examples
+- [Sample PDFs](../../examples/sample-pdfs/) - PDF document samples
 
 ## Getting Started
 
-Try running analysis on these sample documents:
+Try the system with sample data:
 
 ```bash
+# Copy samples to inbox
+cp ../../examples/sample-documents/*.txt ./
+cp ../../examples/sample-emails/*.eml ./
+
+# Run analysis
 document-analyzer analyze
-document-analyzer retaliation
+document-analyzer email --case-id DEMO_CASE
+document-analyzer correlate --case-id DEMO_CASE
 ```
 
-Results will be saved to the current directory with visualizations and analysis reports.
+Results will be saved with visualizations and analysis reports.

@@ -1,0 +1,148 @@
+{
+  "evidence_type": "document",
+  "analysis_timestamp": "2025-09-28 14:32:43.638336",
+  "file_metadata": {
+    "filename": "test_document.txt",
+    "file_size": 573,
+    "mime_type": "text/plain",
+    "created_time": "2025-09-28T14:31:47.196503",
+    "modified_time": "2025-09-28T14:31:47.194735",
+    "extension": ".txt",
+    "sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3"
+  },
+  "case_id": "CORRELATION_TEST",
+  "document_analysis": {
+    "total_words": 52,
+    "unique_words": 38,
+    "word_frequency": {
+      "confidential": 1,
+      "memo": 1,
+      "staff": 1,
+      "john": 2,
+      "manager": 2,
+      "january": 2,
+      "workplace": 2,
+      "safety": 5,
+      "review": 2,
+      "following": 2,
+      "recent": 1,
+      "concerns": 1,
+      "raised": 1,
+      "sarah": 2,
+      "johnson": 2,
+      "conducting": 1,
+      "comprehensive": 1,
+      "protocols": 1,
+      "actions": 1,
+      "required": 1,
+      "departments": 1,
+      "must": 1,
+      "submit": 1,
+      "assessments": 1,
+      "lead": 1,
+      "committee": 1,
+      "acme": 2,
+      "corporation": 2,
+      "provide": 1,
+      "external": 1,
+      "audit": 1,
+      "services": 1,
+      "contact": 1,
+      "department": 1,
+      "questions": 1,
+      "best": 1,
+      "director": 1,
+      "operations": 1
+    },
+    "top_words": [
+      [
+        "safety",
+        5
+      ],
+      [
+        "john",
+        2
+      ],
+      [
+        "manager",
+        2
+      ],
+      [
+        "january",
+        2
+      ],
+      [
+        "workplace",
+        2
+      ],
+      [
+        "review",
+        2
+      ],
+      [
+        "following",
+        2
+      ],
+      [
+        "sarah",
+        2
+      ],
+      [
+        "johnson",
+        2
+      ],
+      [
+        "acme",
+        2
+      ],
+      [
+        "corporation",
+        2
+      ],
+      [
+        "confidential",
+        1
+      ],
+      [
+        "memo",
+        1
+      ],
+      [
+        "staff",
+        1
+      ],
+      [
+        "recent",
+        1
+      ],
+      [
+        "concerns",
+        1
+      ],
+      [
+        "raised",
+        1
+      ],
+      [
+        "conducting",
+        1
+      ],
+      [
+        "comprehensive",
+        1
+      ],
+      [
+        "protocols",
+        1
+      ]
+    ],
+    "wordcloud_file": "word_cloud.png",
+    "frequency_chart_file": "word_frequency.png"
+  },
+  "image_analysis": null,
+  "email_analysis": null,
+  "chain_of_custody": [],
+  "exif_data": null,
+  "labels": [],
+  "notes": null
+}
