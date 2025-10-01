@@ -56,5 +56,4 @@ include = ["evidence_toolkit*", "document_analyzer*", "image_analysis*"]
 dev = [
     "pytest>=7.0",
     "mypy>=1.0",
-    "ruff>=0.1.0",
 ]
