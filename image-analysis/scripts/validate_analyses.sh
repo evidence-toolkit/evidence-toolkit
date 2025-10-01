@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SCHEMA_PATH="$ROOT_DIR/schemas/evidence.v1.json"
+SCHEMA_PATH="$ROOT_DIR/schemas/images.v1.json"
 TARGET_DIR="$ROOT_DIR/evidence/derived"
 
 if [[ ! -f "$SCHEMA_PATH" ]]; then
@@ -29,6 +29,6 @@ for file in "${ANALYSIS_FILES[@]}"; do
     status=1
   fi
   echo
-fi
+done
 
 exit $status

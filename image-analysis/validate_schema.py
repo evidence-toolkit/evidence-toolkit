@@ -8,7 +8,7 @@ from pathlib import Path
 
 from jsonschema import Draft7Validator, exceptions
 
-DEFAULT_SCHEMA_PATH = Path("schemas/evidence.v1.json")
+DEFAULT_SCHEMA_PATH = Path("schemas/images.v1.json")
 
 
 def load_json(path: Path) -> dict:

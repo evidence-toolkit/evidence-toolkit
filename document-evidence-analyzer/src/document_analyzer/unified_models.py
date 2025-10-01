@@ -13,6 +13,7 @@ class EvidenceType(str, Enum):
     """Types of evidence that can be analyzed"""
     DOCUMENT = "document"
     IMAGE = "image"
+    EMAIL = "email"
     OTHER = "other"
 
 
@@ -47,6 +48,17 @@ class ImageAnalysisResult(BaseModel):
     analysis_confidence: Optional[float] = None
 
 
+class EmailAnalysisResult(BaseModel):
+    """Results from email thread analysis"""
+    thread_summary: str
+    participant_count: int
+    communication_pattern: str
+    legal_significance: str
+    risk_flags: List[str] = Field(default_factory=list)
+    escalation_events: List[str] = Field(default_factory=list)
+    confidence_overall: float
+
+
 class ChainOfCustodyEvent(BaseModel):
     """Chain of custody tracking event"""
     timestamp: datetime
@@ -66,6 +78,7 @@ class UnifiedAnalysis(BaseModel):
     # Analysis results (only one will be populated based on evidence_type)
     document_analysis: Optional[DocumentAnalysisResult] = None
     image_analysis: Optional[ImageAnalysisResult] = None
+    email_analysis: Optional[EmailAnalysisResult] = None
 
     # Chain of custody
     chain_of_custody: List[ChainOfCustodyEvent] = Field(default_factory=list)

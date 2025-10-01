@@ -1,0 +1,56 @@
+{
+  "case_id": "CORRELATION_TEST",
+  "analysis_timestamp": "2025-09-28T14:59:23.442313",
+  "entity_correlations": [
+    {
+      "entity_name": "John",
+      "entity_type": "person_name",
+      "occurrence_count": 2,
+      "confidence_average": 0.6000000000000001,
+      "evidence_pieces": [
+        "692df64a",
+        "7352e3cd"
+      ]
+    },
+    {
+      "entity_name": "Sarah",
+      "entity_type": "person_name",
+      "occurrence_count": 2,
+      "confidence_average": 0.6000000000000001,
+      "evidence_pieces": [
+        "692df64a",
+        "7352e3cd"
+      ]
+    }
+  ],
+  "timeline_events": [
+    {
+      "timestamp": "2025-09-28T14:31:47.196503",
+      "event_type": "file_created",
+      "description": "Evidence file created: test_document.txt",
+      "evidence_sha256": "692df64a",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2025-09-28T14:31:55.629690",
+      "event_type": "file_created",
+      "description": "Evidence file created: test_email2.eml",
+      "evidence_sha256": "7352e3cd",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2025-09-28T14:32:43.638336",
+      "event_type": "analysis_performed",
+      "description": "AI analysis completed for document evidence",
+      "evidence_sha256": "692df64a",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2025-09-28T14:32:58.929473",
+      "event_type": "analysis_performed",
+      "description": "AI analysis completed for email evidence",
+      "evidence_sha256": "7352e3cd",
+      "confidence": 1.0
+    }
+  ]
+}

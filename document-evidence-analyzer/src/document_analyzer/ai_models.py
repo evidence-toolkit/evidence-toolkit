@@ -57,10 +57,7 @@ class DocumentAnalysis(BaseModel):
         description="Identified risk factors requiring attention"
     )
 
-    confidence_overall: float = Field(
-        ..., ge=0.0, le=1.0,
-        description="Overall confidence in the complete analysis"
-    )
+    # Note: confidence_overall is handled at the analysis record level, not in outputs
 
     class Config:
         """Pydantic configuration for forensic compliance."""

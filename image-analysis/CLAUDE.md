@@ -64,7 +64,7 @@ Evidence is stored by SHA256 hash in a structured layout:
 1. **Ingest**: Images are hashed, copied to content-addressed storage, metadata extracted
 2. **Analysis**: OpenAI Responses API called with temperature=0, results validated against schema
 3. **Chain of Custody**: Every operation logged with timestamps and actors
-4. **Validation**: All outputs conform to `schemas/evidence.v1.json`
+4. **Validation**: All outputs conform to `schemas/images.v1.json`
 
 ### Environment Variables
 - `OPENAI_API_KEY` - Required for analysis operations
@@ -72,4 +72,4 @@ Evidence is stored by SHA256 hash in a structured layout:
 - `EVIDENCE_TOOLKIT_MODEL_REVISION` - Default: "2025-09-10"
 
 ### Schema Validation
-The canonical schema is `schemas/evidence.v1.json`. All analysis outputs must validate against this schema before storage. The validation script provides detailed error reporting for debugging schema violations.
+The canonical schema is `schemas/images.v1.json`. All analysis outputs must validate against this schema before storage. The validation script provides detailed error reporting for debugging schema violations.

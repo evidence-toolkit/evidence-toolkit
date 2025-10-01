@@ -165,12 +165,23 @@ class DocumentAnalyzer:
 
         for file_path in data_path.glob(file_pattern):
             try:
-                with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
-                    content = file.read()
+                # Handle PDF text extraction
+                if file_path.suffix.lower() == '.pdf':
+                    content = self._extract_pdf_text(file_path)
+                else:
+                    # Existing text file processing
+                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                        content = file.read()
+
+                if content and content.strip():  # Only process if we got meaningful content
                     all_text += " " + content
                     file_count += 1
                     if self.verbose:
                         print(f"✓ Processed: {file_path.name}")
+                elif file_path.suffix.lower() == '.pdf':
+                    # PDF had no extractable text - this will route to image analysis
+                    if self.verbose:
+                        print(f"⚠️  No text extracted from PDF: {file_path.name}")
             except Exception as e:
                 error_msg = f"Error processing {file_path.name}: {e}"
                 errors.append(error_msg)
@@ -183,6 +194,22 @@ class DocumentAnalyzer:
                 print(f"⚠️  {len(errors)} files had errors")
 
         return all_text, file_count
+
+    def _extract_pdf_text(self, file_path: Path) -> str:
+        """Extract text content from PDF files"""
+        try:
+            import pdfplumber
+            text_parts = []
+            with pdfplumber.open(file_path) as pdf:
+                for page in pdf.pages:
+                    text = page.extract_text()
+                    if text:
+                        text_parts.append(text)
+            return "\n".join(text_parts)
+        except Exception as e:
+            if self.verbose:
+                print(f"⚠️  Could not extract text from PDF {file_path.name}: {e}")
+            return ""
 
     def generate_word_frequency(self, text: str, top_n: int = 20) -> Dict[str, int]:
         """Generate word frequency analysis"""

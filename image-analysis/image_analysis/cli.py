@@ -24,6 +24,7 @@ from .models import (
     ChainOfCustodyEntry,
     EvidenceBundle,
     EvidenceCore,
+    ImageAnalysisResponse,
 )
 from .paths import Layout
 from .utils import (
@@ -164,6 +165,11 @@ def normalize_risk_flags(value: Any) -> list[str]:
 
 
 def call_openai(image_path: Path, prompt: str, model: str, temperature: float) -> Any:
+    """Call OpenAI Responses API with structured outputs for forensic image analysis.
+
+    Uses the modern responses.parse() API with Pydantic validation for
+    deterministic, forensic-grade analysis results.
+    """
     mime_type = guess_mime_type(image_path)
     image_bytes = image_path.read_bytes()
     encoded = base64.b64encode(image_bytes).decode("ascii")
@@ -173,10 +179,10 @@ def call_openai(image_path: Path, prompt: str, model: str, temperature: float) -
         {"type": "input_image", "image_url": data_url, "detail": "auto"},
     ]
     client = get_client()
-    return client.responses.create(
+    return client.responses.parse(
         model=model,
         input=[{"role": "user", "content": content}],
-        text={"format": {"type": "json_object"}},
+        text_format=ImageAnalysisResponse,
         temperature=temperature,
     )
 
@@ -307,36 +313,37 @@ def process_analysis(sha256_hex: str, model: str, revision: str, actor: str) -> 
         prompt_hash = sha256(prompt.encode("utf-8")).hexdigest()
         response = call_openai(raw_path, prompt, model, TEMPERATURE)
 
+        # Handle structured outputs with proper error checking
+        if response.status != "completed" or not response.output_parsed:
+            if response.status == "incomplete":
+                reason = getattr(response.incomplete_details, 'reason', 'unknown')
+                raise typer.BadParameter(f"OpenAI analysis incomplete: {reason}")
+            elif (response.output and len(response.output) > 0 and
+                  len(response.output[0].content) > 0 and
+                  response.output[0].content[0].type == "refusal"):
+                refusal_msg = response.output[0].content[0].refusal
+                raise typer.BadParameter(f"OpenAI analysis refused: {refusal_msg}")
+            else:
+                raise typer.BadParameter("OpenAI analysis failed: no valid output received")
+
+        # Extract structured response data
+        analysis_result = response.output_parsed
         payload = response.model_dump()
-        output_content = response.output[0].content[0].text if response.output else "{}"
-        try:
-            parsed = json.loads(output_content)
-        except json.JSONDecodeError as exc:
-            raise typer.BadParameter(f"Model returned invalid JSON: {exc}") from exc
 
         analysis_id = build_analysis_id(sha256_hex, prompt_hash, revision)
         created_at = now_utc()
 
-        outputs_payload = parsed.get("outputs")
-        if isinstance(outputs_payload, dict):
-            outputs_data = outputs_payload
-        else:
-            outputs_data = {
-                key: parsed.get(key)
-                for key in ["summary", "objects", "text_found", "risk_flags"]
-            }
-        if "text_found" in outputs_data:
-            outputs_data["text_found"] = normalize_text_found(outputs_data.get("text_found"))
-        if "risk_flags" in outputs_data:
-            outputs_data["risk_flags"] = normalize_risk_flags(outputs_data.get("risk_flags"))
+        # Apply normalization to structured output
+        outputs_data = {
+            "summary": analysis_result.summary,
+            "objects": analysis_result.objects,  # Already DetectedObject instances
+            "text_found": normalize_text_found(analysis_result.text_found),
+            "risk_flags": normalize_risk_flags(analysis_result.risk_flags),
+        }
         outputs_clean = {k: v for k, v in outputs_data.items() if v is not None}
         outputs = AnalysisOutputs(**outputs_clean)
 
-        confidence_value = parsed.get("confidence_overall")
-        if confidence_value is None and isinstance(outputs_payload, dict):
-            confidence_value = outputs_payload.get("confidence_overall")
-        if confidence_value is None:
-            confidence_value = 0.0
+        confidence_value = analysis_result.confidence_overall
 
         analysis_record = AnalysisRecord(
             analysis_id=analysis_id,

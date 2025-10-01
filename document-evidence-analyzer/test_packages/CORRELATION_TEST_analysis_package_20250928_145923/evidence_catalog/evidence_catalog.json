@@ -1,0 +1,40 @@
+{
+  "case_id": "CORRELATION_TEST",
+  "catalog_generated": "2025-09-28T14:59:32.147756",
+  "total_evidence_pieces": 2,
+  "evidence_types": [
+    "document",
+    "email"
+  ],
+  "evidence_inventory": [
+    {
+      "filename": "test_document.txt",
+      "evidence_type": "document",
+      "sha256": "692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3",
+      "file_size_bytes": 573,
+      "analysis_confidence": null,
+      "legal_significance": null,
+      "risk_flags": [],
+      "key_findings_summary": [
+        "Document contains 52 words",
+        "Top concepts: safety, john, manager, january, workplace"
+      ],
+      "chain_of_custody": "Complete audit trail available in evidence/derived/sha256=692df64a02916d716ce4af13556e8de7a94259eb6a10f41d7c4f8537b47ae3e3/chain_of_custody.json"
+    },
+    {
+      "filename": "test_email2.eml",
+      "evidence_type": "email",
+      "sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810",
+      "file_size_bytes": 599,
+      "analysis_confidence": 0.85,
+      "legal_significance": "low",
+      "risk_flags": [],
+      "key_findings_summary": [
+        "Email thread with 3 participants",
+        "Communication pattern: professional",
+        "The email reflects Sarah Johnson's response to John regarding a workplace safety review, acknowledging the importance of addressing identified safety concerns in the warehouse. The tone is professional, indicating a cooperative and proactive approach to improving safety protocols, involving both management and HR."
+      ],
+      "chain_of_custody": "Complete audit trail available in evidence/derived/sha256=7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810/chain_of_custody.json"
+    }
+  ]
+}

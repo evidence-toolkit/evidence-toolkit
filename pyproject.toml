@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evidence-toolkit"
-version = "0.1.0"
+version = "2.0.0"
 description = "Comprehensive legal evidence analysis suite with AI-powered content-addressed evidence storage"
 authors = [
     {name = "Evidence Toolkit Contributors"}
@@ -56,5 +56,4 @@ include = ["evidence_toolkit*", "document_analyzer*", "image_analysis*"]
 dev = [
     "pytest>=7.0",
     "mypy>=1.0",
-    "ruff>=0.1.0",
 ]

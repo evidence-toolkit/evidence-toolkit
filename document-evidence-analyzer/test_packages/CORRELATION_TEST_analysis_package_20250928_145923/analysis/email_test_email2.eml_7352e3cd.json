@@ -1,0 +1,29 @@
+{
+  "evidence_type": "email",
+  "analysis_timestamp": "2025-09-28 14:32:58.929473",
+  "file_metadata": {
+    "filename": "test_email2.eml",
+    "file_size": 599,
+    "mime_type": "message/rfc822",
+    "created_time": "2025-09-28T14:31:55.629690",
+    "modified_time": "2025-09-28T14:31:55.628690",
+    "extension": ".eml",
+    "sha256": "7352e3cd3676e4e1fbdde65aaf11421291cd877eb02e331fdebd4451f03c3810"
+  },
+  "case_id": "CORRELATION_TEST",
+  "document_analysis": null,
+  "image_analysis": null,
+  "email_analysis": {
+    "thread_summary": "The email reflects Sarah Johnson's response to John regarding a workplace safety review, acknowledging the importance of addressing identified safety concerns in the warehouse. The tone is professional, indicating a cooperative and proactive approach to improving safety protocols, involving both management and HR.",
+    "participant_count": 3,
+    "communication_pattern": "professional",
+    "legal_significance": "low",
+    "risk_flags": [],
+    "escalation_events": [],
+    "confidence_overall": 0.85
+  },
+  "chain_of_custody": [],
+  "exif_data": null,
+  "labels": [],
+  "notes": null
+}

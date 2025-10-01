@@ -1,0 +1,52 @@
+============================================================
+CASE ANALYSIS SUMMARY: CORRELATION_TEST
+============================================================
+Generated: 2025-09-28 14:59:23
+
+📊 CASE OVERVIEW
+------------------------------
+Evidence pieces analyzed: 2
+Evidence types: document, email
+Overall legal significance: LOW
+Cross-evidence correlations: 2
+
+📋 EXECUTIVE SUMMARY
+------------------------------
+This case presents two pieces of evidence—a document and an email—both focusing on workplace safety discussions. The document, a text file, emphasizes themes around safety, management, and workplace protocols, mentioning individuals such as John and a manager, linked to a January incident. The email, part of a communication thread among three participants, highlights a dialogue between Sarah Johnson and John, discussing a review of safety measures in the workplace. Both pieces underscore a proactive approach to addressing safety concerns, demonstrating collaboration between different company departments.
+
+Legal significance in this case is low, as the evidence primarily reflects internal communications and documentation of standard safety reviews rather than a breach of procedures or regulations. There is a coherent timeline and correlation between the entities mentioned, focusing on mitigating safety issues. Despite this, there are no notable legal implications discovered beyond routine compliance. The overall confidence in the analysis is medium at 0.85, owing to the non-critical nature of the evidence and the absence of risk flags.
+
+📁 EVIDENCE ANALYSIS
+------------------------------
+1. test_document.txt (DOCUMENT)
+   SHA256: 692df64a02916d71...
+   Size: 573 bytes
+   Key findings:
+     • Document contains 52 words
+     • Top concepts: safety, john, manager, january, workplace
+
+2. test_email2.eml (EMAIL)
+   SHA256: 7352e3cd3676e4e1...
+   Size: 599 bytes
+   Confidence: 0.85
+   Legal significance: low
+   Key findings:
+     • Email thread with 3 participants
+     • Communication pattern: professional
+     • The email reflects Sarah Johnson's response to John regarding a workplace safety review, acknowledging the importance of addressing identified safety concerns in the warehouse. The tone is professional, indicating a cooperative and proactive approach to improving safety protocols, involving both management and HR.
+
+🔗 ENTITY CORRELATIONS
+------------------------------
+• John (person_name)
+  Appears in 2 evidence pieces
+  Average confidence: 0.60
+• Sarah (person_name)
+  Appears in 2 evidence pieces
+  Average confidence: 0.60
+
+⏰ TIMELINE
+------------------------------
+2025-09-28 14:31 - Evidence file created: test_document.txt
+2025-09-28 14:31 - Evidence file created: test_email2.eml
+2025-09-28 14:32 - AI analysis completed for document evidence
+2025-09-28 14:32 - AI analysis completed for email evidence

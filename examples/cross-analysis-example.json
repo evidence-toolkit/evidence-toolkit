@@ -1,0 +1,241 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "CASE-2024-001",
+  "analysis_metadata": {
+    "analysis_id": "CROSS-2024-001-001",
+    "created_at": "2024-01-15T14:30:00Z",
+    "analyst": "forensic-analysis-system",
+    "analysis_type": "comprehensive",
+    "version": "1.0.0",
+    "parameters": {
+      "confidence_threshold": 0.7,
+      "temporal_window_hours": 24.0,
+      "entity_matching_algorithm": "hybrid"
+    }
+  },
+  "evidence_references": [
+    {
+      "evidence_id": "DOC-001",
+      "sha256": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+      "evidence_type": "document",
+      "bundle_path": "evidence/derived/sha256=a1b2c3d4e5f67890123456789012345678901234567890123456789012345678/analysis.v1.json",
+      "ingested_at": "2024-01-15T10:30:00Z",
+      "source_metadata": {
+        "mime_type": "application/pdf",
+        "filename": "complaint_letter.pdf"
+      }
+    },
+    {
+      "evidence_id": "IMG-001",
+      "sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "evidence_type": "image",
+      "bundle_path": "evidence/derived/sha256=1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef/analysis.v1.json",
+      "ingested_at": "2024-01-15T11:45:00Z",
+      "source_metadata": {
+        "mime_type": "image/jpeg",
+        "filename": "meeting_photo.jpg"
+      }
+    }
+  ],
+  "chain_of_custody": [
+    {
+      "ts": "2024-01-15T14:30:00Z",
+      "actor": "forensic-analysis-system",
+      "action": "initiate_cross_analysis",
+      "note": "Beginning comprehensive cross-analysis of Case 2024-001",
+      "evidence_affected": [
+        "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+        "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+      ]
+    },
+    {
+      "ts": "2024-01-15T14:32:15Z",
+      "actor": "forensic-analysis-system",
+      "action": "entity_correlation_analysis",
+      "note": "Completed entity correlation with 3 correlated entities found"
+    },
+    {
+      "ts": "2024-01-15T14:35:42Z",
+      "actor": "forensic-analysis-system",
+      "action": "timeline_analysis",
+      "note": "Generated timeline with 5 temporal events"
+    },
+    {
+      "ts": "2024-01-15T14:38:17Z",
+      "actor": "forensic-analysis-system",
+      "action": "narrative_consistency_check",
+      "note": "No contradictions found, high narrative consistency"
+    }
+  ],
+  "analysis_results": {
+    "confidence_overall": 0.87,
+    "entity_correlation": {
+      "correlated_entities": [
+        {
+          "entity_name": "John Smith",
+          "entity_type": "person",
+          "evidence_occurrences": [
+            {
+              "evidence_sha256": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+              "context": "Mentioned as the complainant in the formal letter",
+              "confidence": 0.95,
+              "entity_variant": "John Smith",
+              "extraction_method": "nlp"
+            },
+            {
+              "evidence_sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+              "context": "Person visible in meeting photograph wearing name tag",
+              "confidence": 0.82,
+              "entity_variant": "J. Smith",
+              "extraction_method": "ocr"
+            }
+          ],
+          "correlation_confidence": 0.89,
+          "semantic_analysis": {
+            "role_analysis": "Primary complainant in workplace dispute case",
+            "relationship_patterns": ["formal_complainant", "meeting_participant"]
+          }
+        },
+        {
+          "entity_name": "Acme Corporation",
+          "entity_type": "organization",
+          "evidence_occurrences": [
+            {
+              "evidence_sha256": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+              "context": "Named as the employer in the complaint document",
+              "confidence": 0.98,
+              "entity_variant": "Acme Corporation",
+              "extraction_method": "nlp"
+            },
+            {
+              "evidence_sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+              "context": "Company logo visible on conference room wall",
+              "confidence": 0.76,
+              "entity_variant": "ACME",
+              "extraction_method": "ai_analysis"
+            }
+          ],
+          "correlation_confidence": 0.87
+        }
+      ],
+      "correlation_summary": {
+        "total_entities_analyzed": 12,
+        "entities_correlated": 2,
+        "correlation_rate": 0.167,
+        "high_confidence_correlations": 2
+      }
+    },
+    "timeline_analysis": {
+      "temporal_events": [
+        {
+          "event_timestamp": "2024-01-10T09:00:00Z",
+          "evidence_sha256": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+          "event_type": "filing",
+          "description": "Formal complaint filed with HR department",
+          "confidence": 0.92,
+          "entities_involved": ["John Smith", "Acme Corporation"],
+          "source_context": "Date stamp on complaint letter header"
+        },
+        {
+          "event_timestamp": "2024-01-12T14:30:00Z",
+          "evidence_sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+          "event_type": "meeting",
+          "description": "Meeting photographed in Acme Corporation conference room",
+          "confidence": 0.78,
+          "entities_involved": ["John Smith"],
+          "source_context": "EXIF timestamp from digital photograph"
+        }
+      ],
+      "temporal_patterns": {
+        "sequence_analysis": [
+          {
+            "sequence_name": "complaint_process_sequence",
+            "events": ["Formal complaint filed", "Follow-up meeting held"],
+            "pattern_confidence": 0.84,
+            "legal_significance": "medium"
+          }
+        ],
+        "timeline_gaps": [
+          {
+            "gap_start": "2024-01-10T17:00:00Z",
+            "gap_end": "2024-01-12T09:00:00Z",
+            "gap_duration_hours": 40.0,
+            "significance": "low",
+            "context": "Weekend gap between complaint filing and follow-up meeting"
+          }
+        ]
+      },
+      "timeline_summary": {
+        "total_temporal_events": 2,
+        "timeline_span_days": 2.0,
+        "earliest_event": "2024-01-10T09:00:00Z",
+        "latest_event": "2024-01-12T14:30:00Z",
+        "evidence_density": 1.0
+      }
+    },
+    "narrative_consistency": {
+      "consistency_score": 0.91,
+      "contradictions": [],
+      "supporting_evidence": [
+        {
+          "evidence_group": [
+            "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+            "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+          ],
+          "support_type": "sequential",
+          "strength": 0.88,
+          "description": "Meeting photograph supports formal complaint process timeline"
+        }
+      ],
+      "narrative_themes": [
+        {
+          "theme_name": "workplace_dispute_process",
+          "supporting_evidence": [
+            "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+            "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+          ],
+          "strength": 0.85,
+          "keywords": ["complaint", "meeting", "HR", "formal process"],
+          "legal_relevance": "high"
+        }
+      ]
+    },
+    "risk_assessment": {
+      "overall_risk_level": "low",
+      "risk_factors": [
+        {
+          "factor_type": "timeline_gaps",
+          "description": "Weekend gap in evidence timeline",
+          "severity": "low",
+          "evidence_support": [
+            "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
+            "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+          ],
+          "mitigation_recommendations": [
+            "Confirm business hours and weekend policies",
+            "Look for additional evidence during gap period"
+          ]
+        }
+      ]
+    },
+    "summary": {
+      "key_findings": [
+        "Strong entity correlation between John Smith and Acme Corporation across evidence types",
+        "Clear sequential timeline supporting formal complaint process",
+        "High narrative consistency with no contradictions identified",
+        "Low overall risk with minor timeline gap during weekend"
+      ],
+      "evidence_coherence": "highly_coherent",
+      "recommended_actions": [
+        "Consider this evidence set as reliable foundation for case analysis",
+        "Investigate weekend gap period for completeness",
+        "Look for additional evidence to strengthen timeline"
+      ],
+      "legal_considerations": [
+        "Evidence supports formal complaint process documentation",
+        "Strong chain of custody maintained throughout analysis",
+        "High confidence scores support legal admissibility"
+      ]
+    }
+  }
+}

@@ -26,6 +26,8 @@ dependencies = [
     "jsonschema>=4.23",
     "piexif>=1.1",
     "python-dateutil>=2.9",
+    "pdfplumber>=0.9.0",
+    "pdf2image>=1.17.0",
 ]
 
 [project.urls]
