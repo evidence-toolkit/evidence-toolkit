@@ -29,6 +29,6 @@ for file in "${ANALYSIS_FILES[@]}"; do
     status=1
   fi
   echo
-fi
+done
 
 exit $status

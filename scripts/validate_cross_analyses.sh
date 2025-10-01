@@ -115,14 +115,14 @@ validate_file() {
 find_cross_analysis_files() {
     local search_path=${1:-"$PROJECT_ROOT"}
 
-    # Find cross-analysis files using multiple patterns
+    # Find cross-analysis files using multiple patterns, excluding schema definitions
     find "$search_path" -type f \( \
         -name "*cross-analysis*.json" -o \
         -name "*cross_analysis*.json" -o \
         -name "cross-analysis.v*.json" -o \
         -path "*/evidence/derived/*/cross-analysis.*.json" -o \
         -path "*/cross-analysis/*.json" \
-    \) 2>/dev/null | sort
+    \) -not -path "*/schemas/*" 2>/dev/null | sort
 }
 
 validate_all_found_files() {
