@@ -1,0 +1,50 @@
+{
+  "package_info": {
+    "created": "2025-09-28T14:59:32.148576",
+    "case_id": "CORRELATION_TEST",
+    "evidence_count": 2,
+    "evidence_types": [
+      "document",
+      "email"
+    ],
+    "generator": "Evidence Toolkit v1.0"
+  },
+  "analysis_summary": {
+    "overall_legal_significance": "low",
+    "total_risk_flags": 0,
+    "entity_correlations": 2,
+    "timeline_events": 4,
+    "ai_analysis_included": true
+  },
+  "package_components": {
+    "reports": [
+      "executive_summary.txt"
+    ],
+    "analysis": [
+      "case_analysis.json",
+      "document_test_document.txt_692df64a.json",
+      "email_test_email2.eml_7352e3cd.json"
+    ],
+    "visualizations": [],
+    "evidence_catalog": [
+      "evidence_catalog.json"
+    ],
+    "correlations": [
+      "correlation_analysis.json"
+    ],
+    "documentation": [
+      "README.md",
+      "methodology.md"
+    ],
+    "raw_evidence": []
+  },
+  "file_counts": {
+    "reports": 1,
+    "analysis": 3,
+    "visualizations": 0,
+    "evidence_catalog": 1,
+    "correlations": 1,
+    "documentation": 2,
+    "raw_evidence": 0
+  }
+}

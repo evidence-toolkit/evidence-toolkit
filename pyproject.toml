@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evidence-toolkit"
+version = "3.3.0"
+description = "AI-powered legal evidence analysis with maximum data utilization - forensic insights, legal patterns, and executive-ready reporting"
+authors = [
+    {name = "Evidence Toolkit Contributors"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Core toolkit dependencies
+    "openai>=1.60",
+    "pydantic>=2.8",
+    "jsonschema>=4.23",
+    "python-dateutil>=2.9",
+    # Document/text analysis
+    "wordcloud>=1.9.4",
+    "matplotlib>=3.7.0",
+    "nltk>=3.9.0",
+    "pandas>=2.0.0",
+    "numpy>=2.0",
+    "seaborn>=0.12.0",
+    # Document parsing
+    "pdfplumber>=0.9.0",
+    "pdf2image>=1.17.0",
+    # Image handling (EXIF extraction)
+    "Pillow>=10.0.0",
+    "piexif>=1.1",
+    # CLI
+    "click>=8.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/evidence-toolkit/evidence-toolkit"
+Repository = "https://github.com/evidence-toolkit/evidence-toolkit"
+Issues = "https://github.com/evidence-toolkit/evidence-toolkit/issues"
+Documentation = "https://github.com/evidence-toolkit/evidence-toolkit#readme"
+
+[project.scripts]
+# v3.0 unified CLI - handles all evidence types (documents, emails, images)
+evidence-toolkit = "evidence_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["evidence_toolkit*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "mypy>=1.0",
+]

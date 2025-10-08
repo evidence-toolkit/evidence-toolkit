@@ -1,0 +1,129 @@
+"""Pydantic models for OpenAI Responses API integration.
+
+This module provides structured data models for document analysis using
+the OpenAI Responses API (NOT chat completions API). These models ensure
+deterministic, forensic-grade analysis suitable for legal evidence processing.
+"""
+
+from __future__ import annotations
+
+from typing import List, Literal
+from pydantic import BaseModel, Field
+
+SCHEMA_VERSION = "1.0.0"
+
+
+class DocumentEntity(BaseModel):
+    """Represents an extracted entity from document analysis."""
+    name: str = Field(..., description="The extracted entity text")
+    type: Literal["person", "organization", "date", "legal_term"] = Field(
+        ..., description="Classification of the entity type"
+    )
+    confidence: float = Field(
+        ..., ge=0.0, le=1.0, description="Confidence score for the extraction"
+    )
+    context: str = Field(
+        ..., description="Surrounding context where entity was found"
+    )
+
+
+class DocumentAnalysis(BaseModel):
+    """Complete structured analysis result from OpenAI Responses API.
+
+    This model defines the exact response format for deterministic
+    document analysis suitable for legal evidence processing.
+    """
+    summary: str = Field(..., description="Executive summary of document content")
+
+    entities: List[DocumentEntity] = Field(
+        default_factory=list,
+        description="Extracted entities with confidence scores"
+    )
+
+    document_type: Literal["email", "letter", "contract", "filing"] = Field(
+        ..., description="Classification of document type"
+    )
+
+    sentiment: Literal["hostile", "neutral", "professional"] = Field(
+        ..., description="Overall tone and sentiment analysis"
+    )
+
+    legal_significance: Literal["critical", "high", "medium", "low"] = Field(
+        ..., description="Assessment of legal importance"
+    )
+
+    risk_flags: List[Literal["threatening", "deadline", "pii", "confidential", "time_sensitive", "retaliation_indicators", "harassment", "discrimination"]] = Field(
+        default_factory=list,
+        description="Identified risk factors requiring attention"
+    )
+
+    confidence_overall: float = Field(
+        ..., ge=0.0, le=1.0, description="Overall analysis confidence score"
+    )
+
+    class Config:
+        """Pydantic configuration for forensic compliance."""
+        # Ensure deterministic serialization for legal use
+        json_encoders = {
+            float: lambda v: round(v, 4)  # Consistent precision for confidence scores
+        }
+
+
+class ImageAnalysisStructured(BaseModel):
+    """Structured image analysis result from OpenAI Responses API (Vision).
+
+    This model ensures deterministic, forensic-grade image analysis
+    suitable for legal evidence processing.
+    """
+    scene_description: str = Field(
+        ..., description="Detailed description of the visual scene"
+    )
+
+    detected_text: str | None = Field(
+        None, description="Any visible text content (OCR)"
+    )
+
+    detected_objects: List[str] = Field(
+        default_factory=list,
+        description="List of visible objects, people, or items"
+    )
+
+    people_present: bool = Field(
+        ..., description="Whether people are visible in the image"
+    )
+
+    timestamps_visible: bool = Field(
+        ..., description="Whether timestamps or dates are visible"
+    )
+
+    potential_evidence_value: Literal["low", "medium", "high"] = Field(
+        ..., description="Assessment of evidential value"
+    )
+
+    analysis_notes: str = Field(
+        ..., description="Additional forensic observations or context"
+    )
+
+    confidence_overall: float = Field(
+        ..., ge=0.0, le=1.0, description="Overall analysis confidence score"
+    )
+
+    risk_flags: List[Literal["low_quality", "tampering_suspected", "metadata_missing", "unclear_content"]] = Field(
+        default_factory=list,
+        description="Identified risk factors or quality issues"
+    )
+
+    class Config:
+        """Pydantic configuration for forensic compliance."""
+        json_encoders = {
+            float: lambda v: round(v, 4)  # Consistent precision
+        }
+
+
+# Export models for easy import
+__all__ = [
+    "SCHEMA_VERSION",
+    "DocumentEntity",
+    "DocumentAnalysis",
+    "ImageAnalysisStructured"
+]
