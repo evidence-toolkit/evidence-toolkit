@@ -1,52 +1,38 @@
-# Evidence Toolkit - Quick Start Guide
-## 5 Minutes to Your First Client Package
+# Quick Start Guide
+## From Zero to Analysis in 5 Minutes
 
-**Goal**: From installation to professional evidence analysis package in under 5 minutes.
-
----
-
-## Prerequisites (30 seconds)
-
-Before you begin, ensure you have:
-
-1. **Python 3.12+** installed
-2. **OpenAI API key** (required for AI analysis)
-3. **Evidence files** ready to analyze (documents, PDFs, images, or emails)
+This guide gets you from installation to your first professional forensic analysis package.
 
 ---
 
-## Step 1: Installation (60 seconds)
+## Prerequisites
 
-### Option A: Using UV (Recommended - Fastest)
+- Python 3.12+
+- OpenAI API key ([get one here](https://platform.openai.com/api-keys))
+- Evidence files (documents, emails, or images)
+
+---
+
+## 1. Install (60 seconds)
+
+### Using UV (Recommended - Fastest)
 
 ```bash
-# Clone the repository
-git clone https://github.com/evidence-toolkit/evidence-toolkit.git
+git clone https://github.com/your-org/evidence-toolkit.git
 cd evidence-toolkit
-
-# Install with UV (fast!)
 pip install uv
 uv pip install -e .
-
-# Verify installation
 uv run evidence-toolkit --version
 ```
 
-### Option B: Using Standard pip
+### Using pip
 
 ```bash
-# Clone the repository
-git clone https://github.com/evidence-toolkit/evidence-toolkit.git
+git clone https://github.com/your-org/evidence-toolkit.git
 cd evidence-toolkit
-
-# Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -e .
-
-# Verify installation
 evidence-toolkit --version
 ```
 
@@ -54,148 +40,102 @@ evidence-toolkit --version
 
 ---
 
-## Step 2: Configure OpenAI API Key (15 seconds)
+## 2. Configure API Key (15 seconds)
 
 ```bash
-# Set your OpenAI API key
 export OPENAI_API_KEY="your-api-key-here"
 
-# Or create a .env file
+# Or create .env file
 echo "OPENAI_API_KEY=your-api-key-here" > .env
 ```
 
-**Why?** The toolkit uses OpenAI's GPT-4.1-mini model for deterministic evidence analysis (temperature=0 for reproducibility).
-
 ---
 
-## Step 3: Prepare Your Evidence (30 seconds)
-
-Create a case directory and add your evidence files:
+## 3. Prepare Evidence (30 seconds)
 
 ```bash
 # Create case directory
-mkdir -p data/cases/MY-CASE-001
+mkdir -p data/cases/MY-CASE
 
 # Add your evidence files
-cp /path/to/your/documents/*.pdf data/cases/MY-CASE-001/
-cp /path/to/your/emails/*.eml data/cases/MY-CASE-001/
-cp /path/to/your/images/*.jpg data/cases/MY-CASE-001/
+cp /path/to/documents/*.pdf data/cases/MY-CASE/
+cp /path/to/emails/*.eml data/cases/MY-CASE/
+cp /path/to/images/*.jpg data/cases/MY-CASE/
 ```
 
 **Supported formats**:
-- **Documents**: `.txt`, `.pdf`
-- **Emails**: `.eml` (standard email format)
-- **Images**: `.jpg`, `.jpeg`, `.png`
-
-**Example structure**:
-```
-data/cases/MY-CASE-001/
-├── complaint_letter.pdf
-├── email_thread_001.eml
-├── email_thread_002.eml
-└── evidence_photo.jpg
-```
+- Documents: `.txt`, `.pdf`
+- Emails: `.eml`
+- Images: `.jpg`, `.jpeg`, `.png`
 
 ---
 
-## Step 4: Run the Analysis (3 minutes)
+## 4. Run Analysis (2-3 minutes)
 
-### Option A: One-Command Pipeline (Easiest!)
-
-```bash
-./quick-start.sh data/cases/MY-CASE-001 MY-CASE-001
-```
-
-This script will:
-1. ✅ Validate your environment
-2. 📥 Ingest evidence into content-addressed storage
-3. 🤖 Run AI analysis on all evidence
-4. 🔗 Perform cross-evidence correlation
-5. 📦 Generate professional client package
-
-### Option B: Manual Step-by-Step
+### One-Command Pipeline
 
 ```bash
-# Full pipeline in one command
-uv run evidence-toolkit process-case data/cases/MY-CASE-001 \
-  --case-id MY-CASE-001 \
-  --actor "your-name"
+uv run evidence-toolkit process-case data/cases/MY-CASE --case-id MY-CASE
 ```
 
-### What Happens During Processing?
+This will:
+1. 📥 Ingest evidence (SHA256 hashing, deduplication)
+2. 🤖 Run AI analysis (entities, sentiment, legal significance)
+3. 🔗 Perform cross-evidence correlation
+4. 📦 Generate professional client package
 
-**Phase 1: Ingestion (15 seconds)**
-- Files hashed with SHA256 for deduplication
-- Evidence stored in `data/storage/raw/sha256=<hash>/`
-- Metadata extracted and saved
+### What Happens During Processing
+
+**Phase 1: Ingestion** (15s)
+- Files hashed with SHA256
+- Stored in `data/storage/raw/sha256=<hash>/`
 - Chain of custody initialized
 
-**Phase 2: Analysis (90-120 seconds)**
-- **Documents**: AI extracts entities, sentiment, legal significance
-- **Emails**: Thread reconstruction, participant analysis, escalation detection
-- **Images**: Vision AI performs scene analysis, OCR, object detection
-- Results saved to `data/storage/derived/sha256=<hash>/analysis.v1.json`
+**Phase 2: AI Analysis** (90-120s)
+- Documents: Entity extraction, sentiment, legal risk
+- Emails: Thread reconstruction, power dynamics
+- Images: Vision AI scene analysis, OCR
 
-**Phase 3: Correlation (15 seconds)**
-- Entity matching across all evidence (e.g., "John Smith" in doc + email)
-- Timeline reconstruction from file metadata, EXIF, email dates
-- Pattern detection (temporal clusters, suspicious gaps)
+**Phase 3: Correlation** (15s)
+- Entity matching across evidence
+- Timeline reconstruction
+- Pattern detection
 
-**Phase 4: Package Generation (30 seconds)**
-- AI-generated executive summary
-- Professional reports and visualizations
-- Evidence catalog with chain of custody
-- ZIP archive created in `data/packages/`
+**Phase 4: Package Generation** (30s)
+- AI executive summary
+- Professional reports
+- ZIP archive created
 
 ---
 
-## Step 5: View Your Results (30 seconds)
-
-### Find Your Package
+## 5. View Results (30 seconds)
 
 ```bash
-# List generated packages
+# Find your package
 ls -lh data/packages/
 
-# Example output:
-# MY-CASE-001_analysis_package_20251005_183045.zip
-```
-
-### Explore the Package
-
-```bash
 # Unzip to explore
-unzip data/packages/MY-CASE-001_analysis_package_*.zip -d review/
+unzip data/packages/MY-CASE*.zip -d review/
 
-# Package structure:
-review/MY-CASE-001_analysis_package_20251005_183045/
-├── reports/
-│   └── executive_summary.txt          # ← Start here!
-├── analysis/
-│   ├── case_analysis.json
-│   └── document_complaint_letter_*.json
-├── correlations/
-│   └── correlation_analysis.json
-├── evidence_catalog/
-│   └── evidence_catalog.json
-├── visualizations/
-│   ├── word_cloud.png
-│   └── word_frequency.png
-├── documentation/
-│   ├── README.md
-│   └── methodology.md
-└── raw_evidence/
-    └── [original files]
+# Read executive summary
+cat review/*/reports/executive_summary.txt
 ```
 
-### Quick Preview
+### Package Structure
 
-```bash
-# Read the executive summary
-cat review/*/reports/executive_summary.txt
-
-# View correlations
-cat review/*/correlations/correlation_analysis.json | jq '.entity_correlations[] | {entity: .entity_name, occurrences: .occurrence_count}'
+```
+MY-CASE_analysis_package_20251009_143000/
+├── reports/
+│   └── executive_summary.txt          # Start here!
+├── analysis/
+│   ├── case_analysis.json             # Structured data
+│   └── [individual analyses]          # Per-evidence details
+├── correlations/
+│   └── correlation_analysis.json      # Cross-evidence patterns
+├── evidence_catalog/
+│   └── evidence_catalog.json          # Evidence inventory
+└── raw_evidence/
+    └── [original files]               # Your evidence
 ```
 
 ---
@@ -206,205 +146,143 @@ cat review/*/correlations/correlation_analysis.json | jq '.entity_correlations[]
 
 ```
 ================================
-CASE SUMMARY: MY-CASE-001
+CASE SUMMARY: MY-CASE
 ================================
 
-CASE OVERVIEW
--------------
-Evidence Analyzed: 4 pieces
-  - Documents: 2
-  - Emails: 1
-  - Images: 1
+🔍 FORENSIC SUMMARY
+-------------------
+[1,280-char detailed narrative analysis of the case]
+
+💡 KEY FINDINGS
+---------------
+1. [Finding with evidence citations]
+2. [Finding with evidence citations]
+3. [Finding with evidence citations]
+
+⚖️ LEGAL IMPLICATIONS
+----------------------
+1. [Risk area for case strategy]
+2. [Risk area for case strategy]
+...
+
+🎯 RECOMMENDED ACTIONS
+----------------------
+1. [Strategic guidance]
+2. [Strategic guidance]
+...
 
 CROSS-EVIDENCE CORRELATIONS
 ----------------------------
-Key Entities Found Across Multiple Evidence:
-  1. John Smith (person) - 3 occurrences
-  2. HR Department (organization) - 2 occurrences
+Key Entities:
+  • John Smith (person) - 3 occurrences
+  • HR Department (org) - 2 occurrences
 
 TIMELINE ANALYSIS
 -----------------
-Evidence Timespan: 2024-08-15 to 2024-10-01
-Total Events: 12
+Timespan: 2024-08-15 to 2024-10-01
+Events: 12
 Temporal Clusters: 2
 Timeline Gaps: 1 suspicious gap (14 days)
-
-AI-POWERED INSIGHTS
--------------------
-[Executive summary generated by OpenAI based on all evidence]
-
-LEGAL SIGNIFICANCE ASSESSMENT
-------------------------------
-Overall Assessment: HIGH
-Risk Flags Identified: retaliation, harassment
-Recommended Actions: [AI recommendations]
 ```
-
-`★ Insight ─────────────────────────────────────`
-**Why Content-Addressed Storage?** Using SHA256 hashing means:
-1. **Automatic deduplication** - Same file used in multiple cases = analyzed once
-2. **Integrity verification** - Hash changes if file is tampered with
-3. **Multi-case support** - Evidence can belong to multiple investigations
-`─────────────────────────────────────────────────`
 
 ---
 
-## Common Commands Reference
+## Common Commands
 
 ### Individual Pipeline Steps
 
 ```bash
-# 1. Ingest only
+# Step-by-step workflow
 uv run evidence-toolkit ingest data/cases/MY-CASE --case-id MY-CASE
-
-# 2. Analyze specific evidence (by SHA256)
 uv run evidence-toolkit analyze <sha256> --case-id MY-CASE
-
-# 3. Run correlation analysis
 uv run evidence-toolkit correlate --case-id MY-CASE
+uv run evidence-toolkit package --case-id MY-CASE
+```
 
-# 4. Generate package only
-uv run evidence-toolkit package --case-id MY-CASE --include-raw
+### Case Management
+
+```bash
+# List all cases
+uv run evidence-toolkit case list
+
+# Show case details
+uv run evidence-toolkit case show MY-CASE
+
+# List evidence in case
+uv run evidence-toolkit case evidence MY-CASE
 ```
 
 ### Storage Management
 
 ```bash
-# View storage statistics
+# View storage stats
 uv run evidence-toolkit storage stats
 
-# List all cases
-uv run evidence-toolkit case list
-
-# Show specific case details
-uv run evidence-toolkit case show MY-CASE
-
-# Clean up orphaned files
+# Clean orphaned files
 uv run evidence-toolkit storage cleanup --dry-run
-uv run evidence-toolkit storage cleanup --force  # Actually clean
+uv run evidence-toolkit storage cleanup --force
 ```
 
 ### Re-analysis
 
 ```bash
-# Re-analyze all evidence in a case (useful after model updates)
-uv run evidence-toolkit reanalyze --case-id MY-CASE --dry-run
+# Re-analyze with latest AI models
 uv run evidence-toolkit reanalyze --case-id MY-CASE
 ```
 
 ---
 
-## What Makes This Forensic-Grade?
+## Advanced Features
 
-### 1. Deterministic AI Analysis
-- **Temperature = 0**: Same input = same output (reproducible)
-- **Structured outputs**: Pydantic validation ensures schema compliance
-- **Confidence scoring**: Every analysis includes confidence metrics
+### AI Entity Resolution (v3.2)
 
-### 2. Complete Chain of Custody
-```json
-{
-  "ts": "2024-10-05T18:30:45.123Z",
-  "actor": "your-name",
-  "action": "ingest",
-  "note": "File ingested from data/cases/MY-CASE/document.pdf"
-}
+Context-aware name matching ("Paul" → "Paul Boucherat"):
+
+```bash
+uv run evidence-toolkit process-case data/cases/MY-CASE \
+  --case-id MY-CASE \
+  --ai-resolve
 ```
 
-### 3. Content-Addressed Storage
-- SHA256 hashing prevents tampering
-- Immutable storage (original files never modified)
-- Derived data kept separate from raw evidence
+### Case Type Support (v3.2)
 
-### 4. Professional Deliverables
-- Executive summaries suitable for legal proceedings
-- Complete evidence catalogs with metadata
-- Methodology documentation for expert testimony
+Domain-specific analysis prompts:
 
-`★ Insight ─────────────────────────────────────`
-**Multi-Case Efficiency**: Evidence analyzed once, used everywhere:
-- Same document in 3 cases = 1 AI analysis (cost savings!)
-- Chain of custody tracks all case associations
-- Storage stats show orphaned evidence for cleanup
-`─────────────────────────────────────────────────`
+```bash
+# Workplace investigation
+uv run evidence-toolkit process-case data/cases/MY-CASE \
+  --case-id MY-CASE \
+  --case-type workplace
+
+# Contract dispute
+uv run evidence-toolkit process-case data/cases/MY-CASE \
+  --case-id MY-CASE \
+  --case-type contract
+```
+
+Available case types:
+- `generic` (default)
+- `workplace` / `employment`
+- `contract`
+
+### Multi-Case Evidence Reuse
+
+The same evidence can belong to multiple cases without re-analysis:
+
+```bash
+# Analyze once
+uv run evidence-toolkit process-case data/cases/CASE-A --case-id CASE-A
+
+# Add same evidence to another case (no re-analysis!)
+uv run evidence-toolkit ingest data/cases/CASE-A --case-id CASE-B
+uv run evidence-toolkit package --case-id CASE-B
+```
+
+**Cost savings**: 5 cases sharing 10 documents = 10 analyses instead of 50.
 
 ---
 
-## Troubleshooting
-
-### "OPENAI_API_KEY not set"
-```bash
-# Check if key is set
-echo $OPENAI_API_KEY
-
-# Set it for this session
-export OPENAI_API_KEY="your-key"
-
-# Or permanently in .env file
-echo "OPENAI_API_KEY=your-key" >> .env
-```
-
-### "No evidence found for case"
-```bash
-# Check case directory exists
-ls -la data/cases/MY-CASE
-
-# List ingested evidence
-uv run evidence-toolkit case show MY-CASE
-```
-
-### "Analysis failed"
-```bash
-# Check file is readable
-file data/cases/MY-CASE/document.pdf
-
-# Check storage permissions
-ls -la data/storage/
-
-# Re-analyze with verbose output
-uv run evidence-toolkit analyze <sha256> --case-id MY-CASE
-```
-
-### "Package generation failed"
-```bash
-# Check correlation ran successfully
-uv run evidence-toolkit correlate --case-id MY-CASE
-
-# Check output directory is writable
-mkdir -p data/packages
-ls -la data/packages/
-```
-
----
-
-## Next Steps
-
-### 1. Explore Advanced Features
-
-**Custom Domain Configuration**:
-```python
-# src/evidence_toolkit/domains/custom_config.py
-DOCUMENT_ANALYSIS_PROMPT = """
-You are analyzing evidence for [your specific domain].
-Focus on [your specific criteria]...
-"""
-```
-
-**Batch Processing**:
-```bash
-# Process multiple cases
-for case in data/cases/*/; do
-  case_id=$(basename "$case")
-  ./quick-start.sh "$case" "$case_id"
-done
-```
-
-### 2. Review the Architecture
-- [V3_ARCHITECTURE.md](V3_ARCHITECTURE.md) - Complete design documentation
-- [CLAUDE.md](CLAUDE.md) - Developer quick reference
-- [V3_COMPLETE.md](V3_COMPLETE.md) - Refactor achievements
-
-### 3. API Usage (Python)
+## Python API Usage
 
 ```python
 from evidence_toolkit.core.storage import EvidenceStorage
@@ -416,9 +294,9 @@ storage = EvidenceStorage("data/storage")
 
 # Ingest evidence
 result = storage.ingest_file(
-    file_path="path/to/evidence.pdf",
+    file_path="data/cases/MY-CASE/document.pdf",
     case_id="MY-CASE",
-    actor="your-name"
+    actor="investigator@firm.com"
 )
 
 # Get analysis
@@ -426,84 +304,140 @@ analysis = storage.get_analysis(result.sha256)
 print(f"Legal significance: {analysis.document_analysis.legal_significance}")
 
 # Run correlation
-analyzer = CorrelationAnalyzer(storage)
-correlations = analyzer.analyze_case_correlations("MY-CASE")
-print(f"Found {len(correlations.entity_correlations)} correlated entities")
+correlator = CorrelationAnalyzer(storage)
+correlations = correlator.analyze_case_correlations("MY-CASE")
+
+# Generate package
+packager = PackageGenerator(storage)
+package = packager.create_client_package("MY-CASE", "data/packages/")
 ```
+
+---
+
+## Forensic Features
+
+### Deterministic AI Analysis
+- **Temperature = 0**: Reproducible results
+- **Structured Output**: Pydantic validation
+- **Confidence Scoring**: Every finding includes metrics
+
+### Chain of Custody
+```json
+{
+  "ts": "2025-10-09T14:30:45.123Z",
+  "actor": "investigator@firm.com",
+  "action": "ingest",
+  "note": "File ingested from data/cases/MY-CASE/document.pdf"
+}
+```
+
+### Content-Addressed Storage
+- SHA256 hashing prevents tampering
+- Immutable originals
+- Automatic deduplication
 
 ---
 
 ## Performance & Costs
 
-### Typical Case Processing Times
-| Evidence Count | Documents | Emails | Images | Total Time |
-|---------------|-----------|--------|--------|------------|
-| Small (5)     | 30s       | 20s    | 15s    | ~2 min     |
-| Medium (20)   | 90s       | 60s    | 45s    | ~4 min     |
-| Large (50)    | 180s      | 120s   | 90s    | ~8 min     |
+### Processing Times
 
-*Times include AI analysis with gpt-4.1-mini*
+| Evidence Count | Time | Notes |
+|----------------|------|-------|
+| 5 files | 2-3 min | Mixed types |
+| 20 files | 6-8 min | Typical case |
+| 50+ files | 15-20 min | Large case |
 
-### OpenAI API Costs (Approximate)
-- **Document analysis**: ~$0.001-0.003 per document
-- **Email analysis**: ~$0.002-0.005 per thread
-- **Image analysis**: ~$0.003-0.008 per image
-- **Executive summary**: ~$0.01-0.02 per case
+### OpenAI API Costs
+
+- Document: ~$0.001-0.003
+- Email: ~$0.002-0.005
+- Image: ~$0.003-0.008
+- Summary: ~$0.01-0.02
 
 **Example**: 20-piece case ≈ $0.10-0.30 total
 
-`★ Insight ─────────────────────────────────────`
-**Cost Optimization with Content-Addressed Storage**:
-- Evidence analyzed ONCE and cached by SHA256
-- Re-using same document in 10 cases = 1× analysis cost
-- Multi-case workflows save 90%+ on duplicate evidence
-`─────────────────────────────────────────────────`
+---
+
+## Troubleshooting
+
+### "OPENAI_API_KEY not set"
+```bash
+echo $OPENAI_API_KEY  # Check if set
+export OPENAI_API_KEY="your-key"  # Set for session
+echo "OPENAI_API_KEY=your-key" >> .env  # Set permanently
+```
+
+### "No evidence found for case"
+```bash
+ls -la data/cases/MY-CASE  # Check directory
+uv run evidence-toolkit case show MY-CASE  # Check ingestion
+```
+
+### "Analysis failed"
+```bash
+file data/cases/MY-CASE/document.pdf  # Check file
+ls -la data/storage/  # Check permissions
+```
+
+### "Package generation failed"
+```bash
+uv run evidence-toolkit correlate --case-id MY-CASE  # Re-run correlation
+mkdir -p data/packages  # Ensure output dir exists
+```
 
 ---
 
-## Support & Resources
+## Next Steps
 
-### Documentation
-- **Quick Start**: You are here! (QUICKSTART.md)
-- **Architecture**: [V3_ARCHITECTURE.md](V3_ARCHITECTURE.md)
-- **API Reference**: [docs/api/](docs/api/)
-- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
+### Explore Documentation
+- [Architecture](V3_ARCHITECTURE.md) - Complete design
+- [Contributing](CONTRIBUTING.md) - Development setup
+- [Case Types](docs/CASE_TYPES.md) - Domain-specific analysis
 
-### Getting Help
-- **Issues**: https://github.com/evidence-toolkit/evidence-toolkit/issues
-- **Discussions**: GitHub Discussions
-- **Documentation**: https://github.com/evidence-toolkit/evidence-toolkit#readme
+### Try Advanced Workflows
 
-### Community
-- Share your use cases and workflows
-- Contribute domain configurations (corporate, journalism, research)
-- Report bugs and request features
+**Batch Processing**:
+```bash
+for case in data/cases/*/; do
+  case_id=$(basename "$case")
+  uv run evidence-toolkit process-case "$case" --case-id "$case_id"
+done
+```
+
+**Custom Domain Configuration**:
+```python
+# src/evidence_toolkit/domains/custom_config.py
+DOCUMENT_ANALYSIS_PROMPT = """
+You are analyzing evidence for [your domain].
+Focus on [your criteria]...
+"""
+```
 
 ---
 
 ## Summary: Your 5-Minute Workflow
 
 ```bash
-# 1. Install (60 seconds)
-pip install uv
-uv pip install -e .
+# 1. Install (60s)
+pip install uv && uv pip install -e .
 
-# 2. Configure (15 seconds)
+# 2. Configure (15s)
 export OPENAI_API_KEY="your-key"
 
-# 3. Prepare evidence (30 seconds)
+# 3. Prepare evidence (30s)
 mkdir -p data/cases/MY-CASE
 cp /path/to/evidence/* data/cases/MY-CASE/
 
-# 4. Run analysis (3 minutes)
-./quick-start.sh data/cases/MY-CASE MY-CASE
+# 4. Run analysis (3min)
+uv run evidence-toolkit process-case data/cases/MY-CASE --case-id MY-CASE
 
-# 5. Review results (30 seconds)
+# 5. View results (30s)
 cat data/packages/MY-CASE*/reports/executive_summary.txt
 ```
 
-**Total**: ~5 minutes from zero to professional client package! 🎉
+**Total**: ~5 minutes from zero to professional forensic package! 🚀
 
 ---
 
-**Ready to analyze your evidence? Start with Step 1 above!**
+**Ready to analyze evidence? Start with Step 1 above!**

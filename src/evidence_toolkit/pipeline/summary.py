@@ -1500,50 +1500,41 @@ Be concise but thorough. Focus on legally significant information."""
         lines = []
 
         # Header
-        lines.append("=" * 60)
-        lines.append(f"CASE ANALYSIS SUMMARY: {case_summary.case_id}")
-        lines.append("=" * 60)
+        lines.append("=" * 80)
+        lines.append(f"FORENSIC EVIDENCE ANALYSIS: {case_summary.case_id}")
+        lines.append("=" * 80)
         lines.append(f"Generated: {case_summary.generation_timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
+        lines.append(f"Evidence analyzed: {case_summary.evidence_count} items | Legal significance: {case_summary.overall_assessment['overall_legal_significance'].upper()}")
         lines.append("")
 
-        # Overview
-        lines.append("📊 CASE OVERVIEW")
-        lines.append("-" * 30)
-        lines.append(f"Evidence pieces analyzed: {case_summary.evidence_count}")
-        lines.append(f"Evidence types: {', '.join(case_summary.evidence_types)}")
-        lines.append(f"Overall legal significance: {case_summary.overall_assessment['overall_legal_significance'].upper()}")
-        lines.append(f"Cross-evidence correlations: {case_summary.overall_assessment['entity_correlations_found']}")
+        # === STRATEGIC ANALYSIS (INSIGHTS FIRST) ===
+        lines.append("=" * 80)
+        lines.append("STRATEGIC ANALYSIS")
+        lines.append("=" * 80)
         lines.append("")
 
-        # Executive Summary (if available)
-        if case_summary.executive_summary:
-            lines.append("📋 EXECUTIVE SUMMARY")
-            lines.append("-" * 30)
-            lines.append(case_summary.executive_summary)
-            lines.append("")
-
-        # v3.3 Phase B+: Forensic Summary (detailed narrative analysis)
+        # v3.3 Phase B+: Forensic Summary (detailed narrative analysis) - MOVED TO TOP
         forensic_summary = case_summary.overall_assessment.get('forensic_summary')
         if forensic_summary:
             lines.append("🔍 FORENSIC SUMMARY")
-            lines.append("-" * 30)
+            lines.append("-" * 80)
             lines.append(forensic_summary)
             lines.append("")
 
-        # v3.3 Phase B+: AI Key Findings (bullet-point discoveries)
+        # v3.3 Phase B+: AI Key Findings (bullet-point discoveries) - MOVED TO TOP
         ai_key_findings = case_summary.overall_assessment.get('ai_key_findings')
         if ai_key_findings:
             lines.append("💡 KEY FINDINGS")
-            lines.append("-" * 30)
+            lines.append("-" * 80)
             for i, finding in enumerate(ai_key_findings, 1):
                 lines.append(f"{i}. {finding}")
             lines.append("")
 
-        # v3.3 Phase B+: Forensic Legal Implications (specific risk areas)
+        # v3.3 Phase B+: Forensic Legal Implications (specific risk areas) - MOVED TO TOP
         forensic_legal_impl = case_summary.overall_assessment.get('forensic_legal_implications')
         if forensic_legal_impl:
             lines.append("⚖️  LEGAL IMPLICATIONS")
-            lines.append("-" * 30)
+            lines.append("-" * 80)
             for i, impl in enumerate(forensic_legal_impl, 1):
                 lines.append(f"{i}. {impl}")
             lines.append("")
@@ -1593,12 +1584,21 @@ Be concise but thorough. Focus on legally significant information."""
 
             lines.append("")
 
-        # v3.3: Quoted Statements Section
+        # v3.3 Phase B+: Forensic Recommended Actions (strategic guidance) - IN STRATEGIC SECTION
+        forensic_actions = case_summary.overall_assessment.get('forensic_recommended_actions')
+        if forensic_actions:
+            lines.append("🎯 RECOMMENDED ACTIONS")
+            lines.append("-" * 80)
+            for i, action in enumerate(forensic_actions, 1):
+                lines.append(f"{i}. {action}")
+            lines.append("")
+
+        # v3.3: Quoted Statements Section - IN STRATEGIC SECTION
         if 'quoted_statements' in case_summary.overall_assessment:
             qs = case_summary.overall_assessment['quoted_statements']
             lines.append("💬 QUOTED STATEMENTS")
-            lines.append("-" * 30)
-            lines.append(f"Total statements captured: {qs['total_statements']} from {qs['people_quoted']} people across {qs['documents_with_quotes']} documents")
+            lines.append("-" * 80)
+            lines.append(f"Total: {qs['total_statements']} statements from {qs['people_quoted']} people across {qs['documents_with_quotes']} documents")
             lines.append("")
             for person_data in qs['quoted_statements'][:5]:  # Top 5
                 lines.append(f"• {person_data['person']} ({person_data['role']})")
@@ -1610,11 +1610,11 @@ Be concise but thorough. Focus on legally significant information."""
                     lines.append(f"  → \"{stmt['text'][:120]}...\"{risk_str}")
                 lines.append("")
 
-        # v3.3: Communication Patterns Section
+        # v3.3: Communication Patterns Section - IN STRATEGIC SECTION
         if 'communication_patterns' in case_summary.overall_assessment:
             cp = case_summary.overall_assessment['communication_patterns']
             lines.append("📧 EMAIL COMMUNICATION PATTERNS")
-            lines.append("-" * 30)
+            lines.append("-" * 80)
             lines.append(f"Emails analyzed: {cp['email_count']}")
             lines.append(f"Dominant pattern: {cp['dominant_pattern'].upper()}")
             lines.append(f"Risk level: {cp['risk_level'].upper()}")
@@ -1625,66 +1625,48 @@ Be concise but thorough. Focus on legally significant information."""
             lines.append(f"  • Hostile/Retaliatory: {cp['hostile_or_retaliatory_count']} emails")
             lines.append("")
 
-        # v3.3 Phase B: Relationship Network Section
+        # v3.3 Phase B: Relationship Network Section - IN STRATEGIC SECTION
         if 'relationship_network' in case_summary.overall_assessment:
             rn = case_summary.overall_assessment['relationship_network']
             lines.append("🔗 RELATIONSHIP NETWORK")
-            lines.append("-" * 30)
-            lines.append(f"Total connections identified: {rn['total_relationships']}")
-            lines.append(f"Unique connection pairs: {rn['unique_connections']}")
+            lines.append("-" * 80)
+            lines.append(f"Total connections: {rn['total_relationships']} | Unique pairs: {rn['unique_connections']}")
             lines.append("")
-            lines.append("Connection type distribution:")
-            lines.append(f"  • Email communication: {rn['relationship_type_distribution']['email_communication']}")
-            lines.append(f"  • Escalation: {rn['relationship_type_distribution']['escalation']}")
-            lines.append(f"  • Other relationships: {rn['relationship_type_distribution']['other']}")
+            lines.append("Connection types: Email={0} | Escalation={1} | Other={2}".format(
+                rn['relationship_type_distribution']['email_communication'],
+                rn['relationship_type_distribution']['escalation'],
+                rn['relationship_type_distribution']['other']
+            ))
             lines.append("")
-            lines.append("Key players by connection count:")
+            lines.append("Key players:")
             for player in rn['key_players'][:8]:  # Top 8
-                lines.append(f"  • {player['name']} - {player['connection_count']} connection(s)")
-                if player['role'] and player['role'] != 'unknown':
-                    lines.append(f"    Role: {player['role']}")
+                role_str = f" ({player['role']})" if player['role'] and player['role'] != 'unknown' else ""
+                lines.append(f"  • {player['name']}{role_str} - {player['connection_count']} connection(s)")
             lines.append("")
 
-        # v3.3 Phase B: Image OCR Section (if applicable)
+        # v3.3 Phase B: Image OCR Section - IN STRATEGIC SECTION (if applicable)
         if 'image_ocr' in case_summary.overall_assessment:
             ocr = case_summary.overall_assessment['image_ocr']
             lines.append("🖼️  IMAGE OCR ANALYSIS")
-            lines.append("-" * 30)
-            lines.append(f"Images with detected text: {ocr['total_images_with_text']} ({ocr['text_extraction_rate']:.0%} of all images)")
-            lines.append(f"Evidence value: {ocr['high_evidence_value_count']} high, {ocr['medium_evidence_value_count']} medium")
+            lines.append("-" * 80)
+            lines.append(f"Images with text: {ocr['total_images_with_text']} ({ocr['text_extraction_rate']:.0%}) | High-value: {ocr['high_evidence_value_count']} | Medium: {ocr['medium_evidence_value_count']}")
             if ocr['people_present_count'] > 0:
-                lines.append(f"Images with people visible: {ocr['people_present_count']}")
+                lines.append(f"Images with people: {ocr['people_present_count']}")
             if ocr['timestamps_visible_count'] > 0:
                 lines.append(f"Images with timestamps: {ocr['timestamps_visible_count']}")
             lines.append("")
             if ocr['images_with_text']:
-                lines.append("Sample OCR extractions:")
+                lines.append("Sample extractions:")
                 for img in ocr['images_with_text'][:3]:  # Top 3
-                    lines.append(f"  • {img['filename']} [{img['evidence_value']}]")
+                    lines.append(f"  • {img['filename']} [{img['evidence_value'].upper()}]")
                     lines.append(f"    \"{img['detected_text'][:80]}...\"")
                 lines.append("")
 
-        # v3.3 Phase B+: Forensic Recommended Actions (strategic guidance)
-        forensic_actions = case_summary.overall_assessment.get('forensic_recommended_actions')
-        if forensic_actions:
-            lines.append("🎯 RECOMMENDED ACTIONS")
-            lines.append("-" * 30)
-            for i, action in enumerate(forensic_actions, 1):
-                lines.append(f"{i}. {action}")
-            lines.append("")
-
-        # Original risk flags (still useful)
-        if case_summary.overall_assessment['total_risk_flags'] > 0:
-            lines.append("⚠️  RISK FLAGS IDENTIFIED")
-            lines.append("-" * 30)
-            lines.append(f"Total risk flags: {case_summary.overall_assessment['total_risk_flags']}")
-            lines.append(f"Unique risk types: {case_summary.overall_assessment['unique_risk_flags']}")
-            lines.append("")
-
-        # APPENDIX: Evidence details moved to end for reference
-        lines.append("=" * 60)
+        # === END OF STRATEGIC ANALYSIS ===
+        lines.append("")
+        lines.append("=" * 80)
         lines.append("APPENDIX: SUPPORTING DOCUMENTATION")
-        lines.append("=" * 60)
+        lines.append("=" * 80)
         lines.append("The following sections contain detailed information about each piece")
         lines.append("of evidence, entity correlations, and timeline reconstruction.")
         lines.append("This serves as supporting documentation for the analysis above.")

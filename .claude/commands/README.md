@@ -47,6 +47,43 @@ Custom slash commands for Claude Code to help navigate and understand the Eviden
 
 ---
 
+### `/detect-duplicates`
+**Purpose:** Detect and report code duplication
+
+**What it does:**
+- Analyzes codebase for duplicate code patterns
+- Identifies functions, classes, and code blocks with duplication
+- Generates comprehensive report with severity rankings
+- Provides specific refactoring recommendations
+- Writes findings to `docs/technical-debt/`
+
+**Use when:**
+- Monthly code quality reviews
+- Before major releases
+- After implementing large features
+- Planning refactoring sprints
+- Measuring technical debt
+
+**Example:**
+```bash
+# Analyze entire src/ directory
+/detect-duplicates src/evidence_toolkit 5 "*.py"
+
+# Analyze specific module
+/detect-duplicates src/evidence_toolkit/core 10 "*.py"
+
+# Use defaults (src/evidence_toolkit, 5 lines, *.py)
+/detect-duplicates
+```
+
+**Output:**
+- Full report: `docs/technical-debt/code-duplication-report-<timestamp>.md`
+- Summary: `docs/technical-debt/duplication-summary.md`
+
+**Read More:** [Code Duplication Agent Guide](../../docs/technical-debt/code-duplication-agent-guide.md)
+
+---
+
 ## How Slash Commands Work
 
 1. Type `/` in Claude Code to see available commands
