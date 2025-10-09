@@ -26,17 +26,19 @@ class PackageGenerator:
     v3.0: Renamed from ClientPackager, now uses EvidenceStorage
     """
 
-    def __init__(self, storage: EvidenceStorage, openai_client=None, case_type: str = 'generic'):
+    def __init__(self, storage: EvidenceStorage, openai_client=None, case_type: str = 'generic', ai_resolve: bool = False):
         """Initialize package generator.
 
         Args:
             storage: EvidenceStorage instance for accessing evidence
             openai_client: Optional OpenAI client for AI summaries
             case_type: Type of case for domain-specific prompts (generic, workplace, contract)
+            ai_resolve: If True, use AI to resolve ambiguous entity matches (v3.2 feature)
         """
         self.storage = storage
-        self.summary_generator = SummaryGenerator(storage, openai_client, case_type=case_type)
+        self.summary_generator = SummaryGenerator(storage, openai_client, case_type=case_type, ai_resolve=ai_resolve)
         self.case_type = case_type
+        self.ai_resolve = ai_resolve
 
     def create_client_package(
         self,

@@ -210,22 +210,12 @@ def process_case(case_directory: Path, case_id: str, storage_dir: str, output_di
     if not quiet:
         click.echo(f"   ✅ Analyzed {analyzed_count} new items (skipped {skipped_count} existing)")
 
-    # Step 3: Cross-evidence correlation
+    # Step 3: Cross-evidence correlation (integrated into package generation)
     if not quiet:
-        click.echo("\n🔗 [3/4] Running cross-evidence correlation...")
+        click.echo("\n🔗 [3/4] Cross-evidence correlation...")
         if ai_resolve:
-            click.echo("   🤖 AI entity resolution enabled")
-
-    try:
-        # v3.1: Pass openai_client for AI pattern detection
-        correlation_analyzer = CorrelationAnalyzer(storage, openai_client=openai_client, verbose=not quiet)
-        correlation_result = correlation_analyzer.analyze_case_correlations(case_id, ai_resolve=ai_resolve)
-
-        if not quiet:
-            click.echo(f"   ✅ Found {len(correlation_result.entity_correlations)} correlated entities")
-            click.echo(f"   ✅ Extracted {len(correlation_result.timeline_events)} timeline events")
-    except Exception as e:
-        click.echo(f"   ⚠️  Correlation analysis had issues: {e}")
+            click.echo("   🤖 AI entity resolution will be applied during correlation")
+        click.echo("   ℹ️  Correlation runs during package generation for efficiency")
 
     # Step 4: Generate client package
     if not skip_package:
@@ -233,7 +223,7 @@ def process_case(case_directory: Path, case_id: str, storage_dir: str, output_di
             click.echo("\n📦 [4/4] Generating client package...")
 
         try:
-            package_generator = PackageGenerator(storage, openai_client, case_type=case_type)
+            package_generator = PackageGenerator(storage, openai_client, case_type=case_type, ai_resolve=ai_resolve)
             result = package_generator.create_client_package(
                 case_id=case_id,
                 output_directory=Path(output_dir),
@@ -421,9 +411,10 @@ def correlate_cmd(case_id: str, storage_dir: str, json_output: Optional[Path], a
               default='zip', help='Package format (default: zip)')
 @click.option('--case-type', type=click.Choice(['generic', 'workplace', 'employment', 'contract']),
               default='generic', help='Case type for domain-specific executive summary (default: generic)')
+@click.option('--ai-resolve', is_flag=True, help='Use AI to resolve ambiguous entity matches (v3.2 feature)')
 @click.option('--quiet', '-q', is_flag=True, help='Suppress verbose output')
 def package_cmd(case_id: str, storage_dir: str, output_dir: str, include_raw: bool,
-                package_format: str, case_type: str, quiet: bool):
+                package_format: str, case_type: str, ai_resolve: bool, quiet: bool):
     """Create client deliverable package
 
     Generates professional client package with:
@@ -451,7 +442,7 @@ def package_cmd(case_id: str, storage_dir: str, output_dir: str, include_raw: bo
         if not quiet:
             click.echo("⚠️  OpenAI package not available - executive summary disabled")
 
-    package_generator = PackageGenerator(storage, openai_client, case_type=case_type)
+    package_generator = PackageGenerator(storage, openai_client, case_type=case_type, ai_resolve=ai_resolve)
 
     try:
         if not quiet:

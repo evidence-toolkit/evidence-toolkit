@@ -138,13 +138,14 @@ class SummaryGenerator:
     v3.0: Renamed from CaseSummaryGenerator, now uses EvidenceStorage
     """
 
-    def __init__(self, storage: EvidenceStorage, openai_client=None, case_type: str = 'generic'):
+    def __init__(self, storage: EvidenceStorage, openai_client=None, case_type: str = 'generic', ai_resolve: bool = False):
         """Initialize summary generator.
 
         Args:
             storage: EvidenceStorage instance for accessing evidence
             openai_client: Optional OpenAI client for AI executive summaries
             case_type: Type of case for domain-specific prompts (generic, workplace, contract)
+            ai_resolve: If True, use AI to resolve ambiguous entity matches (v3.2 feature)
         """
         self.storage = storage
         # v3.1: Pass openai_client to CorrelationAnalyzer for AI pattern detection
@@ -152,6 +153,7 @@ class SummaryGenerator:
         self.openai_client = openai_client
         self.ai_enabled = openai_client is not None
         self.case_type = case_type.lower()
+        self.ai_resolve = ai_resolve  # Store for correlation analysis
 
     def generate_case_summary(self, case_id: str) -> CaseSummary:
         """Generate a comprehensive summary for a case.
@@ -166,7 +168,8 @@ class SummaryGenerator:
             ValueError: If no evidence found for case
         """
         # Get correlation analysis (includes all case evidence)
-        correlation_result = self.correlation_analyzer.analyze_case_correlations(case_id)
+        # Pass ai_resolve flag for entity resolution (v3.2 feature)
+        correlation_result = self.correlation_analyzer.analyze_case_correlations(case_id, ai_resolve=self.ai_resolve)
 
         if correlation_result.evidence_count == 0:
             raise ValueError(f"No evidence found for case ID: {case_id}")
@@ -327,7 +330,7 @@ class SummaryGenerator:
                 if doc_analysis.get('entities'):
                     entity_count = len(doc_analysis['entities'])
                     key_entity_types = set(e.get('type', 'unknown') for e in doc_analysis['entities'][:5])
-                    key_findings.append(f"Extracted {entity_count} entities: {', '.join(key_entity_types)}")
+                    key_findings.append(f"Extracted {entity_count} entities: {', '.join(sorted(key_entity_types))}")
 
                 # Extract AI assessment fields
                 confidence = doc_analysis.get('analysis_confidence')
