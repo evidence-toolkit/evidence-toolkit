@@ -50,7 +50,7 @@ pip install -e .
 evidence-toolkit --version
 ```
 
-**Expected output**: `Evidence Toolkit v3.0.0`
+**Expected output**: `Evidence Toolkit v3.3.0`
 
 ---
 

@@ -3,23 +3,26 @@
 Image Analyzer - OpenAI Vision API integration for image analysis (v3.0)
 
 Part of Evidence Toolkit v3.0 unified architecture.
+
+v3.3.1 Enhancement: Async batch processing for parallel image analysis
 """
 
 import os
 import base64
+import asyncio
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 import openai
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 
 from evidence_toolkit.core.models import ImageAnalysisResult, ImageAnalysisStructured
 from evidence_toolkit.core.utils import is_image_file
 
 
 class ImageAnalyzer:
-    """Analyzes images using OpenAI Vision API"""
+    """Analyzes images using OpenAI Vision API with async batch processing support"""
 
     def __init__(
         self,
@@ -36,7 +39,9 @@ class ImageAnalyzer:
             max_tokens: Maximum tokens for response (unused with Responses API)
             verbose: Print progress messages
         """
-        self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.client = OpenAI(api_key=self.api_key)
+        self.async_client = AsyncOpenAI(api_key=self.api_key)  # For async operations
         self.model = model
         self.max_tokens = max_tokens
         self.verbose = verbose
@@ -225,6 +230,156 @@ class ImageAnalyzer:
                 scene_description=f"Analysis failed: {str(e)}",
                 analysis_confidence=0.0
             )
+
+    async def analyze_image_async(
+        self,
+        image_path: Path,
+        prompt: Optional[str] = None
+    ) -> ImageAnalysisResult:
+        """Async version of analyze_image for batch processing
+
+        This method allows multiple images to be analyzed concurrently,
+        significantly speeding up processing for cases with many images.
+
+        Args:
+            image_path: Path to image file
+            prompt: Optional custom prompt (unused, uses legal_config)
+
+        Returns:
+            ImageAnalysisResult object
+        """
+        if not is_image_file(image_path):
+            raise ValueError(f"File {image_path} is not a supported image format")
+
+        if not image_path.exists():
+            raise ValueError(f"Image file {image_path} does not exist")
+
+        # Import legal domain prompt
+        from evidence_toolkit.domains import legal_config
+        system_prompt = legal_config.IMAGE_ANALYSIS_PROMPT
+
+        try:
+            # Encode image to base64 (sync operation, but fast)
+            image_base64 = self._encode_image(image_path)
+
+            # Call OpenAI Responses API with structured outputs (ASYNC)
+            response = await self.async_client.responses.parse(
+                model=self.model,
+                input=[
+                    {"role": "system", "content": system_prompt},
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "input_image",
+                                "image_url": f"data:image/jpeg;base64,{image_base64}"
+                            }
+                        ]
+                    }
+                ],
+                text_format=ImageAnalysisStructured
+            )
+
+            # Handle response (same pattern as sync version)
+            if response.status == "completed" and response.output_parsed:
+                if self.verbose:
+                    print(f"✅ Image analysis complete - confidence: {response.output_parsed.confidence_overall:.2f}")
+
+                return ImageAnalysisResult(
+                    openai_model=self.model,
+                    openai_response={"parsed": response.output_parsed.model_dump()},
+                    detected_objects=response.output_parsed.detected_objects,
+                    detected_text=response.output_parsed.detected_text,
+                    scene_description=response.output_parsed.scene_description,
+                    analysis_confidence=response.output_parsed.confidence_overall
+                )
+            elif response.status == "incomplete":
+                if self.verbose:
+                    print(f"❌ Image analysis incomplete: {response.incomplete_details}")
+                return ImageAnalysisResult(
+                    openai_model=self.model,
+                    openai_response={"error": f"incomplete: {response.incomplete_details}"},
+                    detected_objects=None,
+                    detected_text=None,
+                    scene_description="Image analysis incomplete",
+                    analysis_confidence=0.0
+                )
+            else:
+                raise Exception("Image analysis failed with unknown error")
+
+        except Exception as e:
+            if self.verbose:
+                print(f"❌ Image analysis error: {str(e)}")
+            return ImageAnalysisResult(
+                openai_model=self.model,
+                openai_response={"error": str(e)},
+                detected_objects=None,
+                detected_text=None,
+                scene_description=f"Analysis failed: {str(e)}",
+                analysis_confidence=0.0
+            )
+
+    async def analyze_images_batch(
+        self,
+        image_paths: List[Path],
+        max_concurrent: int = 5,
+        quiet: bool = False
+    ) -> List[ImageAnalysisResult]:
+        """Analyze multiple images concurrently with rate limiting
+
+        This is the main entry point for batch processing. It uses asyncio
+        to process multiple images in parallel while respecting rate limits.
+
+        Args:
+            image_paths: List of image file paths to analyze
+            max_concurrent: Maximum number of concurrent API calls (default: 5)
+            quiet: Suppress progress output
+
+        Returns:
+            List of ImageAnalysisResult objects in same order as input paths
+
+        Example:
+            >>> analyzer = ImageAnalyzer()
+            >>> paths = [Path("img1.jpg"), Path("img2.png")]
+            >>> results = asyncio.run(analyzer.analyze_images_batch(paths))
+        """
+        if not image_paths:
+            return []
+
+        if not quiet:
+            print(f"🖼️  Batch processing {len(image_paths)} images (max {max_concurrent} concurrent)...")
+
+        # Create semaphore to limit concurrent API calls
+        semaphore = asyncio.Semaphore(max_concurrent)
+
+        async def analyze_with_semaphore(path: Path, index: int) -> ImageAnalysisResult:
+            """Analyze one image with semaphore rate limiting"""
+            async with semaphore:
+                if not quiet and (index + 1) % 5 == 0:
+                    print(f"   Processing image {index + 1}/{len(image_paths)}...")
+
+                try:
+                    return await self.analyze_image_async(path)
+                except Exception as e:
+                    # Return error result instead of raising
+                    return ImageAnalysisResult(
+                        openai_model=self.model,
+                        openai_response={"error": str(e)},
+                        detected_objects=None,
+                        detected_text=None,
+                        scene_description=f"Batch analysis failed: {str(e)}",
+                        analysis_confidence=0.0
+                    )
+
+        # Process all images concurrently (with semaphore limiting)
+        tasks = [analyze_with_semaphore(path, i) for i, path in enumerate(image_paths)]
+        results = await asyncio.gather(*tasks)
+
+        if not quiet:
+            successful = sum(1 for r in results if r.analysis_confidence > 0.0)
+            print(f"✅ Batch complete: {successful}/{len(results)} successful")
+
+        return results
 
     def _encode_image(self, image_path: Path) -> str:
         """Encode image to base64"""

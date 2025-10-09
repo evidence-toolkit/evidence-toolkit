@@ -34,6 +34,11 @@ from evidence_toolkit.pipeline.package import (
     PackageGenerator,
 )
 
+from evidence_toolkit.pipeline.batch import (
+    analyze_images_batch,
+    batch_analyze_case_images,
+)
+
 
 __all__ = [
     # Ingestion
@@ -44,6 +49,10 @@ __all__ = [
 
     # Analysis
     'analyze_evidence',
+
+    # Batch processing (v3.3.1)
+    'analyze_images_batch',
+    'batch_analyze_case_images',
 
     # Summary
     'ExecutiveSummaryResponse',

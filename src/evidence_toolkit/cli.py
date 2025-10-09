@@ -59,10 +59,11 @@ def cli():
 @click.option('--ai-resolve', is_flag=True, help='Use AI to resolve ambiguous entity matches (v3.2 feature)')
 @click.option('--case-type', type=click.Choice(['generic', 'workplace', 'employment', 'contract']),
               default='generic', help='Case type for domain-specific analysis (default: generic, v3.2 feature)')
+@click.option('--max-concurrent', default=5, type=int, help='Max concurrent image analyses (default: 5, v3.3.1 feature)')
 @click.option('--actor', default='system', help='Actor performing the processing (default: system)')
 @click.option('--quiet', '-q', is_flag=True, help='Suppress verbose output')
 def process_case(case_directory: Path, case_id: str, storage_dir: str, output_dir: str,
-                skip_package: bool, ai_resolve: bool, case_type: str, actor: str, quiet: bool):
+                skip_package: bool, ai_resolve: bool, case_type: str, max_concurrent: int, actor: str, quiet: bool):
     """Complete pipeline: ingest → analyze → correlate → package
 
     Process all evidence files in CASE_DIRECTORY through the complete analysis pipeline.
@@ -116,7 +117,48 @@ def process_case(case_directory: Path, case_id: str, storage_dir: str, output_di
     # Get only the evidence that was just ingested (from results)
     ingested_sha256s = [r.sha256 for r in results if r.success]
 
+    # v3.3.1: Separate images for batch processing
+    image_sha256s = []
+    non_image_sha256s = []
+
     for sha256 in ingested_sha256s:
+        original_file = storage.get_original_file_path(sha256)
+        if original_file and original_file.suffix.lower() in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+            image_sha256s.append(sha256)
+        else:
+            non_image_sha256s.append(sha256)
+
+    # Batch process images if we have any
+    if image_sha256s and openai_client:
+        if not quiet:
+            click.echo(f"\n   ⚡ Batch processing {len(image_sha256s)} images ({max_concurrent} concurrent)...")
+
+        try:
+            import asyncio
+            from evidence_toolkit.pipeline.batch import analyze_images_batch
+
+            # Run async batch processing
+            batch_results = asyncio.run(analyze_images_batch(
+                image_sha256s,
+                storage,
+                case_id=case_id,
+                max_concurrent=max_concurrent,
+                quiet=quiet
+            ))
+
+            analyzed_count += len([r for r in batch_results.values() if r.image_analysis])
+            if not quiet:
+                click.echo(f"   ✅ Batch analyzed {len(batch_results)} images")
+
+        except Exception as e:
+            if not quiet:
+                click.echo(f"   ⚠️  Batch processing failed, falling back to sequential: {e}")
+            # Fall back to sequential processing
+            for sha256 in image_sha256s:
+                non_image_sha256s.append(sha256)
+
+    # Process non-image evidence sequentially
+    for sha256 in non_image_sha256s:
         # Check if already analyzed
         sha256_dir = storage.derived_dir / f"sha256={sha256}"
         analysis_file = sha256_dir / "analysis.v1.json"
