@@ -21,6 +21,7 @@ from evidence_toolkit.core.models import (
     CaseSummary,      # v3.1: Moved from @dataclass to Pydantic in models.py
 )
 from evidence_toolkit.analyzers.correlation import CorrelationAnalyzer
+from evidence_toolkit.core.utils import read_json_safe, call_openai_structured
 
 
 class ExecutiveSummaryResponse(BaseModel):
@@ -256,51 +257,46 @@ class SummaryGenerator:
             if not (analysis_file.exists() and metadata_file.exists()):
                 continue
 
-            try:
-                # Load metadata and analysis
-                with open(metadata_file, 'r') as f:
-                    metadata = json.load(f)
+            # Load metadata and analysis using safe utility
+            metadata = read_json_safe(metadata_file)
+            analysis = read_json_safe(analysis_file)
 
-                with open(analysis_file, 'r') as f:
-                    analysis = json.load(f)
+            if not metadata or not analysis:
+                continue  # Skip invalid evidence
 
-                # Check if this evidence belongs to the case (support both old and new schema)
-                case_ids = analysis.get('case_ids', [])
-                if not case_ids and 'case_id' in analysis:
-                    # Legacy format - convert on the fly
-                    case_ids = [analysis['case_id']] if analysis['case_id'] else []
+            # Check if this evidence belongs to the case (support both old and new schema)
+            case_ids = analysis.get('case_ids', [])
+            if not case_ids and 'case_id' in analysis:
+                # Legacy format - convert on the fly
+                case_ids = [analysis['case_id']] if analysis['case_id'] else []
 
-                if case_id not in case_ids:
-                    continue
-
-                sha256 = evidence_dir.name.replace('sha256=', '')
-                evidence_type = analysis.get('evidence_type')
-
-                # Extract key findings based on evidence type
-                key_findings, confidence, legal_significance, risk_flags = self._extract_key_findings(
-                    evidence_type, analysis
-                )
-
-                # Extract document_type for documents (v3.3 Phase B++)
-                document_type = None
-                if evidence_type == 'document' and analysis.get('document_analysis'):
-                    document_type = analysis['document_analysis'].get('document_type')
-
-                evidence_summaries.append(EvidenceSummary(
-                    sha256=sha256,
-                    evidence_type=evidence_type,
-                    filename=metadata['filename'],
-                    file_size=metadata['file_size'],
-                    analysis_confidence=confidence,
-                    key_findings=key_findings,
-                    legal_significance=legal_significance,
-                    risk_flags=risk_flags,
-                    document_type=document_type
-                ))
-
-            except (json.JSONDecodeError, KeyError) as e:
-                # Skip invalid evidence
+            if case_id not in case_ids:
                 continue
+
+            sha256 = evidence_dir.name.replace('sha256=', '')
+            evidence_type = analysis.get('evidence_type')
+
+            # Extract key findings based on evidence type
+            key_findings, confidence, legal_significance, risk_flags = self._extract_key_findings(
+                evidence_type, analysis
+            )
+
+            # Extract document_type for documents (v3.3 Phase B++)
+            document_type = None
+            if evidence_type == 'document' and analysis.get('document_analysis'):
+                document_type = analysis['document_analysis'].get('document_type')
+
+            evidence_summaries.append(EvidenceSummary(
+                sha256=sha256,
+                evidence_type=evidence_type,
+                filename=metadata['filename'],
+                file_size=metadata['file_size'],
+                analysis_confidence=confidence,
+                key_findings=key_findings,
+                legal_significance=legal_significance,
+                risk_flags=risk_flags,
+                document_type=document_type
+            ))
 
         return evidence_summaries
 
@@ -402,28 +398,15 @@ class SummaryGenerator:
         )
 
         try:
-            # OpenAI Responses API call (SAME PATTERN as other analyzers)
-            response = self.openai_client.responses.parse(
-                model="gpt-4o-2024-08-06",
-                input=[
-                    {"role": "system", "content": executive_summary_prompt},
-                    {"role": "user", "content": case_context}
-                ],
-                text_format=ExecutiveSummaryResponse
+            # Call OpenAI Responses API using standardized utility
+            return call_openai_structured(
+                self.openai_client,
+                "gpt-4o-2024-08-06",
+                executive_summary_prompt,
+                case_context,
+                ExecutiveSummaryResponse,
+                verbose=False
             )
-
-            # Handle response (SAME PATTERN as other analyzers)
-            if response.status == "completed" and response.output_parsed:
-                return response.output_parsed
-            elif response.status == "incomplete":
-                raise Exception(f"AI executive summary incomplete: {response.incomplete_details}")
-            else:
-                # Check for refusal
-                if (response.output and len(response.output) > 0 and
-                    len(response.output[0].content) > 0 and
-                    response.output[0].content[0].type == "refusal"):
-                    raise Exception(f"AI executive summary refused: {response.output[0].content[0].refusal}")
-                raise Exception("AI executive summary failed with unknown error")
 
         except Exception as e:
             raise Exception(f"OpenAI executive summary generation failed: {e}")
@@ -511,31 +494,18 @@ Confidence: {forensic_response.confidence_overall:.2f}
         from evidence_toolkit.domains import legal_config
 
         try:
-            # Call OpenAI for enhancement using Responses API
-            response = self.openai_client.responses.parse(
-                model="gpt-4o-2024-08-06",
-                input=[
-                    {"role": "system", "content": legal_config.EXECUTIVE_SUMMARY_ENHANCER_PROMPT},
-                    {"role": "user", "content": enhancement_context}
-                ],
-                text_format=EnhancedExecutiveSummary
+            # Call OpenAI for enhancement using standardized utility
+            result = call_openai_structured(
+                self.openai_client,
+                "gpt-4o-2024-08-06",
+                legal_config.EXECUTIVE_SUMMARY_ENHANCER_PROMPT,
+                enhancement_context,
+                EnhancedExecutiveSummary,
+                verbose=False
             )
 
-            # Handle response (same pattern as other analyzers)
-            if response.status == "completed" and response.output_parsed:
-                print("   ✨ Executive summary enhanced with tribunal probability & financial estimates")
-                return response.output_parsed
-
-            elif response.status == "incomplete":
-                raise Exception(f"Enhancement incomplete: {response.incomplete_details}")
-
-            else:
-                # Check for refusal
-                if (response.output and len(response.output) > 0 and
-                    len(response.output[0].content) > 0 and
-                    response.output[0].content[0].type == "refusal"):
-                    raise Exception(f"Enhancement refused: {response.output[0].content[0].refusal}")
-                raise Exception("Enhancement failed with unknown error")
+            print("   ✨ Executive summary enhanced with tribunal probability & financial estimates")
+            return result
 
         except Exception as e:
             # Fallback: return forensic response wrapped in enhanced structure
@@ -601,20 +571,15 @@ Confidence: {forensic_response.confidence_overall:.2f}
 
 Be concise but thorough. Focus on legally significant information."""
 
-        # Call OpenAI
-        response = self.openai_client.responses.parse(
-            model="gpt-4o-2024-08-06",
-            input=[
-                {"role": "system", "content": chunk_prompt},
-                {"role": "user", "content": chunk_context}
-            ],
-            text_format=ChunkSummaryResponse
+        # Call OpenAI using standardized utility
+        return call_openai_structured(
+            self.openai_client,
+            "gpt-4o-2024-08-06",
+            chunk_prompt,
+            chunk_context,
+            ChunkSummaryResponse,
+            verbose=False
         )
-
-        if response.status == "completed" and response.output_parsed:
-            return response.output_parsed
-        else:
-            raise Exception(f"Chunk summary failed: {response.status}")
 
     def _build_case_context_for_ai(self, case_summary: CaseSummary) -> str:
         """Build comprehensive case context for AI analysis.
@@ -1024,14 +989,11 @@ Be concise but thorough. Focus on legally significant information."""
             if evidence.evidence_type == 'email':
                 analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
                 if analysis_file.exists():
-                    try:
-                        with open(analysis_file) as f:
-                            analysis = json.load(f)
-                            email_analysis = analysis.get('email_analysis', {})
-                            participants = email_analysis.get('participants', [])
-                            participants_data.extend(participants)
-                    except (json.JSONDecodeError, FileNotFoundError):
-                        continue
+                    analysis = read_json_safe(analysis_file)
+                    if analysis:
+                        email_analysis = analysis.get('email_analysis', {})
+                        participants = email_analysis.get('participants', [])
+                        participants_data.extend(participants)
 
         if not participants_data:
             return None
@@ -1114,27 +1076,23 @@ Be concise but thorough. Focus on legally significant information."""
             if evidence.evidence_type == 'email':
                 analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
                 if analysis_file.exists():
-                    try:
-                        with open(analysis_file) as f:
-                            analysis = json.load(f)
-                            email_analysis = analysis.get('email_analysis', {})
+                    analysis = read_json_safe(analysis_file)
+                    if analysis:
+                        email_analysis = analysis.get('email_analysis', {})
 
-                            if not email_analysis:
-                                continue
+                        if not email_analysis:
+                            continue
 
-                            # Get communication pattern
-                            pattern = email_analysis.get('communication_pattern')
-                            if pattern:
-                                patterns.append(pattern)
-                                pattern_by_evidence.append({
-                                    'sha256': evidence.sha256,
-                                    'filename': analysis.get('file_metadata', {}).get('filename', 'unknown'),
-                                    'pattern': pattern,
-                                    'risk_flags': email_analysis.get('risk_flags', [])
-                                })
-
-                    except (json.JSONDecodeError, FileNotFoundError, KeyError):
-                        continue
+                        # Get communication pattern
+                        pattern = email_analysis.get('communication_pattern')
+                        if pattern:
+                            patterns.append(pattern)
+                            pattern_by_evidence.append({
+                                'sha256': evidence.sha256,
+                                'filename': analysis.get('file_metadata', {}).get('filename', 'unknown'),
+                                'pattern': pattern,
+                                'risk_flags': email_analysis.get('risk_flags', [])
+                            })
 
         if not patterns:
             return None
@@ -1191,42 +1149,38 @@ Be concise but thorough. Focus on legally significant information."""
             if evidence.evidence_type == 'document':
                 analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
                 if analysis_file.exists():
-                    try:
-                        with open(analysis_file) as f:
-                            analysis = json.load(f)
-                            doc_analysis = analysis.get('document_analysis', {})
+                    analysis = read_json_safe(analysis_file)
+                    if analysis:
+                        doc_analysis = analysis.get('document_analysis', {})
 
-                            if not doc_analysis:
-                                continue
+                        if not doc_analysis:
+                            continue
 
-                            # Get document-level metadata
-                            doc_sentiment = doc_analysis.get('sentiment', 'neutral')
-                            doc_risk_flags = doc_analysis.get('risk_flags', [])
-                            doc_filename = analysis.get('file_metadata', {}).get('filename', 'unknown')
+                        # Get document-level metadata
+                        doc_sentiment = doc_analysis.get('sentiment', 'neutral')
+                        doc_risk_flags = doc_analysis.get('risk_flags', [])
+                        doc_filename = analysis.get('file_metadata', {}).get('filename', 'unknown')
 
-                            # Extract quoted statements from entities
-                            for entity in doc_analysis.get('entities', []):
-                                if entity.get('type') == 'person' and entity.get('quoted_text'):
-                                    person_name = entity['name']
+                        # Extract quoted statements from entities
+                        for entity in doc_analysis.get('entities', []):
+                            if entity.get('type') == 'person' and entity.get('quoted_text'):
+                                person_name = entity['name']
 
-                                    statements_by_person[person_name]['statements'].append({
-                                        'text': entity['quoted_text'],
-                                        'source_sha256': evidence.sha256,
-                                        'source_file': doc_filename,
-                                        'document_sentiment': doc_sentiment,
-                                        'risk_flags': doc_risk_flags,
-                                        'context': entity.get('context', '')[:100]
-                                    })
+                                statements_by_person[person_name]['statements'].append({
+                                    'text': entity['quoted_text'],
+                                    'source_sha256': evidence.sha256,
+                                    'source_file': doc_filename,
+                                    'document_sentiment': doc_sentiment,
+                                    'risk_flags': doc_risk_flags,
+                                    'context': entity.get('context', '')[:100]
+                                })
 
-                                    statements_by_person[person_name]['sentiments'].append(doc_sentiment)
-                                    statements_by_person[person_name]['risk_flags'].update(doc_risk_flags)
+                                statements_by_person[person_name]['sentiments'].append(doc_sentiment)
+                                statements_by_person[person_name]['risk_flags'].update(doc_risk_flags)
 
-                                    # Store role from relationship field if available
-                                    if entity.get('relationship') and not statements_by_person[person_name]['role']:
-                                        statements_by_person[person_name]['role'] = entity['relationship']
-
-                    except (json.JSONDecodeError, FileNotFoundError, KeyError):
-                        continue
+                                # Store role from relationship field if available
+                                if entity.get('relationship') and not statements_by_person[person_name]['role']:
+                                    statements_by_person[person_name]['role'] = entity['relationship']
 
         if not statements_by_person:
             return None
@@ -1282,32 +1236,28 @@ Be concise but thorough. Focus on legally significant information."""
             if evidence.evidence_type == 'image':
                 analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
                 if analysis_file.exists():
-                    try:
-                        with open(analysis_file) as f:
-                            analysis = json.load(f)
-                            img_analysis = analysis.get('image_analysis', {})
-                            img_parsed = img_analysis.get('openai_response', {}).get('parsed', {})
+                    analysis = read_json_safe(analysis_file)
+                    if analysis:
+                        img_analysis = analysis.get('image_analysis', {})
+                        img_parsed = img_analysis.get('openai_response', {}).get('parsed', {})
 
-                            detected_text = img_parsed.get('detected_text')
-                            if detected_text:
-                                images_with_text.append({
-                                    'sha256': evidence.sha256,
-                                    'filename': analysis.get('file_metadata', {}).get('filename', 'unknown'),
-                                    'detected_text': detected_text,
-                                    'scene_description': img_parsed.get('scene_description', '')[:100],
-                                    'detected_objects': img_parsed.get('detected_objects', []),
-                                    'evidence_value': img_parsed.get('potential_evidence_value', 'low'),
-                                    'people_present': img_parsed.get('people_present', False),
-                                    'timestamps_visible': img_parsed.get('timestamps_visible', False),
-                                    'legal_relevance_notes': img_parsed.get('legal_relevance_notes', '')  # v3.3 Phase B++
-                                })
+                        detected_text = img_parsed.get('detected_text')
+                        if detected_text:
+                            images_with_text.append({
+                                'sha256': evidence.sha256,
+                                'filename': analysis.get('file_metadata', {}).get('filename', 'unknown'),
+                                'detected_text': detected_text,
+                                'scene_description': img_parsed.get('scene_description', '')[:100],
+                                'detected_objects': img_parsed.get('detected_objects', []),
+                                'evidence_value': img_parsed.get('potential_evidence_value', 'low'),
+                                'people_present': img_parsed.get('people_present', False),
+                                'timestamps_visible': img_parsed.get('timestamps_visible', False),
+                                'legal_relevance_notes': img_parsed.get('legal_relevance_notes', '')  # v3.3 Phase B++
+                            })
 
-                                # Group by object categories for analysis
-                                for obj in img_parsed.get('detected_objects', []):
-                                    object_categories[obj].append(detected_text)
-
-                    except (json.JSONDecodeError, FileNotFoundError, KeyError):
-                        continue
+                            # Group by object categories for analysis
+                            for obj in img_parsed.get('detected_objects', []):
+                                object_categories[obj].append(detected_text)
 
         if not images_with_text:
             return None
@@ -1370,58 +1320,54 @@ Be concise but thorough. Focus on legally significant information."""
             if evidence.evidence_type == 'document':
                 analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
                 if analysis_file.exists():
-                    try:
-                        with open(analysis_file) as f:
-                            analysis = json.load(f)
-                            doc_analysis = analysis.get('document_analysis', {})
+                    analysis = read_json_safe(analysis_file)
+                    if analysis:
+                        doc_analysis = analysis.get('document_analysis', {})
 
-                            if not doc_analysis:
+                        if not doc_analysis:
+                            continue
+
+                        for entity in doc_analysis.get('entities', []):
+                            entity_name = entity.get('name')
+                            relationship = entity.get('relationship', '')
+
+                            if not entity_name or not relationship:
                                 continue
 
-                            for entity in doc_analysis.get('entities', []):
-                                entity_name = entity.get('name')
-                                relationship = entity.get('relationship', '')
+                            # Store role information
+                            if entity_name not in entity_roles:
+                                entity_roles[entity_name] = relationship
 
-                                if not entity_name or not relationship:
-                                    continue
+                            # Parse relationship for network edges
+                            relationship_type = 'other'
+                            target = None
 
-                                # Store role information
-                                if entity_name not in entity_roles:
-                                    entity_roles[entity_name] = relationship
+                            # Check email patterns
+                            for pattern in email_patterns:
+                                match = re.search(pattern, relationship, re.IGNORECASE)
+                                if match:
+                                    target = match.group(1).strip()
+                                    relationship_type = 'email_communication'
+                                    break
 
-                                # Parse relationship for network edges
-                                relationship_type = 'other'
-                                target = None
-
-                                # Check email patterns
-                                for pattern in email_patterns:
+                            # Check escalation patterns
+                            if not target:
+                                for pattern in escalation_patterns:
                                     match = re.search(pattern, relationship, re.IGNORECASE)
                                     if match:
                                         target = match.group(1).strip()
-                                        relationship_type = 'email_communication'
+                                        relationship_type = 'escalation'
                                         break
 
-                                # Check escalation patterns
-                                if not target:
-                                    for pattern in escalation_patterns:
-                                        match = re.search(pattern, relationship, re.IGNORECASE)
-                                        if match:
-                                            target = match.group(1).strip()
-                                            relationship_type = 'escalation'
-                                            break
-
-                                # If we found a target, create relationship edge
-                                if target:
-                                    relationships.append({
-                                        'source': entity_name,
-                                        'target': target,
-                                        'relationship_type': relationship_type,
-                                        'evidence_sha256': evidence.sha256,
-                                        'context': relationship
-                                    })
-
-                    except (json.JSONDecodeError, FileNotFoundError, KeyError):
-                        continue
+                            # If we found a target, create relationship edge
+                            if target:
+                                relationships.append({
+                                    'source': entity_name,
+                                    'target': target,
+                                    'relationship_type': relationship_type,
+                                    'evidence_sha256': evidence.sha256,
+                                    'context': relationship
+                                })
 
         if not relationships:
             return None
@@ -1607,20 +1553,17 @@ Be concise but thorough. Focus on legally significant information."""
                 # Need to load analysis file to get ai_summary
                 analysis_file = self.storage.derived_dir / f"sha256={summary.sha256}" / "analysis.v1.json"
                 if analysis_file.exists():
-                    try:
-                        with open(analysis_file) as f:
-                            analysis = json.load(f)
-                            doc_analysis = analysis.get('document_analysis', {})
-                            ai_summary = doc_analysis.get('ai_summary')
-                            if ai_summary:
-                                doc_summaries.append({
-                                    'filename': summary.filename,
-                                    'document_type': summary.document_type or 'document',
-                                    'ai_summary': ai_summary,
-                                    'legal_significance': summary.legal_significance
-                                })
-                    except (json.JSONDecodeError, FileNotFoundError, KeyError):
-                        continue
+                    analysis = read_json_safe(analysis_file)
+                    if analysis:
+                        doc_analysis = analysis.get('document_analysis', {})
+                        ai_summary = doc_analysis.get('ai_summary')
+                        if ai_summary:
+                            doc_summaries.append({
+                                'filename': summary.filename,
+                                'document_type': summary.document_type or 'document',
+                                'ai_summary': ai_summary,
+                                'legal_significance': summary.legal_significance
+                            })
 
         if doc_summaries:
             lines.append("📄 KEY DOCUMENT SUMMARIES")

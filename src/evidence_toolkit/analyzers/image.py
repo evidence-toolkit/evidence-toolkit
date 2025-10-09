@@ -18,7 +18,7 @@ import openai
 from openai import OpenAI, AsyncOpenAI
 
 from evidence_toolkit.core.models import ImageAnalysisResult, ImageAnalysisStructured
-from evidence_toolkit.core.utils import is_image_file
+from evidence_toolkit.core.utils import is_image_file, call_openai_structured
 
 
 class ImageAnalyzer:
@@ -157,66 +157,39 @@ class ImageAnalyzer:
             # Encode image to base64
             image_base64 = self._encode_image(image_path)
 
-            # Call OpenAI Responses API with structured outputs (SAME PATTERN as DocumentAnalyzer/EmailAnalyzer)
-            response = self.client.responses.parse(
-                model=self.model,  # Vision-capable model (default: gpt-4o-2024-08-06)
-                input=[
-                    {"role": "system", "content": system_prompt},
+            # Build user content with image
+            user_content = {
+                "role": "user",
+                "content": [
                     {
-                        "role": "user",
-                        "content": [
-                            {
-                                "type": "input_image",  # Responses API format (not "image_url")
-                                "image_url": f"data:image/jpeg;base64,{image_base64}"
-                            }
-                        ]
+                        "type": "input_image",  # Responses API format (not "image_url")
+                        "image_url": f"data:image/jpeg;base64,{image_base64}"
                     }
-                ],
-                text_format=ImageAnalysisStructured  # Pydantic model for structured output
+                ]
+            }
+
+            # Call OpenAI Responses API using standardized utility
+            parsed_result = call_openai_structured(
+                self.client,
+                self.model,  # Vision-capable model (default: gpt-4o-2024-08-06)
+                system_prompt,
+                user_content,
+                ImageAnalysisStructured,
+                verbose=self.verbose
             )
 
-            # Handle response (SAME PATTERN as DocumentAnalyzer, EmailAnalyzer)
-            if response.status == "completed" and response.output_parsed:
-                if self.verbose:
-                    print(f"✅ Image analysis complete - confidence: {response.output_parsed.confidence_overall:.2f}")
+            if self.verbose:
+                print(f"✅ Image analysis complete - confidence: {parsed_result.confidence_overall:.2f}")
 
-                # Convert structured Pydantic model to legacy ImageAnalysisResult format
-                return ImageAnalysisResult(
-                    openai_model=self.model,
-                    openai_response={"parsed": response.output_parsed.model_dump()},
-                    detected_objects=response.output_parsed.detected_objects,
-                    detected_text=response.output_parsed.detected_text,
-                    scene_description=response.output_parsed.scene_description,
-                    analysis_confidence=response.output_parsed.confidence_overall
-                )
-            elif response.status == "incomplete":
-                if self.verbose:
-                    print(f"❌ Image analysis incomplete: {response.incomplete_details}")
-                return ImageAnalysisResult(
-                    openai_model=self.model,
-                    openai_response={"error": f"incomplete: {response.incomplete_details}"},
-                    detected_objects=None,
-                    detected_text=None,
-                    scene_description="Image analysis incomplete",
-                    analysis_confidence=0.0
-                )
-            else:
-                # Check for refusal (SAME PATTERN as other analyzers)
-                if (response.output and len(response.output) > 0 and
-                    len(response.output[0].content) > 0 and
-                    response.output[0].content[0].type == "refusal"):
-                    refusal_msg = response.output[0].content[0].refusal
-                    if self.verbose:
-                        print(f"❌ Image analysis refused: {refusal_msg}")
-                    return ImageAnalysisResult(
-                        openai_model=self.model,
-                        openai_response={"error": f"refusal: {refusal_msg}"},
-                        detected_objects=None,
-                        detected_text=None,
-                        scene_description=f"Analysis refused: {refusal_msg}",
-                        analysis_confidence=0.0
-                    )
-                raise Exception("Image analysis failed with unknown error")
+            # Convert structured Pydantic model to legacy ImageAnalysisResult format
+            return ImageAnalysisResult(
+                openai_model=self.model,
+                openai_response={"parsed": parsed_result.model_dump()},
+                detected_objects=parsed_result.detected_objects,
+                detected_text=parsed_result.detected_text,
+                scene_description=parsed_result.scene_description,
+                analysis_confidence=parsed_result.confidence_overall
+            )
 
         except Exception as e:
             # Return error result

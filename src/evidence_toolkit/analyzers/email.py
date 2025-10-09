@@ -12,6 +12,7 @@ from pathlib import Path
 
 from evidence_toolkit.core.models import EmailThreadAnalysis
 from evidence_toolkit.analyzers.email_parser import EmailParser
+from evidence_toolkit.core.utils import call_openai_structured
 
 
 class EmailAnalyzer:
@@ -72,33 +73,19 @@ class EmailAnalyzer:
             from evidence_toolkit.domains import legal_config
             email_analysis_prompt = legal_config.EMAIL_ANALYSIS_PROMPT
 
-            # OpenAI Responses API call (SAME PATTERN as DocumentAnalyzer)
-            response = self.openai_client.responses.parse(
-                model="gpt-4o-mini",  # Cost-effective model (16x cheaper than gpt-4o, fixed from gpt-4.1-mini)
-                input=[
-                    {"role": "system", "content": email_analysis_prompt},
-                    {"role": "user", "content": thread_text}
-                ],
-                text_format=EmailThreadAnalysis
+            # Call OpenAI Responses API using standardized utility
+            result = call_openai_structured(
+                self.openai_client,
+                "gpt-4o-mini",  # Cost-effective model (16x cheaper than gpt-4o, fixed from gpt-4.1-mini)
+                email_analysis_prompt,
+                thread_text,
+                EmailThreadAnalysis,
+                verbose=self.verbose
             )
 
-            # Handle responses correctly for Responses API (SAME PATTERN as DocumentAnalyzer)
-            if response.status == "completed" and response.output_parsed:
-                if self.verbose:
-                    print(f"✅ Email thread analysis complete - confidence: {response.output_parsed.confidence_overall:.2f}")
-                return response.output_parsed
-            elif response.status == "incomplete":
-                if self.verbose:
-                    print(f"❌ Email analysis incomplete: {response.incomplete_details}")
-                return None
-            else:
-                # Check for refusal in output (SAME PATTERN as DocumentAnalyzer)
-                if (response.output and len(response.output) > 0 and
-                    len(response.output[0].content) > 0 and
-                    response.output[0].content[0].type == "refusal"):
-                    if self.verbose:
-                        print(f"❌ Email analysis refused: {response.output[0].content[0].refusal}")
-                return None
+            if self.verbose:
+                print(f"✅ Email thread analysis complete - confidence: {result.confidence_overall:.2f}")
+            return result
 
         except Exception as e:
             if self.verbose:

@@ -39,6 +39,9 @@ try:
 except ImportError:
     AI_MODELS_AVAILABLE = False
 
+# Import utility functions for deduplication (v3.3+)
+from evidence_toolkit.core.utils import call_openai_structured
+
 # Import validation for schema-compliant output
 # TODO: Check if validation module exists in new structure
 VALIDATION_AVAILABLE = False
@@ -490,33 +493,19 @@ class DocumentAnalyzer:
             from evidence_toolkit.domains import legal_config
             legal_analysis_prompt = legal_config.DOCUMENT_ANALYSIS_PROMPT
 
-            # Call OpenAI Responses API - this is the CORRECT API (NOT chat completions)
-            response = self.openai_client.responses.parse(
-                model="gpt-4o-mini",  # Cost-effective model with excellent quality (fixed from gpt-4.1-mini)
-                input=[
-                    {"role": "system", "content": legal_analysis_prompt},
-                    {"role": "user", "content": text}
-                ],
-                text_format=DocumentAnalysis
+            # Call OpenAI Responses API using standardized utility
+            result = call_openai_structured(
+                self.openai_client,
+                "gpt-4o-mini",  # Cost-effective model with excellent quality (fixed from gpt-4.1-mini)
+                legal_analysis_prompt,
+                text,
+                DocumentAnalysis,
+                verbose=self.verbose
             )
 
-            # Handle responses correctly for Responses API
-            if response.status == "completed" and response.output_parsed:
-                if self.verbose:
-                    print(f"✅ AI analysis complete - confidence: {response.output_parsed.confidence_overall:.2f}")
-                return response.output_parsed
-            elif response.status == "incomplete":
-                if self.verbose:
-                    print(f"❌ AI analysis incomplete: {response.incomplete_details}")
-                return None
-            else:
-                # Check for refusal in output
-                if (response.output and len(response.output) > 0 and
-                    len(response.output[0].content) > 0 and
-                    response.output[0].content[0].type == "refusal"):
-                    if self.verbose:
-                        print(f"❌ AI analysis refused: {response.output[0].content[0].refusal}")
-                return None
+            if self.verbose:
+                print(f"✅ AI analysis complete - confidence: {result.confidence_overall:.2f}")
+            return result
 
         except Exception as e:
             if self.verbose:

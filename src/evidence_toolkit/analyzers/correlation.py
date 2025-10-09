@@ -73,6 +73,7 @@ from evidence_toolkit.core.models import (
     Contradiction,
     CorroborationLink,
 )
+from evidence_toolkit.core.utils import read_json_safe, call_openai_structured
 
 # OpenAI Responses API for pattern detection (v3.1)
 try:
@@ -280,31 +281,25 @@ class CorrelationAnalyzer:
             if not (analysis_file.exists() and metadata_file.exists()):
                 continue
 
-            try:
-                # Load metadata
-                with open(metadata_file, 'r') as f:
-                    metadata = json.load(f)
+            # Load metadata and analysis using safe utility
+            metadata = read_json_safe(metadata_file)
+            analysis = read_json_safe(analysis_file)
 
-                # Load analysis
-                with open(analysis_file, 'r') as f:
-                    analysis = json.load(f)
+            if not metadata or not analysis:
+                continue  # Skip invalid evidence
 
-                # Check if this evidence belongs to the case (support both old and new schema)
-                case_ids = analysis.get('case_ids', [])
-                if not case_ids and 'case_id' in analysis:
-                    # Legacy format - convert on the fly
-                    case_ids = [analysis['case_id']] if analysis['case_id'] else []
+            # Check if this evidence belongs to the case (support both old and new schema)
+            case_ids = analysis.get('case_ids', [])
+            if not case_ids and 'case_id' in analysis:
+                # Legacy format - convert on the fly
+                case_ids = [analysis['case_id']] if analysis['case_id'] else []
 
-                if case_id in case_ids:
-                    evidence_items.append({
-                        'sha256': evidence_dir.name.replace('sha256=', ''),
-                        'metadata': metadata,
-                        'analysis': analysis
-                    })
-
-            except (json.JSONDecodeError, FileNotFoundError) as e:
-                # Skip invalid evidence
-                continue
+            if case_id in case_ids:
+                evidence_items.append({
+                    'sha256': evidence_dir.name.replace('sha256=', ''),
+                    'metadata': metadata,
+                    'analysis': analysis
+                })
 
         return evidence_items
 
@@ -1029,19 +1024,15 @@ Group entity names that likely refer to the same person. Consider:
 Return structured JSON with entity groups."""
 
         try:
-            # Single AI call for all entities
-            response = self.openai_client.responses.parse(
-                model="gpt-4o-mini",
-                input=[{"role": "user", "content": prompt}],
-                text_format=BatchEntityResolution
+            # Single AI call for all entities using standardized utility
+            batch_result = call_openai_structured(
+                self.openai_client,
+                "gpt-4o-mini",
+                "",  # No system prompt needed, instructions in user prompt
+                prompt,
+                BatchEntityResolution,
+                verbose=self.verbose
             )
-
-            if response.status != "completed" or not response.output_parsed:
-                if self.verbose:
-                    print(f"   ⚠️  AI batch resolution incomplete (status: {response.status})")
-                return existing_correlations
-
-            batch_result = response.output_parsed
 
             if self.verbose:
                 print(f"   ✓ Batch resolution: {batch_result.groups_created} groups from {batch_result.total_input_entities} entities")
@@ -1257,39 +1248,22 @@ Return structured JSON with entity groups."""
             from evidence_toolkit.domains import legal_config
             pattern_prompt = legal_config.CORRELATION_PATTERN_PROMPT
 
-            # OpenAI Responses API call (SAME PATTERN as other analyzers)
-            response = self.openai_client.responses.parse(
-                model="gpt-4o-mini",  # Cost-effective model (fixed from gpt-4.1-mini)
-                input=[
-                    {"role": "system", "content": pattern_prompt},
-                    {"role": "user", "content": context}
-                ],
-                text_format=LegalPatternAnalysis
+            # Call OpenAI Responses API using standardized utility
+            result = call_openai_structured(
+                self.openai_client,
+                "gpt-4o-mini",  # Cost-effective model (fixed from gpt-4.1-mini)
+                pattern_prompt,
+                context,
+                LegalPatternAnalysis,
+                verbose=self.verbose
             )
 
-            # Handle response (SAME PATTERN as DocumentAnalyzer, EmailAnalyzer)
-            if response.status == "completed" and response.output_parsed:
-                if self.verbose:
-                    print(f"✅ Legal pattern analysis complete - confidence: {response.output_parsed.confidence:.2f}")
-                    print(f"   Contradictions: {len(response.output_parsed.contradictions)}")
-                    print(f"   Corroboration links: {len(response.output_parsed.corroboration)}")
-                    print(f"   Evidence gaps: {len(response.output_parsed.evidence_gaps)}")
-                return response.output_parsed
-
-            elif response.status == "incomplete":
-                if self.verbose:
-                    print(f"❌ Legal pattern analysis incomplete: {response.incomplete_details}")
-                return None
-            else:
-                # Check for refusal - with type guards for Pylance/Mypy
-                if response.output and len(response.output) > 0:
-                    first_output = response.output[0]
-                    if hasattr(first_output, 'content') and first_output.content and len(first_output.content) > 0:
-                        first_content = first_output.content[0]
-                        if hasattr(first_content, 'type') and first_content.type == "refusal":
-                            if self.verbose and hasattr(first_content, 'refusal'):
-                                print(f"❌ Legal pattern analysis refused: {first_content.refusal}")
-                return None
+            if self.verbose:
+                print(f"✅ Legal pattern analysis complete - confidence: {result.confidence:.2f}")
+                print(f"   Contradictions: {len(result.contradictions)}")
+                print(f"   Corroboration links: {len(result.corroboration)}")
+                print(f"   Evidence gaps: {len(result.evidence_gaps)}")
+            return result
 
         except Exception as e:
             if self.verbose:

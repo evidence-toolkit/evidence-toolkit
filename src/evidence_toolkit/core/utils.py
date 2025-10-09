@@ -180,3 +180,98 @@ def create_hard_link(source: Path, target: Path) -> None:
 
     # Create hard link
     os.link(source, target)
+
+
+# =============================================================================
+# DEDUPLICATION UTILITIES (v3.3+)
+# =============================================================================
+
+def read_json_safe(path: Path) -> Optional[Dict[str, Any]]:
+    """Read JSON file with forensic-grade error handling.
+
+    Returns None on failure but preserves specific error types for debugging.
+    Used across pipeline and analyzer modules to eliminate duplication.
+    """
+    import json
+    try:
+        with open(path, 'r') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, FileNotFoundError, PermissionError):
+        return None
+
+
+def get_analysis_paths(derived_dir: Path, sha256: str) -> tuple[Path, Path]:
+    """Get standard analysis + metadata file paths for evidence hash.
+
+    Args:
+        derived_dir: Base derived directory path
+        sha256: Evidence SHA256 hash
+
+    Returns:
+        Tuple of (analysis_path, metadata_path)
+    """
+    base = derived_dir / f"sha256={sha256}"
+    return base / "analysis.v1.json", base / "metadata.json"
+
+
+def call_openai_structured(
+    client,
+    model: str,
+    system_prompt: str,
+    user_content: str,
+    response_schema,
+    verbose: bool = False
+):
+    """Call OpenAI Responses API with standardized error handling.
+
+    This eliminates 9 instances of duplicated API call + error handling code
+    across document, email, image, correlation, and summary modules.
+
+    Args:
+        client: OpenAI client instance
+        model: Model name (e.g., "gpt-4o-2024-08-06")
+        system_prompt: System prompt text
+        user_content: User message (string or dict for image inputs)
+        response_schema: Pydantic model for structured output
+        verbose: Enable verbose logging
+
+    Returns:
+        Parsed response object matching response_schema
+
+    Raises:
+        Exception: If API call fails, is incomplete, or refused
+    """
+    # Build input messages
+    if isinstance(user_content, str):
+        input_messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content}
+        ]
+    else:
+        # Dict format for image/complex inputs
+        input_messages = [
+            {"role": "system", "content": system_prompt},
+            user_content
+        ]
+
+    # Call API
+    response = client.responses.parse(
+        model=model,
+        input=input_messages,
+        text_format=response_schema
+    )
+
+    # Handle response with standard pattern
+    if response.status == "completed" and response.output_parsed:
+        return response.output_parsed
+
+    elif response.status == "incomplete":
+        raise Exception(f"API response incomplete: {response.incomplete_details}")
+
+    else:
+        # Check for refusal
+        if (response.output and len(response.output) > 0 and
+            len(response.output[0].content) > 0 and
+            response.output[0].content[0].type == "refusal"):
+            raise Exception(f"API refused: {response.output[0].content[0].refusal}")
+        raise Exception("API call failed with unknown error")
