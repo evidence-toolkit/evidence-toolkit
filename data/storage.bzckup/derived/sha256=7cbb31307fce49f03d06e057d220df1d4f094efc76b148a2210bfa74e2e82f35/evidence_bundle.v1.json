@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "test_ai_batch",
+  "evidence": {
+    "evidence_id": "7cbb31307fce49f03d06e057d220df1d4f094efc76b148a2210bfa74e2e82f35",
+    "sha256": "7cbb31307fce49f03d06e057d220df1d4f094efc76b148a2210bfa74e2e82f35",
+    "mime_type": "text/plain",
+    "bytes": 146,
+    "ingested_at": "2025-10-09T04:54:21.435660",
+    "source_path": "manager_memo.txt"
+  },
+  "chain_of_custody": [],
+  "analyses": [
+    {
+      "analysis_id": "7cbb31307fce49f03d06e057d220df1d4f094efc76b148a2210bfa74e2e82f35_1759982103",
+      "created_at": "2025-10-09T04:55:03.501639",
+      "model": {
+        "name": "gpt-4o-mini",
+        "revision": "2025-09-10"
+      },
+      "parameters": {
+        "temperature": 0.0,
+        "prompt_hash": null,
+        "token_usage_in": null,
+        "token_usage_out": null
+      },
+      "outputs": {
+        "summary": "This memo serves as a formal communication regarding performance concerns related to an individual. Sarah Johnson is requesting Paul Boucherat to review attached documentation. The date mentioned indicates the correspondence was issued on January 13th.",
+        "entities": [
+          {
+            "name": "Sarah Johnson",
+            "type": "person",
+            "confidence": 0.95,
+            "context": "From: Sarah Johnson",
+            "relationship": null,
+            "quoted_text": null,
+            "associated_event": null
+          },
+          {
+            "name": "Paul Boucherat",
+            "type": "person",
+            "confidence": 0.95,
+            "context": "To: Paul Boucherat",
+            "relationship": "sent memo to Paul Boucherat",
+            "quoted_text": null,
+            "associated_event": null
+          },
+          {
+            "name": "January 13th",
+            "type": "date",
+            "confidence": 0.9,
+            "context": "Date: January 13th",
+            "relationship": null,
+            "quoted_text": null,
+            "associated_event": "memo sent"
+          }
+        ],
+        "document_type": "email",
+        "sentiment": "neutral",
+        "legal_significance": "medium",
+        "risk_flags": [],
+        "confidence_overall": 0.93
+      },
+      "confidence_overall": 0.93
+    }
+  ]
+}

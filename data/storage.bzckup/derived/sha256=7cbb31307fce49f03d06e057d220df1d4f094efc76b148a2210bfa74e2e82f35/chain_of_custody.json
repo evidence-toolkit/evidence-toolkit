@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2025-10-09 04:54:46.514714",
+    "event_type": "ingest",
+    "actor": "system",
+    "description": "File ingested from data/cases/test_ai_batch/manager_memo.txt",
+    "metadata": {
+      "case_id": "test_ai_batch"
+    }
+  },
+  {
+    "timestamp": "2025-10-09 04:55:03.502004",
+    "event_type": "analyze",
+    "actor": "system",
+    "description": "Analysis completed: EvidenceType.DOCUMENT",
+    "metadata": null
+  }
+]

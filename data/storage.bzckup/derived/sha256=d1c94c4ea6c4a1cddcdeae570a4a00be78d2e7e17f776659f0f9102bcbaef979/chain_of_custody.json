@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2025-10-09 04:54:46.515882",
+    "event_type": "ingest",
+    "actor": "system",
+    "description": "File ingested from data/cases/test_ai_batch/witness_paul.txt",
+    "metadata": {
+      "case_id": "test_ai_batch"
+    }
+  },
+  {
+    "timestamp": "2025-10-09 04:55:19.239666",
+    "event_type": "analyze",
+    "actor": "system",
+    "description": "Analysis completed: EvidenceType.DOCUMENT",
+    "metadata": null
+  }
+]

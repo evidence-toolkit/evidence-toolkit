@@ -627,6 +627,7 @@ class EvidenceSummary(BaseModel):
     key_findings: List[str] = Field(default_factory=list, description="Bullet points of main findings")
     legal_significance: Optional[str] = Field(None, description="Legal significance level (critical, high, medium, low)")
     risk_flags: List[str] = Field(default_factory=list, description="Risk flags identified in analysis")
+    document_type: Optional[str] = Field(None, description="AI-classified document type (email, memo, contract, letter, etc.) - v3.3 Phase B++")
 
 
 class CaseSummary(BaseModel):

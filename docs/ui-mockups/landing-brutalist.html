@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVIDENCE TOOLKIT // AI-POWERED FORENSIC ANALYSIS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --accent: #00FF00; /* Electric lime green - screams "terminal" */
+            --border: 8px;
+        }
+
+        body {
+            font-family: 'Courier New', 'IBM Plex Mono', monospace;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        /* BRUTAL TYPOGRAPHY */
+        h1, h2, h3 {
+            font-weight: normal;
+            letter-spacing: -0.02em;
+        }
+
+        /* HERO SECTION - AGGRESSIVE ASYMMETRY */
+        .hero {
+            min-height: 100vh;
+            background: var(--black);
+            color: var(--white);
+            position: relative;
+            padding: 60px 40px;
+            border-bottom: var(--border) solid var(--accent);
+        }
+
+        .hero::before {
+            content: 'V3.3.0';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: var(--accent);
+            border: 3px solid var(--accent);
+            padding: 8px 16px;
+            transform: rotate(2deg);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+
+        .hero-title {
+            font-size: clamp(48px, 8vw, 120px);
+            line-height: 0.9;
+            text-transform: uppercase;
+            border-right: var(--border) solid var(--white);
+            padding-right: 40px;
+            position: relative;
+        }
+
+        .hero-title span {
+            display: block;
+        }
+
+        .hero-title .highlight {
+            color: var(--accent);
+            background: var(--accent);
+            color: var(--black);
+            padding: 0 10px;
+            display: inline-block;
+            transform: rotate(-1deg);
+        }
+
+        .hero-content {
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 40px;
+            border-left: 5px solid var(--accent);
+            padding-left: 20px;
+            margin-top: 20px;
+        }
+
+        .hero-cta {
+            margin-top: 60px;
+        }
+
+        .btn-brutal {
+            background: var(--accent);
+            color: var(--black);
+            border: none;
+            padding: 20px 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            transition: transform 0.1s;
+        }
+
+        .btn-brutal:hover {
+            transform: translate(4px, 4px);
+        }
+
+        .btn-brutal::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            border: var(--border) solid var(--accent);
+            z-index: -1;
+        }
+
+        .btn-brutal:hover::after {
+            top: 0;
+            left: 0;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            margin-top: 80px;
+            border: var(--border) solid var(--white);
+        }
+
+        .stat {
+            padding: 30px;
+            border-right: var(--border) solid var(--white);
+            text-align: center;
+        }
+
+        .stat:last-child {
+            border-right: none;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* FEATURES - STACKED BRUTALISM */
+        .features {
+            background: var(--white);
+            padding: 0;
+            position: relative;
+        }
+
+        .features-header {
+            background: var(--black);
+            color: var(--white);
+            padding: 60px 40px;
+            border-bottom: var(--border) solid var(--accent);
+            position: relative;
+        }
+
+        .features-header::before {
+            content: 'CORE CAPABILITIES';
+            position: absolute;
+            top: 50%;
+            left: -80px;
+            transform: rotate(-90deg) translateX(-50%);
+            transform-origin: left center;
+            font-size: 14px;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+        }
+
+        .features-header h2 {
+            font-size: clamp(36px, 5vw, 72px);
+            text-transform: uppercase;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            border: var(--border) solid var(--black);
+            border-top: none;
+            padding: 50px 30px;
+            position: relative;
+            background: var(--white);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-card:nth-child(2) {
+            background: var(--black);
+            color: var(--white);
+            border-left: none;
+            border-right: none;
+            margin-top: 40px;
+        }
+
+        .feature-card:nth-child(2) .feature-number {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .feature-card:nth-child(2) .feature-list li::before {
+            color: var(--accent);
+        }
+
+        .feature-card:nth-child(3) {
+            margin-top: 80px;
+        }
+
+        .feature-number {
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            background: var(--white);
+            border: 5px solid var(--black);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .feature-card:nth-child(2) .feature-number {
+            background: var(--black);
+            color: var(--accent);
+        }
+
+        .feature-title {
+            font-size: 24px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            margin-top: 50px;
+            letter-spacing: -0.02em;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .feature-list {
+            list-style: none;
+            font-size: 13px;
+        }
+
+        .feature-list li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .feature-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* TRUST INDICATORS - RAW TABLE AESTHETIC */
+        .trust-section {
+            background: var(--white);
+            padding: 100px 40px;
+            border-top: var(--border) solid var(--black);
+            border-bottom: var(--border) solid var(--black);
+            position: relative;
+        }
+
+        .trust-section::before {
+            content: 'SPECIFICATIONS';
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 12px;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            border: 3px solid var(--black);
+            padding: 6px 12px;
+        }
+
+        .trust-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: var(--border) solid var(--black);
+        }
+
+        .trust-item {
+            padding: 40px;
+            border-right: var(--border) solid var(--black);
+            border-bottom: var(--border) solid var(--black);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .trust-item:nth-child(2n) {
+            border-right: none;
+        }
+
+        .trust-item:nth-child(3),
+        .trust-item:nth-child(4) {
+            border-bottom: none;
+        }
+
+        .trust-icon {
+            font-size: 48px;
+            min-width: 60px;
+        }
+
+        .trust-content h3 {
+            font-size: 18px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.05em;
+        }
+
+        .trust-content p {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* USE CASES - TERMINAL AESTHETIC */
+        .use-cases {
+            background: var(--black);
+            color: var(--white);
+            padding: 100px 40px;
+            border-bottom: var(--border) solid var(--accent);
+        }
+
+        .use-cases-header {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+
+        .use-cases-header h2 {
+            font-size: 48px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .use-cases-header p {
+            font-size: 16px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .use-cases-list {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .use-case {
+            border: 5px solid var(--white);
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 30px;
+            align-items: start;
+            margin-bottom: -5px;
+        }
+
+        .use-case:hover {
+            background: var(--accent);
+            color: var(--black);
+            border-color: var(--accent);
+        }
+
+        .use-case-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: bold;
+        }
+
+        .use-case-description {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* FOOTER - STARK LAYOUT */
+        .footer {
+            background: var(--white);
+            color: var(--black);
+            padding: 80px 40px 40px;
+            border-top: var(--border) solid var(--black);
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            border-right: 5px solid var(--black);
+            padding-right: 40px;
+        }
+
+        .footer-brand h3 {
+            font-size: 24px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: 0.1em;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .footer-section a {
+            color: var(--black);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .footer-section a::before {
+            content: '>';
+            margin-right: 8px;
+            color: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .footer-section a:hover::before {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 5px solid var(--black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 30px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .hero-title {
+                border-right: none;
+                border-bottom: var(--border) solid var(--white);
+                padding-right: 0;
+                padding-bottom: 40px;
+            }
+
+            .hero-content {
+                padding-left: 0;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card:nth-child(2),
+            .feature-card:nth-child(3) {
+                margin-top: 0;
+            }
+
+            .feature-card {
+                border-left: var(--border) solid var(--black);
+                border-right: var(--border) solid var(--black);
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-item {
+                border-right: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-brand {
+                border-right: none;
+                border-bottom: 5px solid var(--black);
+                padding-right: 0;
+                padding-bottom: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat {
+                border-right: none;
+                border-bottom: var(--border) solid var(--white);
+            }
+
+            .stat:last-child {
+                border-bottom: none;
+            }
+
+            .use-case {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-title">
+                <span>EVIDENCE</span>
+                <span class="highlight">TOOLKIT</span>
+            </div>
+            <div class="hero-content">
+                <div>
+                    <div class="hero-subtitle">AI-Powered Forensic Analysis // For Boutique Legal Firms</div>
+                    <div class="hero-cta">
+                        <a href="#" class="btn-brutal">Request Demo</a>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">Data Utilization</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">5X</span>
+                        <span class="stat-label">Faster Analysis</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">48</span>
+                        <span class="stat-label">AI Models</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features">
+        <div class="features-header">
+            <h2>Maximum Data. <br>Minimum Bullshit.</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-number">01</div>
+                <h3 class="feature-title">Content-Addressed Storage</h3>
+                <p class="feature-description">
+                    SHA256-based deduplication. Chain of custody by design.
+                    Every piece of evidence tracked, versioned, immutable.
+                </p>
+                <ul class="feature-list">
+                    <li>Automatic deduplication</li>
+                    <li>Cryptographic integrity</li>
+                    <li>Forensic audit trail</li>
+                    <li>Zero data loss</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-number">02</div>
+                <h3 class="feature-title">AI Forensic Analysis</h3>
+                <p class="feature-description">
+                    OpenAI-powered entity extraction, contradiction detection,
+                    power dynamics analysis. Legal patterns you'd miss manually.
+                </p>
+                <ul class="feature-list">
+                    <li>Entity resolution (AI name matching)</li>
+                    <li>Contradiction detection</li>
+                    <li>Timeline reconstruction</li>
+                    <li>Email power dynamics</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-number">03</div>
+                <h3 class="feature-title">Client-Ready Packages</h3>
+                <p class="feature-description">
+                    Executive summaries, correlation reports, evidence indexes.
+                    Domain-specific prompts (employment, contract, generic).
+                </p>
+                <ul class="feature-list">
+                    <li>Case-type specific reports</li>
+                    <li>Quoted statement extraction</li>
+                    <li>Communication pattern analysis</li>
+                    <li>Relationship network mapping</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST INDICATORS -->
+    <section class="trust-section">
+        <div class="trust-grid">
+            <div class="trust-item">
+                <div class="trust-icon">⚡</div>
+                <div class="trust-content">
+                    <h3>Built on Pydantic</h3>
+                    <p>48 validated models. Type-safe from ingest to package. Zero schema drift.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">🔒</div>
+                <div class="trust-content">
+                    <h3>Privacy-Protected</h3>
+                    <p>Content-addressed storage. Client data never leaves your infrastructure.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">🎯</div>
+                <div class="trust-content">
+                    <h3>Domain-Specific</h3>
+                    <p>Workplace, contract, generic case types. Tailored prompts for your practice area.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">📊</div>
+                <div class="trust-content">
+                    <h3>Proven Architecture</h3>
+                    <p>v3.3 release. Battle-tested pipeline. Handles 100+ evidence pieces per case.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- USE CASES -->
+    <section class="use-cases">
+        <div class="use-cases-header">
+            <h2>Who Uses This</h2>
+            <p>Boutique firms. Edgy adopters. Compliance specialists.</p>
+        </div>
+        <div class="use-cases-list">
+            <div class="use-case">
+                <div class="use-case-label">Employment Law</div>
+                <div class="use-case-description">
+                    Tribunal prep. ACAS analysis. Workplace investigation evidence processing.
+                    AI detection of power imbalances in email threads.
+                </div>
+            </div>
+            <div class="use-case">
+                <div class="use-case-label">Fraud Investigation</div>
+                <div class="use-case-description">
+                    Document contradiction detection. Timeline reconstruction.
+                    Entity relationship mapping for complex fraud schemes.
+                </div>
+            </div>
+            <div class="use-case">
+                <div class="use-case-label">Compliance Consulting</div>
+                <div class="use-case-description">
+                    Policy violation flagging. Communication pattern analysis.
+                    Risk indicator extraction from unstructured data.
+                </div>
+            </div>
+            <div class="use-case">
+                <div class="use-case-label">Litigation Support</div>
+                <div class="use-case-description">
+                    Evidence correlation. Quoted statement extraction.
+                    Executive summaries for counsel. Case-type specific reporting.
+                </div>
+            </div>
+            <div class="use-case">
+                <div class="use-case-label">Private Investigation</div>
+                <div class="use-case-description">
+                    Image OCR aggregation. Semantic timeline events.
+                    Relationship network extraction from communications.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3>EVIDENCE TOOLKIT</h3>
+                <p>
+                    AI-powered forensic analysis for legal professionals who demand
+                    technical excellence and strategic insight. Built for boutique firms,
+                    compliance specialists, and litigation support teams.
+                </p>
+                <a href="#" class="btn-brutal">Get Started</a>
+            </div>
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Use Cases</h4>
+                <ul>
+                    <li><a href="#">Employment Law</a></li>
+                    <li><a href="#">Fraud Investigation</a></li>
+                    <li><a href="#">Compliance</a></li>
+                    <li><a href="#">Litigation Support</a></li>
+                    <li><a href="#">Private Investigation</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Security</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2025 Evidence Toolkit. v3.3.0</div>
+            <div class="footer-legal">
+                <span>SHA256-VERIFIED</span>
+                <span>PYDANTIC-VALIDATED</span>
+                <span>AI-POWERED</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

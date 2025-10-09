@@ -1,0 +1,121 @@
+{
+  "evidence_type": "document",
+  "analysis_timestamp": "2025-10-09 04:54:55.402080",
+  "file_metadata": {
+    "filename": "email_bob.txt",
+    "file_size": 195,
+    "mime_type": "text/plain",
+    "created_time": "2025-10-09T04:54:12.779741",
+    "modified_time": "2025-10-09T04:54:12.768741",
+    "extension": ".txt",
+    "sha256": "c25f10577f7f37c4df556c1deac9cb23b2d84e85b7e54a9688977cc156538d59"
+  },
+  "case_ids": [
+    "test_ai_batch"
+  ],
+  "case_id": "test_ai_batch",
+  "document_analysis": {
+    "total_words": 10,
+    "unique_words": 7,
+    "word_frequency": {
+      "bob": 3,
+      "complaint": 2,
+      "filing": 1,
+      "formal": 1,
+      "harassment": 1,
+      "manager": 1,
+      "sarah": 1
+    },
+    "top_words": [
+      [
+        "bob",
+        3
+      ],
+      [
+        "complaint",
+        2
+      ],
+      [
+        "filing",
+        1
+      ],
+      [
+        "formal",
+        1
+      ],
+      [
+        "harassment",
+        1
+      ],
+      [
+        "manager",
+        1
+      ],
+      [
+        "sarah",
+        1
+      ]
+    ],
+    "wordcloud_file": "data/storage/derived/sha256=c25f10577f7f37c4df556c1deac9cb23b2d84e85b7e54a9688977cc156538d59/word_cloud.png",
+    "frequency_chart_file": "data/storage/derived/sha256=c25f10577f7f37c4df556c1deac9cb23b2d84e85b7e54a9688977cc156538d59/word_frequency.png",
+    "openai_model": "gpt-4o-mini",
+    "ai_summary": "Bob Smith has formally filed a complaint with HR regarding alleged harassment by his manager, Sarah. This document indicates a potential workplace harassment situation that requires immediate attention from HR.",
+    "entities": [
+      {
+        "name": "Bob Smith",
+        "type": "person",
+        "confidence": 0.95,
+        "context": "I'm Bob and I'm filing a formal complaint",
+        "relationship": "filer of the complaint",
+        "quoted_text": null,
+        "associated_event": null
+      },
+      {
+        "name": "Sarah",
+        "type": "person",
+        "confidence": 0.9,
+        "context": "harassment from my manager Sarah",
+        "relationship": "manager of Bob",
+        "quoted_text": null,
+        "associated_event": null
+      },
+      {
+        "name": "HR",
+        "type": "organization",
+        "confidence": 0.9,
+        "context": "To: HR <hr@company.com>",
+        "relationship": "recipient of the complaint",
+        "quoted_text": null,
+        "associated_event": null
+      },
+      {
+        "name": "2025-01-15",
+        "type": "date",
+        "confidence": 0.95,
+        "context": "Date: 2025-01-15",
+        "relationship": null,
+        "quoted_text": null,
+        "associated_event": "filing of the complaint"
+      }
+    ],
+    "document_type": "email",
+    "sentiment": "professional",
+    "legal_significance": "high",
+    "risk_flags": [
+      "harassment"
+    ],
+    "analysis_confidence": 0.92
+  },
+  "image_analysis": null,
+  "email_analysis": null,
+  "chain_of_custody": [],
+  "exif_data": null,
+  "email_metadata": null,
+  "labels": [
+    "document",
+    "high-significance",
+    "harassment",
+    "doctype-email"
+  ],
+  "notes": null
+}

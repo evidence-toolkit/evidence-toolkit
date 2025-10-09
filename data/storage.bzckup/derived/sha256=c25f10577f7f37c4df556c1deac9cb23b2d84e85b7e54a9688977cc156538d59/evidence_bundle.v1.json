@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "test_ai_batch",
+  "evidence": {
+    "evidence_id": "c25f10577f7f37c4df556c1deac9cb23b2d84e85b7e54a9688977cc156538d59",
+    "sha256": "c25f10577f7f37c4df556c1deac9cb23b2d84e85b7e54a9688977cc156538d59",
+    "mime_type": "text/plain",
+    "bytes": 195,
+    "ingested_at": "2025-10-09T04:54:12.779741",
+    "source_path": "email_bob.txt"
+  },
+  "chain_of_custody": [],
+  "analyses": [
+    {
+      "analysis_id": "c25f10577f7f37c4df556c1deac9cb23b2d84e85b7e54a9688977cc156538d59_1759982095",
+      "created_at": "2025-10-09T04:54:55.402080",
+      "model": {
+        "name": "gpt-4o-mini",
+        "revision": "2025-09-10"
+      },
+      "parameters": {
+        "temperature": 0.0,
+        "prompt_hash": null,
+        "token_usage_in": null,
+        "token_usage_out": null
+      },
+      "outputs": {
+        "summary": "Bob Smith has formally filed a complaint with HR regarding alleged harassment by his manager, Sarah. This document indicates a potential workplace harassment situation that requires immediate attention from HR.",
+        "entities": [
+          {
+            "name": "Bob Smith",
+            "type": "person",
+            "confidence": 0.95,
+            "context": "I'm Bob and I'm filing a formal complaint",
+            "relationship": "filer of the complaint",
+            "quoted_text": null,
+            "associated_event": null
+          },
+          {
+            "name": "Sarah",
+            "type": "person",
+            "confidence": 0.9,
+            "context": "harassment from my manager Sarah",
+            "relationship": "manager of Bob",
+            "quoted_text": null,
+            "associated_event": null
+          },
+          {
+            "name": "HR",
+            "type": "organization",
+            "confidence": 0.9,
+            "context": "To: HR <hr@company.com>",
+            "relationship": "recipient of the complaint",
+            "quoted_text": null,
+            "associated_event": null
+          },
+          {
+            "name": "2025-01-15",
+            "type": "date",
+            "confidence": 0.95,
+            "context": "Date: 2025-01-15",
+            "relationship": null,
+            "quoted_text": null,
+            "associated_event": "filing of the complaint"
+          }
+        ],
+        "document_type": "email",
+        "sentiment": "professional",
+        "legal_significance": "high",
+        "risk_flags": [
+          "harassment"
+        ],
+        "confidence_overall": 0.92
+      },
+      "confidence_overall": 0.92
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+Received: from LO7P302MB1344.GBRP302.PROD.OUTLOOK.COM (::1) by
+ LO0P302MB0178.GBRP302.PROD.OUTLOOK.COM with HTTPS; Sat, 22 Mar 2025 12:39:31
+ +0000
+Received: from LO0P302MB0273.GBRP302.PROD.OUTLOOK.COM (2603:10a6:600:364::13)
+ by LO7P302MB1344.GBRP302.PROD.OUTLOOK.COM (2603:10a6:600:42d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.19; Sat, 22 Mar
+ 2025 12:39:27 +0000
+Received: from LO0P302MB0273.GBRP302.PROD.OUTLOOK.COM
+ ([fe80::52c7:806c:be7e:8d99]) by LO0P302MB0273.GBRP302.PROD.OUTLOOK.COM
+ ([fe80::52c7:806c:be7e:8d99%4]) with mapi id 15.20.8583.018; Sat, 22 Mar 2025
+ 12:39:27 +0000
+From: Amy Martin <Amy.Martin1@sainsburys.co.uk>
+To: Paul Boucherat <Paul.Boucherat.9241@mysainsburys.co.uk>
+CC: Michael Kicks <Michael.Kicks@sainsburys.co.uk>, Trish Sullivan
+	<Trish.Sullivan@sainsburys.co.uk>, Rachel Hemmings
+	<Rachel.Hemmings@sainsburys.co.uk>
+Subject: Re: IPH Meeting
+Thread-Topic: IPH Meeting
+Thread-Index: AQHbjnER+43Yv9f0Hk696/v/jGIWurNnA1xogBgfMok=
+Date: Sat, 22 Mar 2025 12:39:27 +0000
+Message-ID:
+	<LO0P302MB0273FE3BE83D10563A401D6286DA2@LO0P302MB0273.GBRP302.PROD.OUTLOOK.COM>
+References:
+	<LO0P302MB027366D9D26316721FC03F4686CA2@LO0P302MB0273.GBRP302.PROD.OUTLOOK.COM>
+ <LO0P302MB017885D9BBBAE15E6BF61AD582D52@LO0P302MB0178.GBRP302.PROD.OUTLOOK.COM>
+In-Reply-To:
+	<LO0P302MB017885D9BBBAE15E6BF61AD582D52@LO0P302MB0178.GBRP302.PROD.OUTLOOK.COM>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Exchange-Organization-AuthAs: Internal
+X-MS-Exchange-Organization-AuthMechanism: 04
+X-MS-Exchange-Organization-AuthSource: LO0P302MB0273.GBRP302.PROD.OUTLOOK.COM
+X-MS-Has-Attach: yes
+X-MS-Exchange-Organization-Network-Message-Id:
+	5b3882c9-2f96-49d8-eb43-08dd693e95a4
+X-MS-Exchange-Organization-SCL: 1
+X-Message-Flag: Flag for follow up
+X-MS-TNEF-Correlator:
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels:
+	MSIP_Label_e30ba449-43c6-4cb4-ab67-7944acc9363d_Enabled=True;MSIP_Label_e30ba449-43c6-4cb4-ab67-7944acc9363d_SiteId=e11fd634-26b5-47f4-8b8c-908e466e9bdf;MSIP_Label_e30ba449-43c6-4cb4-ab67-7944acc9363d_SetDate=2025-03-22T12:39:27.082Z;MSIP_Label_e30ba449-43c6-4cb4-ab67-7944acc9363d_Name=Confidential;MSIP_Label_e30ba449-43c6-4cb4-ab67-7944acc9363d_ContentBits=0;MSIP_Label_e30ba449-43c6-4cb4-ab67-7944acc9363d_Method=Standard;
+x-ms-publictraffictype: Email
+X-Microsoft-Antispam-Mailbox-Delivery:
+	ucf:0;jmr:0;auth:0;dest:I;ENG:(910005)(944506478)(944626604)(920097)(425001)(930097)(140003);
+X-Microsoft-Antispam-Message-Info:
+	e/8q+1ZVSrcCmW/dSSw6vcE5AfrXcDNodXJv0KSxK+3c+y26hIqSvn8FRAm0ZF1ZNaN8UROa/QK07/S+biAcG1XMZ6z1AJp7fSEVGBeIDIyz0JPmouLoXxrJJiocSC9qResOC1u815NjfXBPwQFNE68ShdzGoQkldwkdalLaYAn600ym8bw8V4HfZvd6MQfqS+++vAdVIus7m0navD7ujuAt9evgx/R3tJ7/F2r5DTuAKIa5cNpIU7ioJIIZX+0ni5UAO0RBBjFkQeDfVFsCdGO857bKJLF2+MLYSWpbdpvSmb7aZZ97FlQNqrLCCDjdM9mRbtuJ5r6pMz5FELQaafEjcE08v8b9pY7diW9bqatwAcNODCBPmfrKyX4PqsJFQ73Fx4soVd4NwiYB0VX/Ug6MkOKr4cTGy0BbluHHC4cDzh7j3y3CJ9kHON4EvQQOSLF21vgePkOFOESN9TWJqajrXiRN7xJ/lJcMcMo0F74+EMepHDczJexEvSiC26LzHOcuylKDl5heNm8KJ/YhD0SccVcKit3QwPNSaVmC7dzg6z95tayw3/XaLV1pY9fgTzbhOvzNh+wEysdkOFsBs6SAC2oGLl+C+RQgO2SN17U9SW9ZfWu5ipZTYCWwbFnb0jNz47xmwyH0O7MKti4gsucWO5jV1GyRGBwkWXR95HSbctfmvvlj3LNw4rnXTxf3BVLs1vT9IYtxJHzRiufkcGBSaOJAdyYNsBix44yZ5RoYJJeqZRZHtlka0KSralqj8qjRE+SM17q6CN0bm7d/0sxCGudIS10RlcKpvg3te162OaeGiE6uGrM5+/QfHSsCi3l6fxOQI35Rh2omK++Tlw==
+Content-Type: multipart/mixed;
+	boundary="_007_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_"
+MIME-Version: 1.0
+
+--_007_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_
+Content-Type: multipart/related;
+	boundary="_006_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_";
+	type="multipart/alternative"
+
+--_006_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_
+Content-Type: multipart/alternative;
+	boundary="_000_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_"
+
+--_000_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_
+Content-Type: text/plain; charset="us-ascii"
+
+Good afternoon Paul,
+
+Thank you for our chat this morning. It was good to have a walk around and see the impacted areas you have highlighted.
+As requested, I have attached your original email that you sent to us.
+Re the need for you or any shopper to go was their hands when shopping, I have no issue with this. If you are approached on the day, re your IPH and you have been to wash your hands just inform us when/If we speak to you and there will not be an issue. We don't know the shopper's reasons for a lower IPH before we approach them for a quick discussion about it, this is so we have a better understanding if you need any assistance or there has been an impact to whilst shopping, for example, spillage, items being blocked by shift stock, handset malfunction or handwashing. I hope that clears it up a little for you.
+
+We spoke about fridge cleans this morning, the last fridge clean was in fact September last year and it is held annually, I was mistaken this morning when we spoke.
+I have also attached the cleaning schedule for the meat aisle, the aisle is set to be deep cleaned by colleagues through the period, after which time it resets. The completion dates are next to the ticks.
+
+Kind regards
+
+Amy Martin.
+
+
+Amy Martin | Food Manager | C11 / Swadlincote / Food
+Sainsbury's Supermarkets | Civic Way, Swadlincote, DE11 0AD
+amy.martin1@sainsburys.co.uk | 01283 226792
+[cid:dc7c8c77-ff1c-4291-b756-20d54ff1a641]
+[https://res-1.cdn.office.net/assets/mail/file-icon/png/pdf_16x16.png]HandS-Concern.pdf<https://jsainsbury-my.sharepoint.com/personal/paul_boucherat_9241_mysainsburys_co_uk/Documents/Attachments/HandS-Concern.pdf>
+
+________________________________
+From: Paul Boucherat <Paul.Boucherat.9241@mysainsburys.co.uk>
+Sent: 07 March 2025 04:22
+To: Amy Martin <Amy.Martin1@sainsburys.co.uk>
+Cc: Michael Kicks <Michael.Kicks@sainsburys.co.uk>; Trish Sullivan <Trish.Sullivan@sainsburys.co.uk>; Rachel Hemmings <Rachel.Hemmings@sainsburys.co.uk>
+Subject: Re: IPH Meeting
+
+Good morning Amy,
+
+Thank you for the meeting notes and follow-up.
+
+Please attach my original February 2nd letter - with photos - regarding food safety concerns to these meeting notes, (mentioned in the meeting) as it provides essential context for our discussion.
+
+I appreciate Michael's email (March 5th) about the upcoming Sunday cleaning plan for Aisle 1.
+
+To clarify the timeline:
+- Feb 2: Submitted food safety concerns letter
+- Feb 9: Attended 4:00 AM meeting about photography (my first shift back from scheduled holiday)
+- Feb 20: Requested proper cleaning equipment (received ice scraper)
+- Mar 5: Received Sunday cleaning plan email
+- Mar 6: Meeting about IPH metrics (which I was asked to attend after my shift ended at 8:00 AM)
+
+I'm concerned yesterday's meeting shifted focus from serious food safety concerns to my personal productivity metrics. This creates a fundamental problem within our department.
+
+The solution provided ("you will skip an item... communicate with a manager... come back to pick the item") inappropriately centres the responsibility on me as an individual rather than addressing the systemic issues that affect all colleagues and customers.
+
+Additionally, the current system creates an impossible conflict between maintaining food safety and meeting productivity targets for any employee, not just me:
+
+- Identifying safety issues takes time, affecting IPH
+
+- Reporting issues to management takes time, affecting IPH
+
+- Following safety procedures takes time, affecting IPH
+
+- Having meetings about these issues outside shift hours impacts personal time
+
+This is not simply about individual performance but about:
+
+- Legal food safety requirements for retail establishments
+
+- Customer safety and public health
+
+- Company reputation and brand protection
+
+- Proper working conditions for all colleagues
+
+My initial letter highlighted several unresolved systemic issues:
+
+- Staff training deficiencies
+
+- Inadequate cleaning supplies and equipment
+
+- Lack of proper documentation procedures
+
+- Disconnect between perfect safety audit scores and actual conditions
+
+Any effective solution needs to address these underlying departmental problems rather than creating workarounds for individual employees.
+
+The current approach doesn't resolve the core conflict between safety requirements and productivity expectations that affects our entire team.
+
+I'm committed to both safety standards and performance goals, but our systems should support both simultaneously rather than forcing employees to prioritise one over the other.
+
+Could we please schedule a follow-up meeting during regular work hours to discuss a more comprehensive approach?
+
+Regards,
+Paul
+
+________________________________
+
+
+________________________________
+From: Amy Martin <Amy.Martin1@sainsburys.co.uk>
+Sent: 06 March 2025 09:00
+To: Paul Boucherat <Paul.Boucherat.9241@mysainsburys.co.uk>
+Cc: Michael Kicks <Michael.Kicks@sainsburys.co.uk>; Trish Sullivan <Trish.Sullivan@sainsburys.co.uk>; Rachel Hemmings <Rachel.Hemmings@sainsburys.co.uk>
+Subject: IPH Meeting
+
+Good morning Paul,
+
+Following our conversation this morning, I have attached the meeting notes to this email.
+Going forward to help with your IPH we have agreed you will skip an item on the meat aisle that needs cleaning, you will then communicate with a manager the issue you have found for it to be rectified, you will then come back to pick the item.
+
+
+Kind Regards
+
+Amy Martin.
+
+
+Amy Martin | Food Manager | C11 / Swadlincote / Food
+Sainsbury's Supermarkets | Civic Way, Swadlincote, DE11 0AD
+amy.martin1@sainsburys.co.uk | 01283 226792
+[cid:2c2bd148-ae14-4a9a-901e-3c78665e5e13]
+
+
+--_000_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_
+Content-Type: text/html; charset="us-ascii"
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css" style="display:none;"> P {margin-top:0;margin-bottom:0;} </style>
+</head>
+<body dir="ltr">
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Good afternoon Paul,</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Thank you for our chat this morning. It was good to have a walk around and see the impacted areas you have highlighted.</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+As requested, I have attached your original email that you sent to us.&nbsp;</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Re the need for you or any shopper to go was their hands when shopping, I have no issue with this. If you are approached on the day, re your IPH and you have been to wash your hands just inform us when/If we speak to you and there will not be an issue. We don't
+ know the shopper's reasons for a lower IPH before we approach them for a quick discussion about it, this is so we have a better understanding if you need any assistance or there has been an impact to whilst shopping, for example, spillage, items being blocked
+ by shift stock, handset malfunction or handwashing. I hope that clears it up a little for you.&nbsp;</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+We spoke about fridge cleans this morning, the last fridge clean was in fact September last year and it is held annually, I was mistaken this morning when we spoke.&nbsp;</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+I have also attached the cleaning schedule for the meat aisle, the aisle is set to be deep cleaned by colleagues through the period, after which time it resets. The completion dates are next to the ticks.&nbsp;</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Kind regards&nbsp;</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Amy Martin.</div>
+<div style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div id="Signature">
+<div style="text-align: left; text-indent: 0px; margin: 0cm 0cm 0.0001pt; font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Amy Martin | Food Manager | C11 / Swadlincote / Food</div>
+<div style="text-align: left; text-indent: 0px; margin: 0cm 0cm 0.0001pt; font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Sainsbury's Supermarkets | Civic Way, Swadlincote, DE11 0AD</div>
+<div style="text-align: left; text-indent: 0px; margin: 0cm 0cm 0.0001pt; font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+amy.martin1@sainsburys.co.uk | 01283 226792</div>
+<div style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<img id="image_0" style="height: auto; max-width: 780px; min-width: auto; min-height: auto; margin: 0px;" data-outlook-trace="F:2|T:2" src="cid:dc7c8c77-ff1c-4291-b756-20d54ff1a641"></div>
+<div style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<span class="_Entity _EType_OWALink _EId_OWALink_2 _EReadonly_1" style="display:inline-block"><span><span><span><a href="https://jsainsbury-my.sharepoint.com/personal/paul_boucherat_9241_mysainsburys_co_uk/Documents/Attachments/HandS-Concern.pdf" rel="noopener noreferrer" id="OLK_Beautified_4e0471ca-3157-b20a-87dd-4f9eec5b9521" class="OWAAutoLink eScj0 none" style="padding:0px 1px;border-radius:2px;user-select:all;background-color:rgb(243, 242, 241);padding:0px 1px;border-radius:2px;user-select:all;background-color:rgb(244, 244, 244);padding: 0px 1px; border-radius: 2px; user-select: all; background-color: rgb(244, 244, 244);" data-ogsc="" data-loopstyle="linkonly"><img class="suRDx" alt="" role="presentation" style="width: 16px; height: 16px; vertical-align: middle; padding: 1px 2px 2px 0px;" src="https://res-1.cdn.office.net/assets/mail/file-icon/png/pdf_16x16.png">HandS-Concern.pdf</a></span></span></span></span></div>
+<div style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+</div>
+<div id="appendonsend"></div>
+<hr style="display:inline-block;width:98%" tabindex="-1">
+<div id="divRplyFwdMsg" dir="ltr"><font face="Calibri, sans-serif" style="font-size:11pt" color="#000000"><b>From:</b> Paul Boucherat &lt;Paul.Boucherat.9241@mysainsburys.co.uk&gt;<br>
+<b>Sent:</b> 07 March 2025 04:22<br>
+<b>To:</b> Amy Martin &lt;Amy.Martin1@sainsburys.co.uk&gt;<br>
+<b>Cc:</b> Michael Kicks &lt;Michael.Kicks@sainsburys.co.uk&gt;; Trish Sullivan &lt;Trish.Sullivan@sainsburys.co.uk&gt;; Rachel Hemmings &lt;Rachel.Hemmings@sainsburys.co.uk&gt;<br>
+<b>Subject:</b> Re: IPH Meeting</font>
+<div>&nbsp;</div>
+</div>
+<div>
+<div>
+<div>Good morning Amy, </div>
+<div>
+<div><br>
+</div>
+<div>Thank you for the meeting notes and follow-up.</div>
+<div><br>
+</div>
+<div><b>Please attach my original February 2nd letter - with photos - regarding food safety concerns to these meeting notes,</b>&nbsp;(mentioned in the meeting) as it provides essential context for our discussion.&nbsp;</div>
+<div><br>
+</div>
+<div>I appreciate Michael's email (March 5th) about the upcoming Sunday cleaning plan for Aisle 1.</div>
+<div><br>
+</div>
+<div><b>To clarify the timeline:</b></div>
+<div>- Feb 2: Submitted food safety concerns letter</div>
+<div>- Feb 9: Attended 4:00 AM meeting about photography (my first shift back from scheduled holiday)</div>
+<div>- Feb 20: Requested proper cleaning equipment (received ice scraper)</div>
+<div>- Mar 5: Received Sunday cleaning plan email</div>
+<div>- Mar 6: Meeting about IPH metrics (which I was asked to attend after my shift ended at 8:00 AM)</div>
+<div><br>
+</div>
+<div>I'm concerned <b>yesterday's meeting shifted focus </b>from serious food safety concerns to my personal productivity metrics. This creates a fundamental problem within our department.</div>
+<div><br>
+</div>
+<div>The solution provided (&quot;you will skip an item... communicate with a manager... come back to pick the item&quot;)
+<b>inappropriately centres the responsibility on me</b> as an individual rather than addressing the systemic
+<b>issues that affect all colleagues and customers.</b></div>
+<div><br>
+</div>
+<div>Additionally, the current system creates an impossible conflict between<b> maintaining food safety and meeting productivity targets</b> for any employee, not just me:</div>
+<div><br>
+</div>
+<div>- Identifying safety issues takes time, affecting IPH</div>
+<div><br>
+</div>
+<div>- Reporting issues to management takes time, affecting IPH</div>
+<div><br>
+</div>
+<div>- Following safety procedures takes time, affecting IPH</div>
+<div><br>
+</div>
+<div>- Having meetings about these issues outside shift hours impacts personal time</div>
+<div><br>
+</div>
+<div><b>This is not simply about individual performance but about:</b></div>
+<div><br>
+</div>
+<div>- Legal food safety requirements for retail establishments</div>
+<div><br>
+</div>
+<div>- Customer safety and public health</div>
+<div><br>
+</div>
+<div>- Company reputation and brand protection</div>
+<div><br>
+</div>
+<div>- Proper working conditions for all colleagues</div>
+<div><br>
+</div>
+<div><b>My initial letter highlighted several unresolved systemic issues:</b></div>
+<div><br>
+</div>
+<div>- Staff training deficiencies</div>
+<div><br>
+</div>
+<div>- Inadequate cleaning supplies and equipment</div>
+<div><br>
+</div>
+<div>- Lack of proper documentation procedures</div>
+<div><br>
+</div>
+<div>- Disconnect between perfect safety audit scores and actual conditions</div>
+<div><br>
+</div>
+<div><b>Any effective solution needs to address these underlying departmental problems rather than creating workarounds for individual employees</b>.</div>
+<div>&nbsp;</div>
+<div>The current approach doesn't resolve the core conflict between safety requirements and productivity expectations that affects our entire team.</div>
+<div><br>
+</div>
+<div>I'm committed to both safety standards and performance goals, but our systems should support both simultaneously rather than forcing employees to prioritise one over the other.</div>
+<div><br>
+</div>
+<div>Could we please schedule a follow-up meeting during regular work hours to discuss a more comprehensive approach?</div>
+<div><br>
+</div>
+<div>Regards,</div>
+Paul<br>
+</div>
+<br>
+<hr tabindex="-1" style="display:inline-block; width:98%">
+<br>
+</div>
+<br>
+<hr tabindex="-1" style="display:inline-block; width:98%">
+<div id="x_divRplyFwdMsg" dir="ltr"><font face="Calibri, sans-serif" color="#000000" data-ogsc="" style="font-size:11pt"><b>From:</b> Amy Martin &lt;Amy.Martin1@sainsburys.co.uk&gt;<br>
+<b>Sent:</b> 06 March 2025 09:00<br>
+<b>To:</b> Paul Boucherat &lt;Paul.Boucherat.9241@mysainsburys.co.uk&gt;<br>
+<b>Cc:</b> Michael Kicks &lt;Michael.Kicks@sainsburys.co.uk&gt;; Trish Sullivan &lt;Trish.Sullivan@sainsburys.co.uk&gt;; Rachel Hemmings &lt;Rachel.Hemmings@sainsburys.co.uk&gt;<br>
+<b>Subject:</b> IPH Meeting</font>
+<div>&nbsp;</div>
+</div>
+<div dir="ltr">
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Good morning Paul,</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Following our conversation this morning, I have attached the meeting notes to this email.</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Going forward to help with your IPH we have agreed you will skip an item on the meat aisle that needs cleaning, you will then communicate with a manager the issue you have found for it to be rectified, you will then come back to pick the item.&nbsp;</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Kind Regards</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Amy Martin.</div>
+<div class="x_x_elementToProof" style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<div style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<div id="x_x_Signature">
+<div style="text-align:left; text-indent:0px; margin:0cm 0cm 0.0001pt; font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Amy Martin | Food Manager | C11 / Swadlincote / Food</div>
+<div style="text-align:left; text-indent:0px; margin:0cm 0cm 0.0001pt; font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Sainsbury's Supermarkets | Civic Way, Swadlincote, DE11 0AD</div>
+<div style="text-align:left; text-indent:0px; margin:0cm 0cm 0.0001pt; font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+amy.martin1@sainsburys.co.uk | 01283 226792</div>
+<div style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<img size="19033" alt="" aria-label="One" style="height:auto; max-width:780px; min-width:auto; min-height:auto; margin:0px" data-outlook-trace="F:4|T:4" src="cid:2c2bd148-ae14-4a9a-901e-3c78665e5e13"></div>
+<div style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_--
+
+--_006_LO0P302MB0273FE3BE83D10563A401D6286DA2LO0P302MB0273GBRP_
+Content-Type: image/png; name="Outlook-bpy4eaif.png"
+Content-Description: Outlook-bpy4eaif.png
+Content-Disposition: inline; filename="Outlook-bpy4eaif.png"; size=19033;
+	creation-date="Thu, 06 Mar 2025 08:38:19 GMT";
+	modification-date="Wed, 14 May 2025 10:09:35 GMT"
+Content-ID: <2c2bd148-ae14-4a9a-901e-3c78665e5e13>
+Content-Transfer-Encoding: base64

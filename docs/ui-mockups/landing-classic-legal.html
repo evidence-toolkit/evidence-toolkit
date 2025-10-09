@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence Toolkit - Forensic Evidence Analysis for Legal Professionals</title>
+    <style>
+        /* ========================================
+           CLASSIC/LEGAL DESIGN SYSTEM
+           ========================================
+           Color Palette:
+           - Navy Blue: #1a2b4a (Primary - authority)
+           - Burgundy: #7a1f1f (Accent - tradition)
+           - Gold: #b8860b (Highlight - prestige)
+           - Cream: #f5f3ed (Background - refined)
+           - Charcoal: #2c2c2c (Text - readability)
+           - Light Gray: #e8e6e0 (Borders - subtle)
+        ======================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #2c2c2c;
+            background-color: #f5f3ed;
+            line-height: 1.6;
+        }
+
+        /* Typography Hierarchy */
+        h1, h2, h3 {
+            font-family: 'Garamond', 'Georgia', serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        p, a, li {
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #1a2b4a;
+            padding: 1.5rem 0;
+            border-bottom: 3px solid #b8860b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f5f3ed;
+            text-decoration: none;
+            font-family: 'Garamond', 'Georgia', serif;
+            letter-spacing: 1px;
+        }
+
+        .logo-accent {
+            color: #b8860b;
+            font-style: italic;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #f5f3ed;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a:hover {
+            color: #b8860b;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a2b4a 0%, #2a3f5f 100%);
+            color: #f5f3ed;
+            padding: 6rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid #b8860b;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 50px,
+                    rgba(184, 134, 11, 0.03) 50px,
+                    rgba(184, 134, 11, 0.03) 51px
+                );
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background-color: #7a1f1f;
+            color: #f5f3ed;
+            padding: 0.5rem 1.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            border: 1px solid #b8860b;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            color: #f5f3ed;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-highlight {
+            color: #b8860b;
+            font-style: italic;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: #e8e6e0;
+            line-height: 1.7;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #b8860b;
+            color: #1a2b4a;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border: 2px solid #b8860b;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            background-color: #d4a017;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-secondary {
+            display: inline-block;
+            background-color: transparent;
+            color: #f5f3ed;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border: 2px solid #f5f3ed;
+            margin-left: 1rem;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .cta-secondary:hover {
+            background-color: rgba(245, 243, 237, 0.1);
+            border-color: #b8860b;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            background-color: #ffffff;
+            border-top: 1px solid #e8e6e0;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-overline {
+            color: #b8860b;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+        }
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            color: #1a2b4a;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: #5a5a5a;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background-color: #f5f3ed;
+            padding: 2.5rem;
+            border-radius: 4px;
+            border: 2px solid #e8e6e0;
+            border-top: 4px solid #7a1f1f;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border-top-color: #b8860b;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: #1a2b4a;
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            color: #1a2b4a;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            font-size: 1.05rem;
+            color: #4a4a4a;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: #3a3a3a;
+            font-size: 0.95rem;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #b8860b;
+            font-weight: bold;
+        }
+
+        /* Trust Indicators Section */
+        .trust-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(to bottom, #1a2b4a 0%, #2a3f5f 100%);
+            color: #f5f3ed;
+            border-top: 3px solid #b8860b;
+            border-bottom: 3px solid #b8860b;
+        }
+
+        .trust-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .trust-card {
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            border: 1px solid rgba(184, 134, 11, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .trust-card:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: #b8860b;
+        }
+
+        .trust-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #b8860b;
+        }
+
+        .trust-card h3 {
+            font-size: 1.5rem;
+            color: #f5f3ed;
+            margin-bottom: 1rem;
+        }
+
+        .trust-card p {
+            color: #e8e6e0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            padding: 5rem 2rem;
+            background-color: #f5f3ed;
+            border-bottom: 1px solid #e8e6e0;
+        }
+
+        .testimonial-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .testimonial-quote {
+            font-size: 1.6rem;
+            font-style: italic;
+            color: #2c2c2c;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            position: relative;
+            padding: 0 3rem;
+        }
+
+        .testimonial-quote::before {
+            content: '"';
+            font-size: 5rem;
+            color: #b8860b;
+            position: absolute;
+            left: -10px;
+            top: -20px;
+            font-family: 'Georgia', serif;
+            opacity: 0.3;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #1a2b4a;
+            font-size: 1.1rem;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+        }
+
+        .testimonial-title {
+            color: #7a1f1f;
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background-color: #7a1f1f;
+            color: #f5f3ed;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            color: #f5f3ed;
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: #e8e6e0;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button-light {
+            background-color: #f5f3ed;
+            color: #7a1f1f;
+            border-color: #f5f3ed;
+        }
+
+        .cta-button-light:hover {
+            background-color: #ffffff;
+            color: #1a2b4a;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #1a2b4a;
+            color: #e8e6e0;
+            padding: 3rem 2rem 2rem;
+            border-top: 3px solid #b8860b;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: #f5f3ed;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Garamond', 'Georgia', serif;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #e8e6e0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #b8860b;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(184, 134, 11, 0.3);
+            text-align: center;
+            color: #b8a080;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 2.2rem;
+            }
+
+            .cta-secondary {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+
+            .testimonial-quote {
+                font-size: 1.3rem;
+                padding: 0 1rem;
+            }
+        }
+
+        /* Legal Badge Styling */
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legal-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(184, 134, 11, 0.4);
+            border-radius: 3px;
+            font-size: 0.9rem;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .legal-badge-icon {
+            color: #b8860b;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo">Evidence <span class="logo-accent">Toolkit</span></a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Forensic-Grade Evidence Analysis</div>
+            <h1>
+                Professional Evidence Analysis<br>
+                for <span class="hero-highlight">Legal Practitioners</span>
+            </h1>
+            <p>
+                AI-powered forensic analysis of documents, emails, and digital evidence.
+                Court-ready reports with complete chain of custody documentation.
+                Trusted by solicitors, barristers, and legal investigators across the UK.
+            </p>
+            <div>
+                <a href="#" class="cta-button">Request a Consultation</a>
+                <a href="#" class="cta-secondary">View Sample Report</a>
+            </div>
+            <div class="badge-container">
+                <div class="legal-badge">
+                    <span class="legal-badge-icon">🔒</span>
+                    <span>ISO 27001 Certified</span>
+                </div>
+                <div class="legal-badge">
+                    <span class="legal-badge-icon">⚖️</span>
+                    <span>Court-Admissible Reports</span>
+                </div>
+                <div class="legal-badge">
+                    <span class="legal-badge-icon">🛡️</span>
+                    <span>GDPR Compliant</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="features-container">
+            <div class="section-header">
+                <div class="section-overline">Comprehensive Analysis</div>
+                <h2>Forensic-Grade Evidence Processing</h2>
+                <p>
+                    Advanced AI analysis combined with rigorous forensic standards
+                    to deliver actionable insights for your legal practice.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>
+                        Advanced machine learning algorithms analyze documents, emails,
+                        and images to identify patterns, contradictions, and corroborating evidence.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Entity extraction and relationship mapping</li>
+                        <li>Timeline reconstruction with gap analysis</li>
+                        <li>Legal pattern detection (contradictions, corroboration)</li>
+                        <li>Power dynamics analysis in communications</li>
+                        <li>Semantic event extraction from narratives</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📑</div>
+                    <h3>Court-Ready Reports</h3>
+                    <p>
+                        Professional forensic reports formatted for tribunal and court submission,
+                        with complete evidentiary documentation and expert analysis.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Executive summaries with key findings</li>
+                        <li>Detailed correlation analysis across evidence</li>
+                        <li>Risk assessment and legal implications</li>
+                        <li>Strategic recommendations for case strategy</li>
+                        <li>Citation-backed evidence references</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Chain of Custody</h3>
+                    <p>
+                        Complete audit trail from evidence ingestion through analysis to final report,
+                        ensuring forensic integrity and admissibility.
+                    </p>
+                    <ul class="feature-list">
+                        <li>SHA-256 cryptographic hashing</li>
+                        <li>Content-addressed storage with deduplication</li>
+                        <li>Immutable timestamp records</li>
+                        <li>Complete processing audit logs</li>
+                        <li>Version-controlled analysis history</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Indicators Section -->
+    <section id="security" class="trust-section">
+        <div class="trust-container">
+            <div class="section-header">
+                <div class="section-overline" style="color: #b8860b;">Security & Compliance</div>
+                <h2 style="color: #f5f3ed;">Built for Legal Professionals</h2>
+                <p style="color: #e8e6e0;">
+                    Enterprise-grade security and compliance standards designed
+                    specifically for the legal industry's stringent requirements.
+                </p>
+            </div>
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <div class="trust-icon">🔐</div>
+                    <h3>Secure by Design</h3>
+                    <p>
+                        End-to-end encryption, zero-knowledge architecture, and
+                        UK-based data centers ensure your client data remains confidential
+                        and protected at all times.
+                    </p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-icon">✓</div>
+                    <h3>GDPR Compliant</h3>
+                    <p>
+                        Full compliance with UK GDPR and Data Protection Act 2018.
+                        Complete data processing agreements and DPO oversight for
+                        peace of mind.
+                    </p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-icon">⚖️</div>
+                    <h3>Court-Ready Standards</h3>
+                    <p>
+                        Reports formatted to meet tribunal and court evidentiary standards.
+                        Expert witness support available for complex cases requiring
+                        technical testimony.
+                    </p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-icon">🛡️</div>
+                    <h3>ISO 27001 Certified</h3>
+                    <p>
+                        Independently audited information security management system
+                        ensuring the highest standards of data protection and
+                        operational security.
+                    </p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-icon">📋</div>
+                    <h3>Audit Trail Integrity</h3>
+                    <p>
+                        Immutable audit logs with cryptographic verification ensure
+                        complete chain of custody documentation for all evidence
+                        processing activities.
+                    </p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-icon">👥</div>
+                    <h3>Professional Support</h3>
+                    <p>
+                        Dedicated account management with 24/7 technical support.
+                        Forensic experts available for consultation on complex
+                        evidence analysis requirements.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial Section -->
+    <section class="testimonial-section">
+        <div class="testimonial-container">
+            <div class="section-overline">Client Testimonial</div>
+            <p class="testimonial-quote">
+                Evidence Toolkit transformed our approach to employment tribunal preparation.
+                The AI analysis identified critical patterns we had missed, and the forensic
+                reports were instrumental in achieving a favorable settlement. An invaluable
+                tool for any litigation practice.
+            </p>
+            <p class="testimonial-author">Sarah Mitchell, LLB</p>
+            <p class="testimonial-title">Senior Partner, Mitchell & Associates Solicitors</p>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Ready to Transform Your Evidence Analysis?</h2>
+        <p>
+            Schedule a consultation with our forensic analysis team to discuss
+            how Evidence Toolkit can support your legal practice.
+        </p>
+        <a href="#" class="cta-button cta-button-light">Schedule Consultation</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Evidence Toolkit</h4>
+                <p style="color: #b8a080; font-size: 0.95rem; line-height: 1.6;">
+                    Forensic-grade evidence analysis for legal professionals.
+                    AI-powered insights with court-ready documentation.
+                </p>
+            </div>
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul class="footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#security">Security</a></li>
+                    <li><a href="#documentation">Documentation</a></li>
+                    <li><a href="#sample-reports">Sample Reports</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#case-studies">Case Studies</a></li>
+                    <li><a href="#guides">User Guides</a></li>
+                    <li><a href="#api-docs">API Documentation</a></li>
+                    <li><a href="#support">Support Center</a></li>
+                    <li><a href="#webinars">Webinars</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#careers">Careers</a></li>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                    <li><a href="#terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Evidence Toolkit. All rights reserved. | Registered in England and Wales</p>
+        </div>
+    </footer>
+</body>
+</html>

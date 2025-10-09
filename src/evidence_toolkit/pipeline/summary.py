@@ -222,11 +222,12 @@ class SummaryGenerator:
                 case_summary.overall_assessment['settlement_recommendation'] = enhanced_response.settlement_recommendation
                 case_summary.overall_assessment['evidence_gaps'] = enhanced_response.evidence_gaps
 
-                # Also store forensic response for reference
-                case_summary.overall_assessment['forensic_summary'] = executive_response.executive_summary
-                case_summary.overall_assessment['forensic_legal_implications'] = executive_response.legal_implications
-                case_summary.overall_assessment['forensic_recommended_actions'] = executive_response.recommended_actions
-                case_summary.overall_assessment['forensic_risk_assessment'] = executive_response.risk_assessment
+                # Also store forensic response for audit trail (not displayed - internal only)
+                # v3.3 Phase B++: Prefix with _ to signal these are audit-only fields
+                case_summary.overall_assessment['_forensic_summary'] = executive_response.executive_summary
+                case_summary.overall_assessment['_forensic_legal_implications'] = executive_response.legal_implications
+                case_summary.overall_assessment['_forensic_recommended_actions'] = executive_response.recommended_actions
+                case_summary.overall_assessment['_forensic_risk_assessment'] = executive_response.risk_assessment
 
             except Exception as e:
                 print(f"⚠️  AI executive summary generation failed: {e}")
@@ -280,6 +281,11 @@ class SummaryGenerator:
                     evidence_type, analysis
                 )
 
+                # Extract document_type for documents (v3.3 Phase B++)
+                document_type = None
+                if evidence_type == 'document' and analysis.get('document_analysis'):
+                    document_type = analysis['document_analysis'].get('document_type')
+
                 evidence_summaries.append(EvidenceSummary(
                     sha256=sha256,
                     evidence_type=evidence_type,
@@ -288,7 +294,8 @@ class SummaryGenerator:
                     analysis_confidence=confidence,
                     key_findings=key_findings,
                     legal_significance=legal_significance,
-                    risk_flags=risk_flags
+                    risk_flags=risk_flags,
+                    document_type=document_type
                 ))
 
             except (json.JSONDecodeError, KeyError) as e:
@@ -1291,7 +1298,8 @@ Be concise but thorough. Focus on legally significant information."""
                                     'detected_objects': img_parsed.get('detected_objects', []),
                                     'evidence_value': img_parsed.get('potential_evidence_value', 'low'),
                                     'people_present': img_parsed.get('people_present', False),
-                                    'timestamps_visible': img_parsed.get('timestamps_visible', False)
+                                    'timestamps_visible': img_parsed.get('timestamps_visible', False),
+                                    'legal_relevance_notes': img_parsed.get('legal_relevance_notes', '')  # v3.3 Phase B++
                                 })
 
                                 # Group by object categories for analysis
@@ -1513,12 +1521,13 @@ Be concise but thorough. Focus on legally significant information."""
         lines.append("=" * 80)
         lines.append("")
 
-        # v3.3 Phase B+: Forensic Summary (detailed narrative analysis) - MOVED TO TOP
-        forensic_summary = case_summary.overall_assessment.get('forensic_summary')
-        if forensic_summary:
-            lines.append("🔍 FORENSIC SUMMARY")
+        # v3.3 Phase B+: Executive Summary (from enhanced layer) - MOVED TO TOP
+        # Note: case_summary.executive_summary contains the ENHANCED version (client-ready)
+        # forensic_summary is kept in overall_assessment for audit trail but not displayed
+        if case_summary.executive_summary:
+            lines.append("🔍 EXECUTIVE SUMMARY")
             lines.append("-" * 80)
-            lines.append(forensic_summary)
+            lines.append(case_summary.executive_summary)
             lines.append("")
 
         # v3.3 Phase B+: AI Key Findings (bullet-point discoveries) - MOVED TO TOP
@@ -1530,14 +1539,9 @@ Be concise but thorough. Focus on legally significant information."""
                 lines.append(f"{i}. {finding}")
             lines.append("")
 
-        # v3.3 Phase B+: Forensic Legal Implications (specific risk areas) - MOVED TO TOP
-        forensic_legal_impl = case_summary.overall_assessment.get('forensic_legal_implications')
-        if forensic_legal_impl:
-            lines.append("⚖️  LEGAL IMPLICATIONS")
-            lines.append("-" * 80)
-            for i, impl in enumerate(forensic_legal_impl, 1):
-                lines.append(f"{i}. {impl}")
-            lines.append("")
+        # v3.3 Phase B++: Legal Implications removed from display
+        # forensic_legal_implications stored for audit but not shown (no enhanced equivalent)
+        # Legal implications are covered in executive summary narrative above
 
         # v3.2: Enhanced Risk Assessment (if enhancement was applied)
         if case_summary.overall_assessment.get('enhancement_applied'):
@@ -1584,14 +1588,47 @@ Be concise but thorough. Focus on legally significant information."""
 
             lines.append("")
 
-        # v3.3 Phase B+: Forensic Recommended Actions (strategic guidance) - IN STRATEGIC SECTION
-        forensic_actions = case_summary.overall_assessment.get('forensic_recommended_actions')
-        if forensic_actions:
+        # v3.3 Phase B++: Recommended Actions (from enhanced layer - deadline-specific)
+        # Display immediate_actions (enhanced, deadline-driven) as standalone section
+        # forensic_recommended_actions stored for audit but not displayed (generic version)
+        immediate_actions_display = case_summary.overall_assessment.get('immediate_actions', [])
+        if immediate_actions_display:
             lines.append("🎯 RECOMMENDED ACTIONS")
             lines.append("-" * 80)
-            for i, action in enumerate(forensic_actions, 1):
+            for i, action in enumerate(immediate_actions_display, 1):
                 lines.append(f"{i}. {action}")
             lines.append("")
+
+        # v3.3 Phase B++: Document Summaries Section - IN STRATEGIC SECTION
+        # Aggregate AI-written narratives for key documents (high/medium significance)
+        doc_summaries = []
+        for summary in case_summary.evidence_summaries:
+            if summary.evidence_type == 'document' and summary.legal_significance in ['high', 'medium', 'critical']:
+                # Need to load analysis file to get ai_summary
+                analysis_file = self.storage.derived_dir / f"sha256={summary.sha256}" / "analysis.v1.json"
+                if analysis_file.exists():
+                    try:
+                        with open(analysis_file) as f:
+                            analysis = json.load(f)
+                            doc_analysis = analysis.get('document_analysis', {})
+                            ai_summary = doc_analysis.get('ai_summary')
+                            if ai_summary:
+                                doc_summaries.append({
+                                    'filename': summary.filename,
+                                    'document_type': summary.document_type or 'document',
+                                    'ai_summary': ai_summary,
+                                    'legal_significance': summary.legal_significance
+                                })
+                    except (json.JSONDecodeError, FileNotFoundError, KeyError):
+                        continue
+
+        if doc_summaries:
+            lines.append("📄 KEY DOCUMENT SUMMARIES")
+            lines.append("-" * 80)
+            for i, doc in enumerate(doc_summaries[:10], 1):  # Top 10 most significant
+                lines.append(f"{i}. {doc['filename']} ({doc['document_type'].upper()})")
+                lines.append(f"   {doc['ai_summary']}")
+                lines.append("")
 
         # v3.3: Quoted Statements Section - IN STRATEGIC SECTION
         if 'quoted_statements' in case_summary.overall_assessment:
@@ -1654,11 +1691,19 @@ Be concise but thorough. Focus on legally significant information."""
                 lines.append(f"Images with people: {ocr['people_present_count']}")
             if ocr['timestamps_visible_count'] > 0:
                 lines.append(f"Images with timestamps: {ocr['timestamps_visible_count']}")
+
+            # v3.3 Phase B++: Display aggregated detected objects
+            if ocr.get('object_categories'):
+                object_summary = ', '.join([f"{count} {obj}" for obj, count in list(ocr['object_categories'].items())[:5]])
+                lines.append(f"Objects detected: {object_summary}")
+
             lines.append("")
             if ocr['images_with_text']:
                 lines.append("Sample extractions:")
                 for img in ocr['images_with_text'][:3]:  # Top 3
-                    lines.append(f"  • {img['filename']} [{img['evidence_value'].upper()}]")
+                    # v3.3 Phase B++: Show legal relevance context
+                    relevance = f" - {img['legal_relevance_notes']}" if img.get('legal_relevance_notes') else ""
+                    lines.append(f"  • {img['filename']} [{img['evidence_value'].upper()}]{relevance}")
                     lines.append(f"    \"{img['detected_text'][:80]}...\"")
                 lines.append("")
 
@@ -1676,7 +1721,12 @@ Be concise but thorough. Focus on legally significant information."""
         lines.append("📁 EVIDENCE ANALYSIS")
         lines.append("-" * 30)
         for i, summary in enumerate(case_summary.evidence_summaries, 1):
-            lines.append(f"{i}. {summary.filename} ({summary.evidence_type.upper()})")
+            # v3.3 Phase B++: Show AI-classified document type for documents
+            type_display = summary.evidence_type.upper()
+            if summary.document_type:
+                type_display = f"{summary.document_type.upper()}"
+
+            lines.append(f"{i}. {summary.filename} ({type_display})")
             lines.append(f"   SHA256: {summary.sha256[:16]}...")
             lines.append(f"   Size: {summary.file_size:,} bytes")
 
@@ -1708,6 +1758,61 @@ Be concise but thorough. Focus on legally significant information."""
         if case_summary.correlation_result.timeline_events:
             lines.append("⏰ TIMELINE")
             lines.append("-" * 30)
+
+            # v3.3 Phase B++: Display temporal sequences (causal chains)
+            if case_summary.correlation_result.temporal_sequences:
+                lines.append("")
+                lines.append("🔄 TEMPORAL PATTERNS (Causal Sequences):")
+                for i, seq in enumerate(case_summary.correlation_result.temporal_sequences[:5], 1):
+                    # seq structure: {anchor_event: {...}, related_events: [{...}, ...]}
+                    anchor = seq.get('anchor_event', {})
+                    related = seq.get('related_events', [])
+
+                    if anchor and related:
+                        # Extract descriptions (remove timestamp prefix if present)
+                        anchor_desc = anchor.get('description', '').split(' - ')[-1] if ' - ' in anchor.get('description', '') else anchor.get('description', '')[:60]
+
+                        # Build chain: anchor → related events
+                        chain_parts = [anchor_desc]
+                        for e in related[:3]:  # Show up to 3 related events
+                            e_desc = e.get('description', '').split(' - ')[-1] if ' - ' in e.get('description', '') else e.get('description', '')[:60]
+                            chain_parts.append(e_desc)
+
+                        chain = " → ".join(chain_parts)
+                        if len(related) > 3:
+                            chain += f" ... (+{len(related) - 3} more)"
+
+                        lines.append(f"{i}. {chain}")
+                        lines.append(f"   {len(related) + 1} events in sequence")
+                lines.append("")
+
+            # v3.3 Phase B++: Call out timeline gaps explicitly
+            if case_summary.correlation_result.timeline_gaps:
+                lines.append("")
+                lines.append("⚠️  TIMELINE GAPS (Suspicious Missing Periods):")
+                for i, gap in enumerate(case_summary.correlation_result.timeline_gaps[:5], 1):
+                    # gap structure: {gap_duration_days: 43.57, before_event: {...}, after_event: {...}, significance: 'high'}
+                    duration_days = int(gap.get('gap_duration_days', 0))
+
+                    # Extract event descriptions
+                    before_event = gap.get('before_event', {})
+                    after_event = gap.get('after_event', {})
+
+                    before_desc = before_event.get('description', 'Start')[:60]
+                    after_desc = after_event.get('description', 'End')[:60]
+
+                    # Show risk flags if present
+                    risk_context = ""
+                    if before_event.get('ai_classification', {}).get('risk_flags'):
+                        flags = before_event['ai_classification']['risk_flags'][:2]
+                        risk_context = f" ({', '.join(flags)})"
+
+                    lines.append(f"{i}. {duration_days}-day gap: {before_desc}{risk_context} → {after_desc}")
+                    if gap.get('significance'):
+                        lines.append(f"   Significance: {gap['significance']}")
+                lines.append("")
+
+            lines.append("Timeline Events:")
             for event in case_summary.correlation_result.timeline_events[:10]:  # Show first 10
                 lines.append(f"{event.timestamp.strftime('%Y-%m-%d %H:%M')} - {event.description}")
             lines.append("")
