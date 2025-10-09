@@ -1,7 +1,8 @@
 # Evidence Toolkit
 
+[![Version](https://img.shields.io/badge/version-3.3.0-success.svg)](CHANGELOG.md)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![OpenAI](https://img.shields.io/badge/Powered%20by-OpenAI-412991.svg)](https://openai.com/)
 
 **AI-powered forensic evidence analysis for workplace investigations, legal cases, and compliance reviews.**
@@ -41,10 +42,13 @@ ls data/packages/
 
 - **AI Analysis**: Entity extraction, sentiment analysis, legal risk assessment
 - **Cross-Evidence Correlation**: Find connections across documents, emails, and images
-- **Timeline Reconstruction**: Automatic chronology from metadata and content
+- **Timeline Reconstruction**: Automatic chronology from metadata and semantic events (v3.3)
 - **Power Dynamics**: Email hierarchy and communication pattern analysis
+- **Relationship Networks**: Escalation chains and communication mapping (v3.3)
+- **Image OCR Aggregation**: Extract and analyze text from visual evidence (v3.3)
 - **Chain of Custody**: Complete audit trail for legal compliance
 - **Content-Addressed Storage**: SHA256-based deduplication and integrity verification
+- **98% Data Utilization**: Maximum insights from every AI analysis (v3.3)
 
 ### Example Use Cases
 
@@ -176,14 +180,18 @@ MY-CASE_analysis_package_20251009_143000/
     └── [original files]               # Your evidence files
 ```
 
-### Executive Summary Includes
+### Executive Summary Includes (v3.3 Enhanced)
 
-- **Forensic Summary**: Detailed narrative analysis
-- **Key Findings**: 3-5 bullet-point discoveries with citations
-- **Legal Implications**: Risk areas and case strategy guidance
-- **Recommended Actions**: Strategic next steps
+- **Forensic Summary**: Detailed narrative analysis (1,280-char insights-first)
+- **Key Findings**: 3-5 bullet-point discoveries with evidence citations
+- **Legal Implications**: 5 specific risk areas for case strategy
+- **Recommended Actions**: 5 strategic guidance items
+- **Quoted Statements**: Direct quotes by person with sentiment analysis (v3.3)
+- **Communication Patterns**: Email risk classification and pattern distribution (v3.3)
+- **Relationship Network**: Key players and connection mapping (v3.3)
+- **Image OCR Analysis**: Text extraction from visual evidence (v3.3)
 - **Entity Correlations**: People/orgs appearing across evidence
-- **Timeline Analysis**: Event chronology with confidence scoring
+- **Timeline Analysis**: Event chronology with semantic events (v3.3)
 
 ---
 
