@@ -27,7 +27,7 @@ from evidence_toolkit.core.models import (
     EmailThreadAnalysis,  # v3.1: Use full EmailThreadAnalysis instead of EmailAnalysisResult
     ChainOfCustodyEvent,
 )
-from evidence_toolkit.core.utils import detect_file_type, extract_exif_data
+from evidence_toolkit.core.utils import detect_file_type, extract_exif_data, get_evidence_base_dir
 from evidence_toolkit.analyzers.document import DocumentAnalyzer
 from evidence_toolkit.analyzers.image import ImageAnalyzer
 from evidence_toolkit.analyzers.email import EmailAnalyzer
@@ -143,7 +143,8 @@ def analyze_evidence(
     # If forcing re-analysis, backup existing analysis
     if existing_analysis and force:
         import shutil
-        analysis_file = storage.derived_dir / f"sha256={sha256}" / "analysis.v1.json"
+        evidence_dir = get_evidence_base_dir(storage.derived_dir, sha256)
+        analysis_file = evidence_dir / "analysis.v1.json"
         if analysis_file.exists():
             backup_file = analysis_file.with_suffix(f".json.backup.{int(time.time())}")
             shutil.copy2(analysis_file, backup_file)
@@ -161,7 +162,8 @@ def analyze_evidence(
         print(f"🔍 Analyzing {evidence_type_enum.value} evidence: {sha256[:12]}...")
 
     # Load metadata
-    metadata_file = storage.derived_dir / f"sha256={sha256}" / "metadata.json"
+    evidence_dir = get_evidence_base_dir(storage.derived_dir, sha256)
+    metadata_file = evidence_dir / "metadata.json"
     with open(metadata_file, 'r') as f:
         metadata_dict = json.load(f)
 
@@ -170,7 +172,7 @@ def analyze_evidence(
     # Perform analysis based on type
     email_metadata = None
     # Create derived directory path for storing visualizations
-    derived_evidence_dir = storage.derived_dir / f"sha256={sha256}"
+    derived_evidence_dir = evidence_dir
 
     if evidence_type_enum == EvidenceType.DOCUMENT:
         analysis_result = _analyze_document(original_file, quiet, output_dir=derived_evidence_dir)

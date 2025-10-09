@@ -21,7 +21,7 @@ from evidence_toolkit.core.models import (
     CaseSummary,      # v3.1: Moved from @dataclass to Pydantic in models.py
 )
 from evidence_toolkit.analyzers.correlation import CorrelationAnalyzer
-from evidence_toolkit.core.utils import read_json_safe, call_openai_structured
+from evidence_toolkit.core.utils import read_json_safe, call_openai_structured, get_evidence_base_dir
 
 
 class ExecutiveSummaryResponse(BaseModel):
@@ -987,7 +987,8 @@ Be concise but thorough. Focus on legally significant information."""
         # Find email analysis files and extract participant data
         for evidence in evidence_summaries:
             if evidence.evidence_type == 'email':
-                analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
+                analysis_file = evidence_dir / "analysis.v1.json"
                 if analysis_file.exists():
                     analysis = read_json_safe(analysis_file)
                     if analysis:
@@ -1074,7 +1075,8 @@ Be concise but thorough. Focus on legally significant information."""
         # Extract communication patterns from email analyses
         for evidence in evidence_summaries:
             if evidence.evidence_type == 'email':
-                analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
+                analysis_file = evidence_dir / "analysis.v1.json"
                 if analysis_file.exists():
                     analysis = read_json_safe(analysis_file)
                     if analysis:
@@ -1147,7 +1149,8 @@ Be concise but thorough. Focus on legally significant information."""
         # Find document analysis files and extract quoted statements
         for evidence in evidence_summaries:
             if evidence.evidence_type == 'document':
-                analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
+                analysis_file = evidence_dir / "analysis.v1.json"
                 if analysis_file.exists():
                     analysis = read_json_safe(analysis_file)
                     if analysis:
@@ -1234,7 +1237,8 @@ Be concise but thorough. Focus on legally significant information."""
 
         for evidence in evidence_summaries:
             if evidence.evidence_type == 'image':
-                analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
+                analysis_file = evidence_dir / "analysis.v1.json"
                 if analysis_file.exists():
                     analysis = read_json_safe(analysis_file)
                     if analysis:
@@ -1318,7 +1322,8 @@ Be concise but thorough. Focus on legally significant information."""
 
         for evidence in evidence_summaries:
             if evidence.evidence_type == 'document':
-                analysis_file = self.storage.derived_dir / f"sha256={evidence.sha256}" / "analysis.v1.json"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
+                analysis_file = evidence_dir / "analysis.v1.json"
                 if analysis_file.exists():
                     analysis = read_json_safe(analysis_file)
                     if analysis:
@@ -1551,7 +1556,8 @@ Be concise but thorough. Focus on legally significant information."""
         for summary in case_summary.evidence_summaries:
             if summary.evidence_type == 'document' and summary.legal_significance in ['high', 'medium', 'critical']:
                 # Need to load analysis file to get ai_summary
-                analysis_file = self.storage.derived_dir / f"sha256={summary.sha256}" / "analysis.v1.json"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, summary.sha256)
+                analysis_file = evidence_dir / "analysis.v1.json"
                 if analysis_file.exists():
                     analysis = read_json_safe(analysis_file)
                     if analysis:

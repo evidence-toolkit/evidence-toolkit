@@ -17,6 +17,7 @@ from datetime import datetime
 
 from evidence_toolkit.core.storage import EvidenceStorage
 from evidence_toolkit.pipeline.summary import SummaryGenerator, CaseSummary
+from evidence_toolkit.core.utils import get_evidence_base_dir
 
 
 class PackageGenerator:
@@ -206,7 +207,7 @@ class PackageGenerator:
         """
         try:
             # Find the analysis file
-            evidence_dir = self.storage.derived_dir / f"sha256={evidence_summary.sha256}"
+            evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence_summary.sha256)
             analysis_file = evidence_dir / "analysis.v1.json"
 
             if analysis_file.exists():
@@ -238,7 +239,7 @@ class PackageGenerator:
         for evidence in case_summary.evidence_summaries:
             if evidence.evidence_type == "document":
                 # Look for word clouds and frequency charts
-                evidence_dir = self.storage.derived_dir / f"sha256={evidence.sha256}"
+                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
 
                 # Common visualization files
                 viz_patterns = ["word_cloud.png", "word_frequency.png", "*.png", "*.jpg", "*.pdf"]
@@ -486,7 +487,7 @@ This methodology is designed for professional legal evidence analysis and mainta
         for evidence in case_summary.evidence_summaries:
             try:
                 # Find original file
-                evidence_dir = self.storage.raw_dir / f"sha256={evidence.sha256}"
+                evidence_dir = get_evidence_base_dir(self.storage.raw_dir, evidence.sha256)
                 original_files = list(evidence_dir.glob("original.*"))
 
                 if original_files:

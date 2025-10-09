@@ -24,6 +24,7 @@ from datetime import datetime
 from evidence_toolkit.core.storage import EvidenceStorage
 from evidence_toolkit.core.models import UnifiedAnalysis, EvidenceType, FileMetadata
 from evidence_toolkit.analyzers.image import ImageAnalyzer
+from evidence_toolkit.core.utils import get_evidence_base_dir
 
 
 async def analyze_images_batch(
@@ -109,7 +110,8 @@ async def analyze_images_batch(
         image_result = image_results[i]
 
         # Load metadata
-        metadata_file = storage.derived_dir / f"sha256={sha256}" / "metadata.json"
+        evidence_dir = get_evidence_base_dir(storage.derived_dir, sha256)
+        metadata_file = evidence_dir / "metadata.json"
         import json
         with open(metadata_file, 'r') as f:
             metadata_dict = json.load(f)

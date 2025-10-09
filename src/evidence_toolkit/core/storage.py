@@ -24,7 +24,9 @@ from .utils import (
     extract_exif_data,
     detect_file_type,
     ensure_directory,
-    create_hard_link
+    create_hard_link,
+    read_json_safe,
+    get_evidence_base_dir
 )
 from .models import (
     # Base types
@@ -130,8 +132,8 @@ class EvidenceStorage:
             evidence_type = EvidenceType(detect_file_type(file_path))
 
             # Create storage directories
-            raw_hash_dir = self.raw_dir / f"sha256={sha256}"
-            derived_hash_dir = self.derived_dir / f"sha256={sha256}"
+            raw_hash_dir = get_evidence_base_dir(self.raw_dir, sha256)
+            derived_hash_dir = get_evidence_base_dir(self.derived_dir, sha256)
 
             ensure_directory(raw_hash_dir)
             ensure_directory(derived_hash_dir)
@@ -203,14 +205,16 @@ class EvidenceStorage:
         Returns:
             UnifiedAnalysis object or None if not found
         """
-        analysis_file = self.derived_dir / f"sha256={sha256}" / "analysis.v1.json"
+        evidence_dir = get_evidence_base_dir(self.derived_dir, sha256)
+        analysis_file = evidence_dir / "analysis.v1.json"
 
         if not analysis_file.exists():
             return None
 
+        data = read_json_safe(analysis_file)
+        if not data:
+            return None
         try:
-            with open(analysis_file, 'r') as f:
-                data = json.load(f)
             return UnifiedAnalysis.model_validate(data)
         except Exception as e:
             print(f"Error loading analysis for {sha256}: {e}")
@@ -227,7 +231,7 @@ class EvidenceStorage:
         """
         try:
             sha256 = analysis.file_metadata.sha256
-            derived_hash_dir = self.derived_dir / f"sha256={sha256}"
+            derived_hash_dir = get_evidence_base_dir(self.derived_dir, sha256)
 
             if not derived_hash_dir.exists():
                 print(f"Error: Derived directory does not exist for {sha256}")
@@ -278,7 +282,7 @@ class EvidenceStorage:
         """
         try:
             sha256 = analysis.file_metadata.sha256
-            derived_hash_dir = self.derived_dir / f"sha256={sha256}"
+            derived_hash_dir = get_evidence_base_dir(self.derived_dir, sha256)
 
             # Convert file metadata to evidence core
             evidence_core = EvidenceCore(
@@ -456,7 +460,8 @@ class EvidenceStorage:
             sha256: SHA256 hash of evidence
             events: List of custody events
         """
-        custody_file = self.derived_dir / f"sha256={sha256}" / "chain_of_custody.json"
+        evidence_dir = get_evidence_base_dir(self.derived_dir, sha256)
+        custody_file = evidence_dir / "chain_of_custody.json"
         events_data = [event.model_dump() for event in events]
 
         with open(custody_file, 'w') as f:
@@ -469,17 +474,18 @@ class EvidenceStorage:
             sha256: SHA256 hash of evidence
             event: Custody event to add
         """
-        custody_file = self.derived_dir / f"sha256={sha256}" / "chain_of_custody.json"
+        evidence_dir = get_evidence_base_dir(self.derived_dir, sha256)
+        custody_file = evidence_dir / "chain_of_custody.json"
 
         # Load existing events
         events = []
         if custody_file.exists():
-            try:
-                with open(custody_file, 'r') as f:
-                    events_data = json.load(f)
+            events_data = read_json_safe(custody_file)
+            if events_data:
+                try:
                     events = [ChainOfCustodyEvent.model_validate(e) for e in events_data]
-            except Exception as e:
-                print(f"Warning: Could not load existing custody events: {e}")
+                except Exception as e:
+                    print(f"Warning: Could not load existing custody events: {e}")
 
         # Add new event
         events.append(event)
@@ -493,7 +499,8 @@ class EvidenceStorage:
             label: Label to create link for
             extension: File extension
         """
-        original_file = self.raw_dir / f"sha256={sha256}" / f"original{extension}"
+        raw_evidence_dir = get_evidence_base_dir(self.raw_dir, sha256)
+        original_file = raw_evidence_dir / f"original{extension}"
         if original_file.exists():
             label_dir = self.labels_dir / label
             label_link = label_dir / f"{sha256}{extension}"
@@ -508,7 +515,7 @@ class EvidenceStorage:
         Returns:
             Path to original file or None if not found
         """
-        raw_hash_dir = self.raw_dir / f"sha256={sha256}"
+        raw_hash_dir = get_evidence_base_dir(self.raw_dir, sha256)
         if not raw_hash_dir.exists():
             return None
 
@@ -548,13 +555,10 @@ class EvidenceStorage:
         for evidence_dir in evidence_dirs:
             analysis_file = evidence_dir / "analysis.v1.json"
             if analysis_file.exists():
-                try:
-                    with open(analysis_file, 'r') as f:
-                        data = json.load(f)
-                        evidence_type = data.get('evidence_type', 'unknown')
-                        evidence_by_type[evidence_type] = evidence_by_type.get(evidence_type, 0) + 1
-                except (json.JSONDecodeError, KeyError):
-                    pass
+                data = read_json_safe(analysis_file)
+                if data:
+                    evidence_type = data.get('evidence_type', 'unknown')
+                    evidence_by_type[evidence_type] = evidence_by_type.get(evidence_type, 0) + 1
 
         # Calculate sizes
         raw_size = sum(f.stat().st_size for f in self.raw_dir.rglob("*") if f.is_file())
@@ -661,13 +665,13 @@ class EvidenceStorage:
                 # This evidence only belongs to this case - safe to remove
                 if not dry_run:
                     # Remove from raw/, derived/, labels/, cases/
-                    raw_dir = self.raw_dir / f"sha256={sha256}"
-                    derived_dir = self.derived_dir / f"sha256={sha256}"
+                    raw_dir = get_evidence_base_dir(self.raw_dir, sha256)
+                    evidence_dir = get_evidence_base_dir(self.derived_dir, sha256)
 
                     if raw_dir.exists():
                         shutil.rmtree(raw_dir)
-                    if derived_dir.exists():
-                        shutil.rmtree(derived_dir)
+                    if evidence_dir.exists():
+                        shutil.rmtree(evidence_dir)
 
                     # Remove from case directory
                     case_dir = self.cases_dir / case_id

@@ -73,7 +73,7 @@ from evidence_toolkit.core.models import (
     Contradiction,
     CorroborationLink,
 )
-from evidence_toolkit.core.utils import read_json_safe, call_openai_structured
+from evidence_toolkit.core.utils import read_json_safe, call_openai_structured, get_evidence_base_dir
 
 # OpenAI Responses API for pattern detection (v3.1)
 try:
@@ -652,7 +652,7 @@ class CorrelationAnalyzer:
 
             # Extract photo capture timestamps from EXIF
             if evidence_type == 'image':
-                evidence_dir = self.evidence_storage.derived_dir / f"sha256={sha256}"
+                evidence_dir = get_evidence_base_dir(self.evidence_storage.derived_dir, sha256)
                 exif_file = evidence_dir / "exif.json"
 
                 if exif_file.exists():

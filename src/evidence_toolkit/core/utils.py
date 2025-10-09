@@ -200,18 +200,27 @@ def read_json_safe(path: Path) -> Optional[Dict[str, Any]]:
         return None
 
 
-def get_analysis_paths(derived_dir: Path, sha256: str) -> tuple[Path, Path]:
-    """Get standard analysis + metadata file paths for evidence hash.
+def get_evidence_base_dir(derived_dir: Path, sha256: str) -> Path:
+    """Get base evidence directory for SHA256 hash.
+
+    This centralizes the evidence directory path construction pattern that
+    was duplicated 23+ times across the codebase. All evidence files
+    (analysis.v1.json, metadata.json, exif.json, chain_of_custody.json,
+    evidence_bundle.v1.json) live in this directory.
 
     Args:
-        derived_dir: Base derived directory path
+        derived_dir: Base derived storage directory path
         sha256: Evidence SHA256 hash
 
     Returns:
-        Tuple of (analysis_path, metadata_path)
+        Path to evidence base directory: derived_dir/sha256={sha256}/
+
+    Example:
+        >>> evidence_dir = get_evidence_base_dir(storage.derived_dir, "abc123...")
+        >>> analysis_file = evidence_dir / "analysis.v1.json"
+        >>> metadata_file = evidence_dir / "metadata.json"
     """
-    base = derived_dir / f"sha256={sha256}"
-    return base / "analysis.v1.json", base / "metadata.json"
+    return derived_dir / f"sha256={sha256}"
 
 
 def call_openai_structured(

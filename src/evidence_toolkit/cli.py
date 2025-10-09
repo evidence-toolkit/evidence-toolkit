@@ -37,6 +37,7 @@ from evidence_toolkit.pipeline import (
     PackageGenerator,
 )
 from evidence_toolkit.analyzers.correlation import CorrelationAnalyzer
+from evidence_toolkit.core.utils import get_evidence_base_dir
 
 
 # Default storage location for v3.0
@@ -160,7 +161,7 @@ def process_case(case_directory: Path, case_id: str, storage_dir: str, output_di
     # Process non-image evidence sequentially
     for sha256 in non_image_sha256s:
         # Check if already analyzed
-        sha256_dir = storage.derived_dir / f"sha256={sha256}"
+        sha256_dir = get_evidence_base_dir(storage.derived_dir, sha256)
         analysis_file = sha256_dir / "analysis.v1.json"
 
         if analysis_file.exists():
