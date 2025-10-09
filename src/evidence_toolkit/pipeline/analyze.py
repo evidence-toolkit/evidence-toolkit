@@ -169,8 +169,11 @@ def analyze_evidence(
 
     # Perform analysis based on type
     email_metadata = None
+    # Create derived directory path for storing visualizations
+    derived_evidence_dir = storage.derived_dir / f"sha256={sha256}"
+
     if evidence_type_enum == EvidenceType.DOCUMENT:
-        analysis_result = _analyze_document(original_file, quiet)
+        analysis_result = _analyze_document(original_file, quiet, output_dir=derived_evidence_dir)
     elif evidence_type_enum == EvidenceType.IMAGE:
         analysis_result = _analyze_image(original_file, openai_client, quiet)
     elif evidence_type_enum == EvidenceType.EMAIL:
@@ -214,12 +217,13 @@ def analyze_evidence(
     return unified_analysis
 
 
-def _analyze_document(file_path: Path, quiet: bool = False) -> DocumentAnalysisResult:
+def _analyze_document(file_path: Path, quiet: bool = False, output_dir: Path = None) -> DocumentAnalysisResult:
     """Analyze document using DocumentAnalyzer.
 
     Args:
         file_path: Path to document file
         quiet: Suppress verbose output
+        output_dir: Directory to save visualizations (word cloud, frequency chart)
 
     Returns:
         DocumentAnalysisResult object
@@ -233,7 +237,7 @@ def _analyze_document(file_path: Path, quiet: bool = False) -> DocumentAnalysisR
     # Analyze the text file
     result = analyzer.analyze_directory(
         data_dir=file_path.parent,
-        output_dir=None,  # Don't save visualizations during analysis
+        output_dir=output_dir,  # Save visualizations to derived storage
         file_pattern=file_path.name
     )
 

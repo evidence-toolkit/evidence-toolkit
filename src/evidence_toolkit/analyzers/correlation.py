@@ -224,13 +224,13 @@ class CorrelationAnalyzer:
         # Find correlations (entities appearing in multiple pieces)
         correlations = self._find_entity_correlations(all_entities)
 
-        # v3.2: AI-powered entity resolution for missed correlations
+        # v3.3.1: AI-powered batch entity resolution (optimized single-call approach)
         if ai_resolve and self.openai_client:
             if self.verbose:
-                print("🤖 Using AI to resolve ambiguous entity matches...")
-            correlations = self._resolve_entities_with_ai(correlations, all_entities, evidence_items)
+                print("🤖 Using AI batch resolution for ambiguous entities...")
+            correlations = self._resolve_entities_with_ai_batch(correlations, all_entities, evidence_items)
             if self.verbose:
-                print(f"   AI resolution complete - total correlations: {len(correlations)}")
+                print(f"   ✓ AI resolution complete - total correlations: {len(correlations)}")
 
         # Extract timeline events
         timeline_events = self._extract_timeline_events(evidence_items)
@@ -955,6 +955,147 @@ class CorrelationAnalyzer:
 
         return gaps
 
+    def _resolve_entities_with_ai_batch(
+        self,
+        existing_correlations: List[CorrelatedEntity],
+        all_entities: Dict[str, List[Dict[str, Any]]],
+        evidence_items: List[Dict[str, Any]]
+    ) -> List[CorrelatedEntity]:
+        """Use AI batch resolution to find additional correlations (v3.3.1 optimization).
+
+        Replaces O(n²) pairwise comparisons with single AI call.
+        Cost: ~$0.01-0.05 vs ~$0.50-2.00 with old approach.
+
+        Args:
+            existing_correlations: Correlations found by string matching
+            all_entities: All entity occurrences indexed by canonical forms
+            evidence_items: All evidence for context lookup
+
+        Returns:
+            Enhanced list of correlations including AI-resolved matches
+        """
+        from evidence_toolkit.core.models import CorrelatedEntity, BatchEntityResolution
+
+        if not self.openai_client:
+            if self.verbose:
+                print("   ⚠️  OpenAI client not available, skipping AI resolution")
+            return existing_correlations
+
+        # Build evidence context map for quick lookup
+        evidence_context = {item['sha256']: item for item in evidence_items}
+
+        # Find single-evidence entities (potential missed correlations)
+        singles = []
+        for canonical_name, occurrences in all_entities.items():
+            unique_evidence = {occ['evidence_sha256'] for occ in occurrences}
+            if len(unique_evidence) == 1 and occurrences[0].get('entity_type') == 'person':
+                occ = occurrences[0]
+                singles.append({
+                    'name': occ.get('original_name', canonical_name),
+                    'context': occ.get('context', '')[:300],  # Limit context length
+                    'sha256': occ['evidence_sha256'],
+                    'evidence_type': evidence_context.get(occ['evidence_sha256'], {}).get('evidence_type', 'unknown'),
+                    'type': occ.get('entity_type', 'person'),
+                    'confidence': occ.get('confidence', 0.8)
+                })
+
+        if not singles:
+            if self.verbose:
+                print("   ℹ️  No unmatched single entities found")
+            return existing_correlations
+
+        if self.verbose:
+            print(f"   🤖 Batch resolving {len(singles)} unmatched entities with 1 AI call...")
+
+        # Create batch resolution prompt
+        entity_list = []
+        for idx, s in enumerate(singles, 1):
+            entity_list.append(f"{idx}. {s['name']} (context: \"{s['context'][:100]}...\" | evidence: {s['evidence_type']})")
+
+        prompt = f"""You are analyzing entity names from legal evidence to identify which names refer to the same real-world people.
+
+**Entity Names to Analyze:**
+{chr(10).join(entity_list)}
+
+**Your Task:**
+Group entity names that likely refer to the same person. Consider:
+- Informal vs formal names (e.g., "Paul" vs "Paul Boucherat")
+- Nicknames and abbreviations (e.g., "Bob" vs "Robert")
+- Same role/organization mentioned in context
+- NO conflicting surnames or organizations
+
+**Conservative Bias:** Only group if CONFIDENT (>0.7) they're the same person. When in doubt, leave unmatched.
+
+Return structured JSON with entity groups."""
+
+        try:
+            # Single AI call for all entities
+            response = self.openai_client.responses.parse(
+                model="gpt-4o-mini",
+                input=[{"role": "user", "content": prompt}],
+                text_format=BatchEntityResolution
+            )
+
+            if response.status != "completed" or not response.output_parsed:
+                if self.verbose:
+                    print(f"   ⚠️  AI batch resolution incomplete (status: {response.status})")
+                return existing_correlations
+
+            batch_result = response.output_parsed
+
+            if self.verbose:
+                print(f"   ✓ Batch resolution: {batch_result.groups_created} groups from {batch_result.total_input_entities} entities")
+
+            # Create new correlations from entity groups
+            new_correlations = []
+            matched_names = set()
+
+            for group in batch_result.entity_groups:
+                if group.confidence < 0.7:
+                    continue  # Skip low-confidence groups
+
+                # Find all singles that match this group
+                group_occurrences = []
+                all_names = [group.canonical_name] + group.variant_names
+
+                for single in singles:
+                    if single['name'] in all_names:
+                        group_occurrences.append({
+                            'evidence_sha256': single['sha256'],
+                            'evidence_type': single['evidence_type'],
+                            'entity_type': single['type'],
+                            'context': single['context'],
+                            'confidence': single['confidence'],
+                            'original_name': single['name']
+                        })
+                        matched_names.add(single['name'])
+
+                if len(group_occurrences) >= 2:
+                    # Create correlation from grouped entities
+                    new_corr = CorrelatedEntity(
+                        entity_name=group.canonical_name,
+                        entity_type='person',
+                        occurrence_count=len(group_occurrences),
+                        confidence_average=sum(o['confidence'] for o in group_occurrences) / len(group_occurrences),
+                        evidence_occurrences=group_occurrences
+                    )
+                    new_correlations.append(new_corr)
+
+                    if self.verbose:
+                        variant_str = ', '.join(f"'{v}'" for v in group.variant_names[:3])
+                        print(f"   ✓ NEW correlation: '{group.canonical_name}' ← {variant_str} (AI: {group.confidence:.2f})")
+
+            # Combine with existing correlations
+            all_correlations = existing_correlations + new_correlations
+
+            # Sort by occurrence count
+            return sorted(all_correlations, key=lambda x: (x.occurrence_count, x.confidence_average), reverse=True)
+
+        except Exception as e:
+            if self.verbose:
+                print(f"   ⚠️  AI batch resolution failed: {e}")
+            return existing_correlations
+
     def _resolve_entities_with_ai(
         self,
         existing_correlations: List[CorrelatedEntity],
@@ -962,6 +1103,9 @@ class CorrelationAnalyzer:
         evidence_items: List[Dict[str, Any]]
     ) -> List[CorrelatedEntity]:
         """Use AI to find additional correlations missed by string matching.
+
+        DEPRECATED in v3.3.1: Use _resolve_entities_with_ai_batch() instead.
+        This O(n²) implementation makes too many API calls.
 
         Checks for entities that appear in only one evidence piece and tries to
         match them with existing correlations or other singles using AI reasoning.

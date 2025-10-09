@@ -780,6 +780,78 @@ class EntityMatchResult(BaseModel):
         }
 
 
+class EntityGroup(BaseModel):
+    """Group of entity names that refer to the same real-world entity.
+
+    v3.3.1 optimization: Batch entity resolution using single AI call.
+    """
+    canonical_name: str = Field(
+        description="The most complete/formal name to use as canonical reference"
+    )
+    variant_names: List[str] = Field(
+        default_factory=list,
+        description="All name variations that refer to this entity (e.g., ['Paul', 'Paul B.', 'PB'])"
+    )
+    entity_type: str = Field(
+        description="Type of entity (person, organization, etc.)"
+    )
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="AI confidence that these names refer to same entity"
+    )
+    reasoning: str = Field(
+        description="Brief explanation of why these names were grouped together"
+    )
+
+
+class BatchEntityResolution(BaseModel):
+    """Result of batch entity resolution using single AI call.
+
+    v3.3.1 optimization: Replaces O(n²) pairwise comparisons with single batch analysis.
+    Cost: ~$0.01-0.05 per case vs ~$0.50-2.00 with old approach.
+    """
+    entity_groups: List[EntityGroup] = Field(
+        default_factory=list,
+        description="Groups of entities that refer to the same real-world entities"
+    )
+    unmatched_entities: List[str] = Field(
+        default_factory=list,
+        description="Entity names that couldn't be grouped with others"
+    )
+    total_input_entities: int = Field(
+        ge=0,
+        description="Total number of entities provided for resolution"
+    )
+    groups_created: int = Field(
+        ge=0,
+        description="Number of entity groups created"
+    )
+    processing_notes: str = Field(
+        default="",
+        description="Any notes about the resolution process (edge cases, ambiguities)"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "entity_groups": [
+                    {
+                        "canonical_name": "Paul Boucherat",
+                        "variant_names": ["Paul", "Paul B.", "PB"],
+                        "entity_type": "person",
+                        "confidence": 0.95,
+                        "reasoning": "Same person: informal 'Paul' appears in casual contexts, formal 'Paul Boucherat' in official documents, same role/organization"
+                    }
+                ],
+                "unmatched_entities": ["John Smith", "ACAS"],
+                "total_input_entities": 6,
+                "groups_created": 1,
+                "processing_notes": "High confidence matching. No ambiguous cases."
+            }
+        }
+
+
 # =============================================================================
 # EXPORTS
 # =============================================================================
@@ -842,4 +914,8 @@ __all__ = [
 
     # v3.2: AI Entity Resolution
     "EntityMatchResult",
+
+    # v3.3.1: Optimized Batch Entity Resolution
+    "EntityGroup",
+    "BatchEntityResolution",
 ]
