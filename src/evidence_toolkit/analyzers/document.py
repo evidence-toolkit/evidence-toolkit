@@ -40,7 +40,7 @@ except ImportError:
     AI_MODELS_AVAILABLE = False
 
 # Import utility functions for deduplication (v3.3+)
-from evidence_toolkit.core.utils import call_openai_structured
+from evidence_toolkit.core.utils import call_openai_structured, ensure_directory
 
 # Import validation for schema-compliant output
 # TODO: Check if validation module exists in new structure
@@ -346,7 +346,7 @@ class DocumentAnalyzer:
         # Setup output directory
         if output_dir:
             output_path = Path(output_dir)
-            output_path.mkdir(parents=True, exist_ok=True)
+            ensure_directory(output_path)
             wordcloud_file = output_path / "word_cloud.png"
             frequency_file = output_path / "word_frequency.png"
         else:
@@ -417,7 +417,7 @@ class DocumentAnalyzer:
 
         if output_dir:
             output_path = Path(output_dir)
-            output_path.mkdir(parents=True, exist_ok=True)
+            ensure_directory(output_path)
             wordcloud_file = str(output_path / "word_cloud.png")
             frequency_file = str(output_path / "word_frequency.png")
 

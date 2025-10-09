@@ -12,7 +12,7 @@ from pathlib import Path
 
 from evidence_toolkit.core.models import EmailThreadAnalysis
 from evidence_toolkit.analyzers.email_parser import EmailParser
-from evidence_toolkit.core.utils import call_openai_structured
+from evidence_toolkit.core.utils import call_openai_structured, ensure_directory
 
 
 class EmailAnalyzer:
@@ -180,7 +180,7 @@ Date: {headers.get('date', 'Unknown Date')}
             import json
 
             output_path = Path(output_path)
-            output_path.parent.mkdir(parents=True, exist_ok=True)
+            ensure_directory(output_path.parent)
 
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(analysis.model_dump(), f, indent=2, ensure_ascii=False)
