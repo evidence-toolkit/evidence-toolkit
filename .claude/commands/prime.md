@@ -39,95 +39,23 @@ Understand the Evidence Toolkit codebase by dynamically discovering and reading 
 **CLI Entry Point:**
 !`ls -1 src/evidence_toolkit/cli.py 2>/dev/null`
 
+**Module Statistics:**
+- Core modules: !`find src/evidence_toolkit/core -name "*.py" -type f 2>/dev/null | wc -l | tr -d ' '` files
+- Analyzers: !`find src/evidence_toolkit/analyzers -name "*.py" -type f 2>/dev/null | wc -l | tr -d ' '` files
+- Pipeline stages: !`find src/evidence_toolkit/pipeline -name "*.py" -type f 2>/dev/null | wc -l | tr -d ' '` files
+- Domain configs: !`find src/evidence_toolkit/domains -name "*.py" -type f 2>/dev/null | wc -l | tr -d ' '` files
+
+**Data Storage:**
+!`if [ -d data/storage ]; then echo "✅ Storage exists"; else echo "❌ No storage yet"; fi`
+
+**CLI Installation:**
+!`if which evidence-toolkit >/dev/null 2>&1; then echo "✅ Installed"; else echo "❌ Not installed"; fi`
+
 ---
 
 ## Your Task
 
-### Step 1: Show Current Project State
-
-Execute these commands to understand the real-time state:
-
-```bash
-echo "=== EVIDENCE TOOLKIT DISCOVERY ==="
-echo ""
-
-# Package structure
-echo "📦 Package Structure:"
-find src/evidence_toolkit -type d -maxdepth 1 | sort | sed 's/^/  /'
-echo ""
-
-# Module counts
-echo "📊 Module Statistics:"
-echo "  Core modules: $(find src/evidence_toolkit/core -name "*.py" -type f | wc -l) files"
-echo "  Analyzers: $(find src/evidence_toolkit/analyzers -name "*.py" -type f | wc -l) files"
-echo "  Pipeline stages: $(find src/evidence_toolkit/pipeline -name "*.py" -type f | wc -l) files"
-echo "  Domain configs: $(find src/evidence_toolkit/domains -name "*.py" -type f 2>/dev/null | wc -l) files"
-echo ""
-
-# Data storage (may be gitignored)
-echo "💾 Data Storage Status:"
-if [ -d data/storage ]; then
-    raw_count=$(find data/storage/raw -type f 2>/dev/null | wc -l)
-    derived_count=$(find data/storage/derived -type d -name "sha256=*" 2>/dev/null | wc -l)
-    echo "  ✅ data/storage/ exists"
-    echo "     Raw evidence: $raw_count files"
-    echo "     Derived analyses: $derived_count"
-elif [ -d evidence ]; then
-    echo "  ⚠️  Legacy evidence/ directory detected"
-else
-    echo "  ℹ️  No data directories yet (run pipeline to create)"
-fi
-echo ""
-
-# CLI installation
-echo "🔧 CLI Status:"
-if which evidence-toolkit >/dev/null 2>&1; then
-    echo "  ✅ Installed: $(which evidence-toolkit)"
-else
-    echo "  ❌ Not installed (run: uv pip install -e .)"
-fi
-echo ""
-
-# Version & feature detection
-echo "📌 Version & Features:"
-pkg_ver=$(uv run python -c "import evidence_toolkit; print(evidence_toolkit.__version__)" 2>/dev/null)
-if [ -n "$pkg_ver" ]; then
-    echo "  Version: v${pkg_ver}"
-
-    # Check for v3.1+ features
-    if grep -q "legal_patterns.*LegalPatternAnalysis" src/evidence_toolkit/core/models.py 2>/dev/null; then
-        echo "  ✨ v3.1+ AI enhancements detected:"
-        echo "     - Legal pattern detection"
-        echo "     - Power dynamics analysis"
-
-        # Check for v3.2+ features
-        if grep -q "EntityMatchResult" src/evidence_toolkit/core/models.py 2>/dev/null; then
-            echo "  ✨ v3.2+ features detected:"
-            echo "     - AI entity resolution (--ai-resolve)"
-
-            # Check for case type support
-            if grep -q "EXECUTIVE_SUMMARY_PROMPTS" src/evidence_toolkit/domains/legal_config.py 2>/dev/null; then
-                case_types=$(grep -A 5 "EXECUTIVE_SUMMARY_PROMPTS = {" src/evidence_toolkit/domains/legal_config.py 2>/dev/null | grep -oP "'\K[^']+(?=')" | tr '\n' ', ' | sed 's/,$//')
-                echo "     - Case type support: $case_types"
-            fi
-
-            # Check for chunked summaries
-            if grep -q "ChunkSummaryResponse" src/evidence_toolkit/pipeline/summary.py 2>/dev/null; then
-                echo "     - Chunked summaries (50+ evidence)"
-            fi
-        fi
-    else
-        echo "  📦 v3.0 baseline (pre-v3.1 enhancements)"
-    fi
-else
-    echo "  ⚠️  Package not installed"
-fi
-echo ""
-
-echo "=== READY TO READ FILES (discovered in Context above) ==="
-```
-
-### Step 2: Read Discovered Files
+### Step 1: Read Discovered Files
 
 Read the files discovered in the **Context** section above, in this order:
 
@@ -157,7 +85,7 @@ Read the files discovered in the **Context** section above, in this order:
    - .gitignore - What's hidden from git
    - quick-start.sh - Quick workflow script
 
-### Step 3: Report Understanding
+### Step 2: Report Understanding
 
 Report your understanding in this format:
 
@@ -256,7 +184,7 @@ Key capabilities I can now help with:
   • [Version-specific capabilities]
 ```
 
-### Step 4: Offer Documentation Update (Optional)
+### Step 3: Offer Documentation Update (Optional)
 
 After completing the comprehension report, if the discovery identified:
 - Recent changes to Python files (in the last 5 commits)

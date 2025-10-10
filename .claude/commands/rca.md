@@ -11,10 +11,25 @@ argument-hint: [error-message|test-name|file-path] [additional-context]
 - **Full arguments**: $ARGUMENTS
 
 ## Analysis Context
-- **Current working directory**: Focus analysis on this project
-- **Recent changes**: Consider git history for potential causes
-- **Test failures**: If analyzing test failures, include test output and logs
-- **Error traces**: If analyzing errors, capture full stack traces
+
+**Recent Git Commits (last 10):**
+!`git log --oneline --decorate -10 2>/dev/null || echo "Not a git repository"`
+
+**Recent File Changes:**
+!`git diff --name-only HEAD~5..HEAD 2>/dev/null | head -10 || echo "No recent changes"`
+
+**Current Branch:**
+!`git branch --show-current 2>/dev/null || echo "Unknown"`
+
+**Project Version:**
+!`uv run python -c "import evidence_toolkit; print(evidence_toolkit.__version__)" 2>/dev/null || echo "Not installed"`
+
+**Analysis Guidelines:**
+- Focus analysis on this Evidence Toolkit project (v3.3)
+- Consider recent git commits (shown above) as potential causes
+- For test failures: examine test output and related test files
+- For errors: capture full stack traces with line numbers
+- For performance issues: check for recent algorithm changes
 
 ## Your Task
 Using the **rca-debugger** subagent, perform comprehensive root-cause analysis of: **$ARGUMENTS**

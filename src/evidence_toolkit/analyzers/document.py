@@ -16,7 +16,7 @@ import hashlib
 from pathlib import Path
 from collections import Counter
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend for production
 import matplotlib.pyplot as plt
@@ -320,7 +320,7 @@ class DocumentAnalyzer:
     def analyze_directory(self,
                          data_dir: Union[str, Path],
                          output_dir: Optional[Union[str, Path]] = None,
-                         file_pattern: str = "*.txt") -> Dict[str, Union[str, int, Dict]]:
+                         file_pattern: str = "*.txt") -> Dict[str, Any]:
         """Run complete analysis on a directory of text files"""
 
         if self.verbose:
@@ -350,8 +350,8 @@ class DocumentAnalyzer:
             wordcloud_file = output_path / "word_cloud.png"
             frequency_file = output_path / "word_frequency.png"
         else:
-            wordcloud_file = "word_cloud.png"
-            frequency_file = "word_frequency.png"
+            wordcloud_file = Path("word_cloud.png")
+            frequency_file = Path("word_frequency.png")
 
         # Create visualizations
         if self.verbose:
@@ -395,7 +395,7 @@ class DocumentAnalyzer:
 
     def analyze_text(self,
                     text: str,
-                    output_dir: Optional[Union[str, Path]] = None) -> Dict[str, Union[str, int, Dict]]:
+                    output_dir: Optional[Union[str, Path]] = None) -> Dict[str, Any]:
         """Run analysis on raw text input"""
 
         if self.verbose:
@@ -512,7 +512,7 @@ class DocumentAnalyzer:
                 print(f"❌ AI analysis failed: {e}")
             return None
 
-    def _generate_evidence_id(self, text: str, source_path: str = None) -> str:
+    def _generate_evidence_id(self, text: str, source_path: Optional[str] = None) -> str:
         """Generate evidence ID from content and source."""
         content_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()[:12]
         source_hash = hashlib.sha256((source_path or "unknown").encode('utf-8')).hexdigest()[:6]
@@ -523,7 +523,7 @@ class DocumentAnalyzer:
         """Generate SHA256 hash of text content."""
         return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
-    def _create_chain_of_custody(self, actor: str = None) -> List[Dict]:
+    def _create_chain_of_custody(self, actor: Optional[str] = None) -> List[Dict]:
         """Create initial chain of custody entry."""
         timestamp = datetime.now(timezone.utc).isoformat()
         actor = actor or "document-analyzer@evidence-toolkit"
@@ -545,9 +545,9 @@ class DocumentAnalyzer:
 
     def create_schema_compliant_analysis(self,
                                        text: str,
-                                       case_id: str = None,
-                                       source_path: str = None,
-                                       actor: str = None) -> Dict:
+                                       case_id: Optional[str] = None,
+                                       source_path: Optional[str] = None,
+                                       actor: Optional[str] = None) -> Dict:
         """
         Create schema-compliant analysis document following document.v1.json.
 
@@ -584,7 +584,7 @@ class DocumentAnalyzer:
         analysis_id = f"{evidence_id}_analysis"
 
         # Default analysis outputs for text processing
-        outputs = {
+        outputs: Dict[str, Any] = {
             "summary": "Document analysis completed with text processing and visualization",
             "document_type": "unknown"
         }
@@ -645,7 +645,7 @@ class DocumentAnalyzer:
 
     def validate_and_save_analysis(self,
                                  schema_document: Dict,
-                                 output_file: str = None) -> bool:
+                                 output_file: Optional[str] = None) -> bool:
         """
         Validate schema document and save to file if valid.
 
@@ -709,10 +709,10 @@ def analyze_text_content(text: str,
 
 
 def create_schema_compliant_document_analysis(text: str,
-                                            case_id: str = None,
-                                            source_path: str = None,
-                                            actor: str = None,
-                                            output_file: str = None,
+                                            case_id: Optional[str] = None,
+                                            source_path: Optional[str] = None,
+                                            actor: Optional[str] = None,
+                                            output_file: Optional[str] = None,
                                             custom_stop_words: Optional[set] = None,
                                             verbose: bool = True) -> Dict:
     """

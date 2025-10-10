@@ -25,32 +25,35 @@ Quick test case generation with hash-spoofed evidence for comprehensive pipeline
 
 ## Your Task
 
-Execute the test case generator based on the user's arguments:
+Execute the test case generator based on the arguments provided in `$ARGUMENTS`:
 
-### Arguments
-- **No args**: Standard test case (10 images + 3 documents)
-- **`--large`**: Large test case (50 images + 10 documents)
-- **`--images-only`**: Only images (backward compatibility)
+### 1. Determine Test Case Mode
 
-### Execution
+Based on `$ARGUMENTS`:
+- **Empty or no arguments**: Standard test case (10 images + 3 documents)
+- **Contains `--large`**: Large test case (50 images + 10 documents)
+- **Contains `--images-only`**: Only images (backward compatibility)
 
-Parse arguments and run the appropriate command:
+### 2. Run Test Case Generator
 
+Execute the appropriate Python command using the Bash tool:
+
+**For standard mode (no args):**
 ```bash
-# Determine mode from arguments
-if [ "$1" = "--large" ]; then
-    echo "🧪 Creating LARGE test case (50 images + 10 documents)..."
-    python create_test_case.py --large
-elif [ "$1" = "--images-only" ]; then
-    echo "🧪 Creating IMAGES-ONLY test case (10 images)..."
-    python create_test_case.py --images-only
-else
-    echo "🧪 Creating STANDARD test case (10 images + 3 documents)..."
-    python create_test_case.py
-fi
+python create_test_case.py
 ```
 
-### Post-Creation Instructions
+**For large mode (`$ARGUMENTS` contains "--large"):**
+```bash
+python create_test_case.py --large
+```
+
+**For images-only mode (`$ARGUMENTS` contains "--images-only"):**
+```bash
+python create_test_case.py --images-only
+```
+
+### 3. Post-Creation Instructions
 
 After successful creation, inform the user:
 

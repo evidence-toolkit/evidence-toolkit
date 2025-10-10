@@ -1,6 +1,6 @@
 # Evidence Toolkit Monorepo .gitignore
 src/evidence_toolkit/domains*
-
+data/storage/packages
 
 *AUDHD*
 archive/
