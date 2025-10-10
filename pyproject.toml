@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evidence-toolkit"
-version = "3.3.0"
+version = "4.0.0"
 description = "AI-powered legal evidence analysis with maximum data utilization - forensic insights, legal patterns, and executive-ready reporting"
 authors = [
     {name = "Evidence Toolkit Contributors"}

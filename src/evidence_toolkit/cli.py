@@ -45,7 +45,7 @@ DEFAULT_STORAGE_PATH = Path("data/storage")
 
 
 @click.group()
-@click.version_option(version="3.3.0", prog_name="evidence-toolkit")
+@click.version_option(version="4.0.0", prog_name="evidence-toolkit")
 def cli():
     """Evidence Toolkit - AI-powered legal evidence analysis suite."""
     pass

@@ -1,8 +1,8 @@
 # Generators Module Documentation
 
 **Module**: `src/evidence_toolkit/generators/`
-**Version**: v3.4.0
-**Status**: Production (Phase 1-3 Complete)
+**Version**: v4.0.0
+**Status**: Production (Released)
 **Purpose**: Transform aggregated case data into professional forensic reports
 
 ---
