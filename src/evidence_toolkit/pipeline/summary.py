@@ -226,8 +226,9 @@ class SummaryGenerator:
                 case_summary.overall_assessment['settlement_recommendation'] = enhanced_response.settlement_recommendation
                 case_summary.overall_assessment['evidence_gaps'] = enhanced_response.evidence_gaps
 
-                # Also store forensic response for audit trail (not displayed - internal only)
-                # v3.3 Phase B++: Prefix with _ to signal these are audit-only fields
+                # Also store forensic response alongside enhanced analysis
+                # v3.3 Phase B++: Both forensic and enhanced data are now displayed in reports
+                # Forensic provides statutory foundation, Enhanced provides risk quantification
                 case_summary.overall_assessment['_forensic_summary'] = executive_response.executive_summary
                 case_summary.overall_assessment['_forensic_legal_implications'] = executive_response.legal_implications
                 case_summary.overall_assessment['_forensic_recommended_actions'] = executive_response.recommended_actions
@@ -1493,10 +1494,6 @@ Be concise but thorough. Focus on legally significant information."""
                 lines.append(f"{i}. {finding}")
             lines.append("")
 
-        # v3.3 Phase B++: Legal Implications removed from display
-        # forensic_legal_implications stored for audit but not shown (no enhanced equivalent)
-        # Legal implications are covered in executive summary narrative above
-
         # v3.2: Enhanced Risk Assessment (if enhancement was applied)
         if case_summary.overall_assessment.get('enhancement_applied'):
             lines.append("⚖️  LEGAL RISK ASSESSMENT")
@@ -1542,9 +1539,31 @@ Be concise but thorough. Focus on legally significant information."""
 
             lines.append("")
 
+        # v3.3 Phase B++: Forensic Legal Analysis Section (NEWLY DISPLAYED!)
+        # Display the forensic analysis data that was previously hidden
+        forensic_legal_implications = case_summary.overall_assessment.get('_forensic_legal_implications', [])
+        forensic_recommended_actions = case_summary.overall_assessment.get('_forensic_recommended_actions', [])
+
+        if forensic_legal_implications or forensic_recommended_actions:
+            lines.append("📋 FORENSIC LEGAL ANALYSIS")
+            lines.append("-" * 80)
+            lines.append("Evidence-based legal assessment from forensic analysis:")
+            lines.append("")
+
+            if forensic_legal_implications:
+                lines.append("Legal implications (statutory foundation):")
+                for i, impl in enumerate(forensic_legal_implications, 1):
+                    lines.append(f"  {i}. {impl}")
+                lines.append("")
+
+            if forensic_recommended_actions:
+                lines.append("Strategic recommendations (forensic):")
+                for i, action in enumerate(forensic_recommended_actions, 1):
+                    lines.append(f"  {i}. {action}")
+                lines.append("")
+
         # v3.3 Phase B++: Recommended Actions (from enhanced layer - deadline-specific)
         # Display immediate_actions (enhanced, deadline-driven) as standalone section
-        # forensic_recommended_actions stored for audit but not displayed (generic version)
         immediate_actions_display = case_summary.overall_assessment.get('immediate_actions', [])
         if immediate_actions_display:
             lines.append("🎯 RECOMMENDED ACTIONS")

@@ -86,7 +86,7 @@ class DocumentEntity(BaseModel):
         default=None,
         description=(
             "Relationship to other entities (e.g., 'sent email to Rachel Hemmings', "
-            "'mentioned by Paul Boucherat', 'copied on email to HR'). "
+            "'mentioned by Sarah Johnson', 'copied on email to HR'). "
             "Set to null if no clear relationship identified in context."
         )
     )
@@ -791,7 +791,7 @@ class EntityGroup(BaseModel):
     )
     variant_names: List[str] = Field(
         default_factory=list,
-        description="All name variations that refer to this entity (e.g., ['Paul', 'Paul B.', 'PB'])"
+        description="All name variations that refer to this entity (e.g., ['Sarah', 'S. Johnson', 'SJ'])"
     )
     entity_type: str = Field(
         description="Type of entity (person, organization, etc.)"
@@ -838,11 +838,11 @@ class BatchEntityResolution(BaseModel):
             "example": {
                 "entity_groups": [
                     {
-                        "canonical_name": "Paul Boucherat",
-                        "variant_names": ["Paul", "Paul B.", "PB"],
+                        "canonical_name": "Sarah Johnson",
+                        "variant_names": ["Sarah", "S. Johnson", "SJ"],
                         "entity_type": "person",
                         "confidence": 0.95,
-                        "reasoning": "Same person: informal 'Paul' appears in casual contexts, formal 'Paul Boucherat' in official documents, same role/organization"
+                        "reasoning": "Same person: informal 'Sarah' appears in casual contexts, formal 'Sarah Johnson' in official documents, same role/organization"
                     }
                 ],
                 "unmatched_entities": ["John Smith", "ACAS"],

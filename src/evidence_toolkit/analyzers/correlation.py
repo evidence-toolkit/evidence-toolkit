@@ -397,7 +397,7 @@ class CorrelationAnalyzer:
 
                         # If no display name, try parsing email address for person name
                         if not display_name and email_addr:
-                            # Parse "Paul.Boucherat.9241@domain" → "Paul Boucherat"
+                            # Parse "Sarah.Johnson.9241@domain" → "Sarah Johnson"
                             local_part = email_addr.split('@')[0]
                             # Remove numbers and split on dots/underscores
                             name_parts = local_part.replace('.', ' ').replace('_', ' ').split()
@@ -1014,7 +1014,7 @@ class CorrelationAnalyzer:
 
 **Your Task:**
 Group entity names that likely refer to the same person. Consider:
-- Informal vs formal names (e.g., "Paul" vs "Paul Boucherat")
+- Informal vs formal names (e.g., "Sarah" vs "Sarah Johnson")
 - Nicknames and abbreviations (e.g., "Bob" vs "Robert")
 - Same role/organization mentioned in context
 - NO conflicting surnames or organizations
