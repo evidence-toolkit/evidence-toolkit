@@ -12,12 +12,12 @@ Phase 1 Generators (Quick Wins - COMPLETE):
 - ForensicLegalOpinionGenerator: Unhides _forensic_* fields (£2K-5K value!)
 - FinancialRiskAssessmentGenerator: Expands tribunal/settlement analysis
 
-Phase 2 Generators (Core Forensic Reports):
+Phase 2 Generators (Core Forensic Reports - COMPLETE):
 - LegalPatternsGenerator: Detailed contradiction/corroboration/gaps analysis
 - TimelineGenerator: Chronological reconstruction with gap analysis
+- QuotedStatementsGenerator: Person-by-person quoted statement breakdown
 
-Future Generators:
-- QuotedStatementsGenerator: Direct quote extraction with attribution
+Future Generators (Phase 3):
 - PowerDynamicsGenerator: Email authority hierarchy analysis
 - RelationshipNetworkGenerator: Entity relationship mapping
 - ImageOCRGenerator: Aggregated OCR findings
@@ -28,6 +28,7 @@ from evidence_toolkit.generators.forensic_legal import ForensicLegalOpinionGener
 from evidence_toolkit.generators.financial_risk import FinancialRiskAssessmentGenerator
 from evidence_toolkit.generators.legal_patterns import LegalPatternsGenerator
 from evidence_toolkit.generators.timeline import TimelineGenerator
+from evidence_toolkit.generators.quoted_statements import QuotedStatementsGenerator
 
 __all__ = [
     'BaseReportGenerator',
@@ -35,4 +36,5 @@ __all__ = [
     'FinancialRiskAssessmentGenerator',
     'LegalPatternsGenerator',
     'TimelineGenerator',
+    'QuotedStatementsGenerator',
 ]

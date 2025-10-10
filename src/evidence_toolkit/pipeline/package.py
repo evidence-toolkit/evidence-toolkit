@@ -531,17 +531,19 @@ This methodology is designed for professional legal evidence analysis and mainta
             ForensicLegalOpinionGenerator,
             FinancialRiskAssessmentGenerator,
             LegalPatternsGenerator,
-            TimelineGenerator
+            TimelineGenerator,
+            QuotedStatementsGenerator
         )
 
         generated_reports = []
 
-        # List of Phase 1-2 generators
+        # List of Phase 1-2 generators (COMPLETE)
         generator_classes = [
             ForensicLegalOpinionGenerator,
             FinancialRiskAssessmentGenerator,
             LegalPatternsGenerator,
             TimelineGenerator,
+            QuotedStatementsGenerator,
         ]
 
         # Instantiate and run each generator
