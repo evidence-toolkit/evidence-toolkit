@@ -532,18 +532,27 @@ This methodology is designed for professional legal evidence analysis and mainta
             FinancialRiskAssessmentGenerator,
             LegalPatternsGenerator,
             TimelineGenerator,
-            QuotedStatementsGenerator
+            QuotedStatementsGenerator,
+            RelationshipNetworkGenerator,
+            PowerDynamicsGenerator,
+            ImageOCRGenerator
         )
 
         generated_reports = []
 
-        # List of Phase 1-2 generators (COMPLETE)
+        # List of Phase 1-3 generators (COMPLETE)
         generator_classes = [
+            # Phase 1: Quick wins (forensic legal + financial)
             ForensicLegalOpinionGenerator,
             FinancialRiskAssessmentGenerator,
+            # Phase 2: Core forensic reports
             LegalPatternsGenerator,
             TimelineGenerator,
             QuotedStatementsGenerator,
+            # Phase 3: Advanced analytics
+            RelationshipNetworkGenerator,
+            PowerDynamicsGenerator,  # Placeholder - pending aggregation layer
+            ImageOCRGenerator,  # Placeholder - for image cases
         ]
 
         # Instantiate and run each generator

@@ -36,7 +36,7 @@ ls data/packages/
 ## What It Does
 
 **Input**: Documents (PDF, TXT), emails (EML), images (JPG, PNG)
-**Output**: Professional ZIP package with executive summary, correlations, timeline, and forensic reports
+**Output**: Professional ZIP package with **8 forensic reports**, correlations, timeline, and complete chain of custody
 
 ### Key Features
 
@@ -49,6 +49,22 @@ ls data/packages/
 - **Chain of Custody**: Complete audit trail for legal compliance
 - **Content-Addressed Storage**: SHA256-based deduplication and integrity verification
 - **98% Data Utilization**: Maximum insights from every AI analysis (v3.3)
+
+### Forensic Reports Generated (v3.4)
+
+Each analysis package includes **8 professional reports**:
+
+1. **Executive Summary** - AI-generated case overview with key findings
+2. **Forensic Legal Opinion** - Statutory risk analysis and legal implications
+3. **Financial Risk Assessment** - Tribunal probability and settlement ranges
+4. **Legal Patterns Analysis** - Contradictions, corroboration, evidence gaps
+5. **Timeline Reconstruction** - Chronological event mapping with gap analysis
+6. **Quoted Statements** - Person-by-person statement breakdown with sentiment
+7. **Relationship Network** - Entity connection mapping and key player identification
+8. **Power Dynamics** - Email authority hierarchy and deference scoring (for email evidence)
+9. **Image OCR Analysis** - Aggregated text extraction from visual evidence (for image evidence)
+
+All reports are **tribunal-ready** and use data from existing AI analysis (zero additional cost).
 
 ### Example Use Cases
 

@@ -989,14 +989,16 @@ Be concise but thorough. Focus on legally significant information."""
         participants_data = []
 
         # Find email analysis files and extract participant data
+        # Note: Check for email_analysis presence, not evidence_type
+        # (emails can be .txt files, PDFs, or image screenshots)
         for evidence in evidence_summaries:
-            if evidence.evidence_type == 'email':
-                evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
-                analysis_file = evidence_dir / "analysis.v1.json"
-                if analysis_file.exists():
-                    analysis = read_json_safe(analysis_file)
-                    if analysis:
-                        email_analysis = analysis.get('email_analysis', {})
+            evidence_dir = get_evidence_base_dir(self.storage.derived_dir, evidence.sha256)
+            analysis_file = evidence_dir / "analysis.v1.json"
+            if analysis_file.exists():
+                analysis = read_json_safe(analysis_file)
+                if analysis:
+                    email_analysis = analysis.get('email_analysis', {})
+                    if email_analysis and 'participants' in email_analysis:
                         participants = email_analysis.get('participants', [])
                         participants_data.extend(participants)
 

@@ -17,10 +17,10 @@ Phase 2 Generators (Core Forensic Reports - COMPLETE):
 - TimelineGenerator: Chronological reconstruction with gap analysis
 - QuotedStatementsGenerator: Person-by-person quoted statement breakdown
 
-Future Generators (Phase 3):
-- PowerDynamicsGenerator: Email authority hierarchy analysis
-- RelationshipNetworkGenerator: Entity relationship mapping
-- ImageOCRGenerator: Aggregated OCR findings
+Phase 3 Generators (Advanced Analytics - COMPLETE):
+- RelationshipNetworkGenerator: Entity relationship mapping & key player analysis
+- PowerDynamicsGenerator: Email authority hierarchy (placeholder - pending aggregation)
+- ImageOCRGenerator: Aggregated OCR findings (placeholder - for image cases)
 """
 
 from evidence_toolkit.generators.base import BaseReportGenerator
@@ -29,6 +29,9 @@ from evidence_toolkit.generators.financial_risk import FinancialRiskAssessmentGe
 from evidence_toolkit.generators.legal_patterns import LegalPatternsGenerator
 from evidence_toolkit.generators.timeline import TimelineGenerator
 from evidence_toolkit.generators.quoted_statements import QuotedStatementsGenerator
+from evidence_toolkit.generators.relationship_network import RelationshipNetworkGenerator
+from evidence_toolkit.generators.power_dynamics import PowerDynamicsGenerator
+from evidence_toolkit.generators.image_ocr import ImageOCRGenerator
 
 __all__ = [
     'BaseReportGenerator',
@@ -37,4 +40,7 @@ __all__ = [
     'LegalPatternsGenerator',
     'TimelineGenerator',
     'QuotedStatementsGenerator',
+    'RelationshipNetworkGenerator',
+    'PowerDynamicsGenerator',
+    'ImageOCRGenerator',
 ]
