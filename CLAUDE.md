@@ -2,6 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Do not make wild claims about the project or what it does. 
 ---
 
 ## Evidence Toolkit v3.3 - Maximum Data Utilization

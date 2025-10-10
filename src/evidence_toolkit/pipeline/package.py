@@ -163,6 +163,10 @@ class PackageGenerator:
             f.write(formatted_report)
         components["reports"].append("executive_summary.txt")
 
+        # 1b. NEW v3.4: Forensic Reports (generated from existing analyzed data!)
+        forensic_reports = self._generate_forensic_reports(case_summary, package_dir / "reports")
+        components["reports"].extend(forensic_reports)
+
         # 2. Detailed JSON Analysis
         json_analysis_path = package_dir / "analysis" / "case_analysis.json"
         self.summary_generator.export_summary_to_json(case_summary, json_analysis_path)
@@ -505,6 +509,55 @@ This methodology is designed for professional legal evidence analysis and mainta
                 print(f"Warning: Could not copy raw evidence {evidence.filename}: {e}")
 
         return raw_files
+
+    def _generate_forensic_reports(self, case_summary: CaseSummary, reports_dir: Path) -> List[str]:
+        """Generate forensic reports using v3.4 generators architecture.
+
+        NEW v3.4: Exposes hidden forensic data using specialized report generators.
+        This is the BIG VALUE UNLOCK - unhides £2K-5K of forensic analysis per case!
+
+        Args:
+            case_summary: Complete case analysis with overall_assessment data
+            reports_dir: Directory where reports will be written
+
+        Returns:
+            List of generated report filenames
+
+        Phase 1 Generators (Zero AI cost - uses existing data!):
+            - ForensicLegalOpinionGenerator: Unhides _forensic_* fields
+            - FinancialRiskAssessmentGenerator: Expands tribunal/financial analysis
+        """
+        from evidence_toolkit.generators import (
+            ForensicLegalOpinionGenerator,
+            FinancialRiskAssessmentGenerator
+        )
+
+        generated_reports = []
+
+        # List of Phase 1 generators
+        generator_classes = [
+            ForensicLegalOpinionGenerator,
+            FinancialRiskAssessmentGenerator,
+        ]
+
+        # Instantiate and run each generator
+        for generator_class in generator_classes:
+            try:
+                generator = generator_class(case_summary, reports_dir)
+
+                # Only generate if data exists
+                if generator.has_data():
+                    report_path = generator.generate()
+                    generated_reports.append(report_path.name)
+                    print(f"✓ Generated: {report_path.name}")
+                else:
+                    print(f"⊘ Skipped {generator_class.__name__}: Insufficient data")
+
+            except Exception as e:
+                print(f"Warning: Failed to generate {generator_class.__name__}: {e}")
+                # Continue with other generators even if one fails
+
+        return generated_reports
 
     def _create_zip_package(self, package_dir: Path, zip_path: Path):
         """Create ZIP archive of the package.
