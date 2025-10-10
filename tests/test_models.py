@@ -40,7 +40,6 @@ from evidence_toolkit.core.models import (
     # Unified Analysis
     DocumentAnalysisResult,
     ImageAnalysisResult,
-    EmailAnalysisResult,
     UnifiedAnalysis,
     # Forensic Bundles
     EvidenceCore,
@@ -963,66 +962,6 @@ class TestImageAnalysisResult:
         assert restored.openai_model == original.openai_model
 
 
-class TestEmailAnalysisResult:
-    """Test EmailAnalysisResult model validation."""
-
-    def test_EmailAnalysisResult_valid_instantiation(self):
-        """Test that valid EmailAnalysisResult can be created."""
-        result = EmailAnalysisResult(
-            thread_summary="Escalating harassment complaint",
-            participant_count=5,
-            communication_pattern="escalating",
-            legal_significance="critical",
-            risk_flags=["harassment", "retaliation"],
-            escalation_events=["CEO added to thread", "Legal counsel mentioned"],
-            confidence_overall=0.89
-        )
-
-        assert result.participant_count == 5
-        assert result.communication_pattern == "escalating"
-        assert len(result.risk_flags) == 2
-
-    def test_EmailAnalysisResult_rejects_missing_required_fields(self):
-        """Test that EmailAnalysisResult rejects instances missing required fields."""
-        with pytest.raises(ValidationError):
-            EmailAnalysisResult(
-                thread_summary="Test",
-                # Missing participant_count, communication_pattern, legal_significance, confidence_overall
-            )
-
-    def test_EmailAnalysisResult_allows_empty_lists(self):
-        """Test that EmailAnalysisResult allows empty lists for default_factory fields."""
-        result = EmailAnalysisResult(
-            thread_summary="Simple email",
-            participant_count=2,
-            communication_pattern="professional",
-            legal_significance="low",
-            risk_flags=[],
-            escalation_events=[],
-            confidence_overall=0.9
-        )
-
-        assert len(result.risk_flags) == 0
-        assert len(result.escalation_events) == 0
-
-    def test_EmailAnalysisResult_serialization_roundtrip(self):
-        """Test that EmailAnalysisResult can be serialized and deserialized."""
-        original = EmailAnalysisResult(
-            thread_summary="Test thread",
-            participant_count=3,
-            communication_pattern="hostile",
-            legal_significance="high",
-            risk_flags=["threatening"],
-            confidence_overall=0.87
-        )
-
-        serialized = original.model_dump()
-        restored = EmailAnalysisResult.model_validate(serialized)
-
-        assert restored.thread_summary == original.thread_summary
-        assert restored.participant_count == original.participant_count
-
-
 class TestUnifiedAnalysis:
     """Test UnifiedAnalysis model validation.
 
@@ -1126,10 +1065,11 @@ class TestUnifiedAnalysis:
             analysis_timestamp=datetime.now(),
             file_metadata=metadata,
             case_ids=["CASE-001"],
-            email_analysis=EmailAnalysisResult(
+            email_analysis=EmailThreadAnalysis(
                 thread_summary="Test",
                 participant_count=2,
                 communication_pattern="professional",
+                sentiment_progression=[0.5, 0.6],
                 legal_significance="low",
                 confidence_overall=0.9
             ),
