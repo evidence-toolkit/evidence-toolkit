@@ -950,6 +950,76 @@ class CorrelationAnalyzer:
 
         return gaps
 
+    def _deduplicate_correlations(self, correlations: List[CorrelatedEntity]) -> List[CorrelatedEntity]:
+        """Deduplicate correlations with the same canonical name.
+
+        When AI resolution creates new correlations, they may have the same canonical name
+        as existing correlations. This function merges duplicates by:
+        1. Grouping by canonical name (case-insensitive)
+        2. Combining evidence_occurrences lists
+        3. Recalculating occurrence_count (unique SHA256s only)
+        4. Recalculating confidence_average
+        5. Using longest entity_name as display name
+
+        Args:
+            correlations: List of correlations (may contain duplicates)
+
+        Returns:
+            Deduplicated list of correlations
+        """
+        if not correlations:
+            return []
+
+        # Group by canonical name (case-insensitive)
+        from collections import defaultdict
+        groups = defaultdict(list)
+
+        for corr in correlations:
+            canonical_key = corr.entity_name.lower().strip()
+            groups[canonical_key].append(corr)
+
+        # Merge duplicates
+        deduplicated = []
+        for canonical_key, group in groups.items():
+            if len(group) == 1:
+                # No duplicates for this name
+                deduplicated.append(group[0])
+            else:
+                # Merge multiple entries with same canonical name
+                # Combine all evidence occurrences
+                all_occurrences = []
+                for corr in group:
+                    all_occurrences.extend(corr.evidence_occurrences)
+
+                # Deduplicate by SHA256 (keep highest confidence per evidence)
+                evidence_map = {}
+                for occ in all_occurrences:
+                    sha = occ['evidence_sha256']
+                    if sha not in evidence_map or occ['confidence'] > evidence_map[sha]['confidence']:
+                        evidence_map[sha] = occ
+
+                # Use longest name as display name (most complete)
+                display_name = max((corr.entity_name for corr in group), key=len)
+
+                # Calculate average confidence
+                avg_confidence = sum(occ['confidence'] for occ in evidence_map.values()) / len(evidence_map)
+
+                # Use most common entity type
+                entity_types = [corr.entity_type for corr in group]
+                most_common_type = max(set(entity_types), key=entity_types.count)
+
+                # Create merged correlation
+                merged = CorrelatedEntity(
+                    entity_name=display_name,
+                    entity_type=most_common_type,
+                    occurrence_count=len(evidence_map),
+                    confidence_average=avg_confidence,
+                    evidence_occurrences=list(evidence_map.values())
+                )
+                deduplicated.append(merged)
+
+        return deduplicated
+
     def _resolve_entities_with_ai_batch(
         self,
         existing_correlations: List[CorrelatedEntity],
@@ -1078,6 +1148,10 @@ Return structured JSON with entity groups."""
 
             # Combine with existing correlations
             all_correlations = existing_correlations + new_correlations
+
+            # Deduplicate any correlations with the same canonical name
+            # (AI may create correlations that match existing ones)
+            all_correlations = self._deduplicate_correlations(all_correlations)
 
             # Sort by occurrence count
             return sorted(all_correlations, key=lambda x: (x.occurrence_count, x.confidence_average), reverse=True)

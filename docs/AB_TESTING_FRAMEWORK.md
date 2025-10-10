@@ -5,13 +5,40 @@
 
 ---
 
+## ⚠️ IMPORTANT: Scientific Validity
+
+### Test Methodology Matters
+
+**INVALID Test Approach**:
+- ❌ Using random sampling for Case A and Case B (creates different content)
+- ❌ Comparing different evidence sets
+- ❌ No ground truth validation
+
+**VALID Test Approach**:
+- ✅ Identical content between Case A and Case B (only SHA256 differs)
+- ✅ Controlled entity variants with known ground truth
+- ✅ Single variable: AI resolution on/off
+
+### Lessons Learned
+
+Initial testing using random sampling showed **350% improvement** - but this was partially due to **sampling bias**. Case B randomly selected documents with more name repetitions.
+
+**Controlled testing revealed**:
+- Real improvement: ~40% variant consolidation success rate
+- AI resolution scope: Cross-document name matching only
+- Value: Modest but measurable for large, informal evidence sets
+
+See [reports/HONEST_AB_TEST_RESULTS.md](../reports/HONEST_AB_TEST_RESULTS.md) for full analysis.
+
+---
+
 ## 🎯 Framework Overview
 
 This framework provides three complementary approaches to validate AI entity resolution:
 
-1. **Automated Full Pipeline** - End-to-end testing with sampled real-world data
-2. **Controlled Testing** - Known entity patterns for validation
-3. **Post-Hoc Analysis** - Compare existing package outputs
+1. **Controlled Testing** - Known entity patterns for validation (RECOMMENDED)
+2. **Automated Full Pipeline** - End-to-end testing with sampled real-world data (CAUTION: Can introduce sampling bias)
+3. **Post-Hoc Analysis** - Compare existing package outputs (Only valid if same evidence processed)
 
 ---
 
