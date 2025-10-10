@@ -211,10 +211,18 @@ Map-reduce pattern for large cases:
 
 ### Phase B+: Forensic Display Restructuring
 **Executive-First Report Layout:**
-- 🔍 **Forensic Summary**: 1,280-char detailed narrative analysis
+- 🔍 **Executive Summary**: Client-ready strategic narrative (enhanced AI analysis)
 - 💡 **Key Findings**: 3-5 bullet-point discoveries with evidence citations
-- ⚖️ **Legal Implications**: 5 specific risk areas for case strategy
-- 🎯 **Recommended Actions**: 5 strategic guidance items
+- ⚖️ **Legal Risk Assessment**: Tribunal probability %, financial exposure estimates (enhanced)
+- 📋 **Forensic Legal Analysis**:
+  - Legal implications: 4-5 specific statutory risks (PIDA, vicarious liability, trust breach)
+  - Strategic recommendations: 5 forensic investigation/defense actions
+- 🎯 **Recommended Actions**: Urgent client-facing deadlines (enhanced)
+
+**Dual-Layer Analysis:**
+- **Forensic Layer** (AI Call #1): Evidence-based legal foundation, statutory citations, investigation strategy
+- **Enhanced Layer** (AI Call #2): Client-ready risk quantification, tribunal %, settlement ranges
+- Both layers displayed separately to provide complementary perspectives
 
 **Report Structure:**
 - Insights first (35-45% of report) - strategic analysis
@@ -226,7 +234,7 @@ Map-reduce pattern for large cases:
 - v3.2: 80% (tribunal probability, financial exposure added)
 - v3.3 Phase A: 95% (quoted statements, patterns extracted & displayed)
 - v3.3 Phase B: 98% (image OCR, relationships, semantic timeline)
-- v3.3 Phase B+: 98% (forensic content now prominently displayed)
+- v3.3 Phase B+: 100% (ALL forensic + enhanced data now displayed in reports)
 
 **Zero Additional Cost:**
 - All v3.3 features use existing v3.1 AI analysis data
