@@ -529,15 +529,19 @@ This methodology is designed for professional legal evidence analysis and mainta
         """
         from evidence_toolkit.generators import (
             ForensicLegalOpinionGenerator,
-            FinancialRiskAssessmentGenerator
+            FinancialRiskAssessmentGenerator,
+            LegalPatternsGenerator,
+            TimelineGenerator
         )
 
         generated_reports = []
 
-        # List of Phase 1 generators
+        # List of Phase 1-2 generators
         generator_classes = [
             ForensicLegalOpinionGenerator,
             FinancialRiskAssessmentGenerator,
+            LegalPatternsGenerator,
+            TimelineGenerator,
         ]
 
         # Instantiate and run each generator
